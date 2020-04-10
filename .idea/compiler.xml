@@ -8,6 +8,8 @@
         <outputRelativeToContentRoot value="true" />
         <module name="common" />
         <module name="protocol" />
+        <module name="starter" />
+        <module name="config" />
       </profile>
     </annotationProcessing>
   </component>

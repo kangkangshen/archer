@@ -5,17 +5,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.archer</groupId>
-  <artifactId>archermq</artifactId>
-  <packaging>pom</packaging>
+  <artifactId>config</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <modules>
-    <module>protocol</module>
-    <module>common</module>
-    <module>config</module>
-    <module>starter</module>
-  </modules>
+  <description>全局配置模块，用于适配各类分布式配置组件</description>
 
-  <name>archermq</name>
+  <name>config</name>
   <!-- FIXME change it to the project's website -->
   <url>http://www.example.com</url>
 
@@ -23,44 +17,9 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-    <spring.platform.version>5.2.0.RELEASE</spring.platform.version>
-    <netty.platform.version>4.1.0.Final</netty.platform.version>
-    <apache.common.version>3.10</apache.common.version>
-    <google.guava.version>28.2-jre</google.guava.version>
   </properties>
 
   <dependencies>
-
-    <!--  单元测试  -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.11</version>
-      <scope>test</scope>
-    </dependency>
-
-    <!-- https://mvnrepository.com/artifact/org.springframework/spring-aop -->
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-core</artifactId>
-      <version>${spring.platform.version}</version>
-    </dependency>
-
-    <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <version>${apache.common.version}</version>
-    </dependency>
-
-    <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>${google.guava.version}</version>
-    </dependency>
-
-
 
 
   </dependencies>

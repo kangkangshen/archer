@@ -1,4 +1,4 @@
-package org.archer.archermq;
+package org.archer.archermq.common;
 
 import com.google.common.collect.Maps;
 
