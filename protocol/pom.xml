@@ -5,13 +5,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>protocol</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>${archermq.middlewire.version}</version>
   <description>AMQP协议层实现</description>
 
   <parent>
     <groupId>org.archer</groupId>
     <artifactId>archermq</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0.SNAPSHOT</version>
   </parent>
   <name>protocol</name>
 
@@ -26,6 +26,12 @@
       <groupId>io.netty</groupId>
       <artifactId>netty-all</artifactId>
       <version>${netty.platform.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.archer</groupId>
+      <artifactId>common</artifactId>
+      <version>${archermq.middlewire.version}</version>
     </dependency>
   </dependencies>
 

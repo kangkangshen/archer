@@ -1,7 +1,7 @@
 package org.archer.archermq.protocol.constants;
 
 
-import org.archer.archermq.protocol.Exchange;
+import org.archer.archermq.common.EnumSpec;
 
 import java.util.Objects;
 
@@ -11,7 +11,7 @@ import java.util.Objects;
  * @author dongyue
  * @date 2020年04月13日21:23:42
  */
-public enum ExchangeType {
+public enum ExchangeTypeEnum implements EnumSpec<Integer> {
     DEFAULT(0, "default exchange"),
     DIRECT(1, "direct exchange"),
     FANOUT(2, "fanout exchange"),
@@ -20,17 +20,17 @@ public enum ExchangeType {
     SYSTEM(5,"system exchange"),
     CUSTOM(6,"custom exchange");
 
-    private int val;
-    private String desc;
+    private final int val;
+    private final String desc;
 
-    ExchangeType(int val, String desc) {
+    ExchangeTypeEnum(int val, String desc) {
         this.val = val;
         this.desc = desc;
     }
 
-    public ExchangeType getByVal(Integer val) {
-        ExchangeType[] types = values();
-        for (ExchangeType type : types) {
+    public ExchangeTypeEnum getByVal(Integer val) {
+        ExchangeTypeEnum[] types = values();
+        for (ExchangeTypeEnum type : types) {
             if (Objects.equals(type.val, val)) {
                 return type;
             }
@@ -38,19 +38,11 @@ public enum ExchangeType {
         return null;
     }
 
-    public int getVal() {
+    public Integer getVal() {
         return val;
-    }
-
-    public void setVal(int val) {
-        this.val = val;
     }
 
     public String getDesc() {
         return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
     }
 }

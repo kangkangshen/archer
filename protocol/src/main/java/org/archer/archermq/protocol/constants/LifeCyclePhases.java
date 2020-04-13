@@ -14,6 +14,12 @@ public interface LifeCyclePhases {
          */
         String DECLARE = "declare";
 
+        String CREATE = "create";
+
+        String DELETE = "delete";
+
+        String CANCEL = "cancel";
+
     }
 
 

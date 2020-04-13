@@ -1,7 +1,7 @@
 package org.archer.archermq.protocol;
 
 
-import org.archer.archermq.protocol.constants.ExchangeType;
+import org.archer.archermq.protocol.constants.ExchangeTypeEnum;
 
 /**
  * 服务器中的实体，用来接收生产者发送的消息并将这些消息路由给服务器中的队列。
@@ -17,9 +17,9 @@ public interface Exchange extends LifeCycle {
      * 获取当前的交换器的类型
      *
      * @return 当前交换器的类型
-     * @see ExchangeType
+     * @see ExchangeTypeEnum
      */
-    ExchangeType type();
+    ExchangeTypeEnum type();
 
     /**
      * 获取当前交换器的唯一编号
