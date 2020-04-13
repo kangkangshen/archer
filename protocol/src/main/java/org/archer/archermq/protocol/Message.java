@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * 消息定义接口
  */
-public interface Message extends LifeCycle{
+public interface Message extends LifeCycle {
 
 
     /**
@@ -25,23 +25,24 @@ public interface Message extends LifeCycle{
 
     /**
      * 消息描述，当消息无法投递时，该项十分有用
+     *
+     * @return 消息描述
      */
     String msgDescription();
 
     /**
-     * 消息扩展属性
+     * 消息头，里面保存了很多有用的扩展字段
      *
      * @return 消息属性
      */
-    Map<String, Object> msgAttributes();
+    MessageHead head();
 
     /**
-     * 消息内容
+     * 消息体，消费者利用其进行消费
      *
-     * @return 消息内容
+     * @return 消息体
      */
-    String msgContent();
-
+    MessageBody body();
 
 
 }

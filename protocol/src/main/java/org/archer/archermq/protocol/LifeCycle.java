@@ -13,14 +13,14 @@ public interface LifeCycle {
      *
      * @return 当前生命周期所属阶段
      */
-    Integer currPhase();
+    String currPhase();
 
     /**
      * 当前生命周期所属阶段的状态，例如开始，结束，异常
      *
      * @return 当前生命周期所属阶段的状态
      */
-    Integer currPhaseStatus();
+    String currPhaseStatus();
 
 
 }

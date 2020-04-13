@@ -8,8 +8,10 @@ import java.util.Objects;
 /**
  * 支持feature的数据对象基类
  *
+ * @author dongyue
+ * @date 2020年04月13日20:51:47
  */
-public class FeatureBased {
+public class FeatureBased implements Extensible{
 
     private Map<String, Object> feature = Maps.newConcurrentMap();
 
@@ -21,7 +23,7 @@ public class FeatureBased {
      * @param val featureVal
      */
     public void addFeature(String key, Object val) {
-        if(!Objects.isNull(val)){
+        if (!Objects.isNull(val)) {
             feature.putIfAbsent(key, val);
         }
     }
@@ -48,13 +50,14 @@ public class FeatureBased {
 
     /**
      * 替换feature,返回替换之前的feature值
+     *
      * @param key 欲替换的featureKey
      * @param val 替换后的featureVal
-     * @return  替换前的featureVal
+     * @return 替换前的featureVal
      */
-    public Object replaceFeature(String key,Object val){
-        if(!Objects.isNull(val)){
-            return feature.put(key,val);
+    public Object replaceFeature(String key, Object val) {
+        if (!Objects.isNull(val)) {
+            return feature.put(key, val);
         }
         return null;
 
@@ -66,7 +69,7 @@ public class FeatureBased {
      * @param key featureKey
      * @return true if包含指定的feature,false if 不包含指定的feature
      */
-    public boolean containsKey(String key){
+    public boolean containsKey(String key) {
         return feature.containsKey(key);
     }
 

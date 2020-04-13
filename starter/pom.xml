@@ -22,6 +22,12 @@
     </properties>
 
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.springframework.amqp/spring-amqp -->
+        <dependency>
+            <groupId>org.springframework.amqp</groupId>
+            <artifactId>spring-amqp</artifactId>
+            <version>${springboot.platform.version}</version>
+        </dependency>
 
     </dependencies>
 

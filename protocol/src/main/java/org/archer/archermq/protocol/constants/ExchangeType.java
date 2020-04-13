@@ -6,14 +6,19 @@ import org.archer.archermq.protocol.Exchange;
 import java.util.Objects;
 
 /**
- * 交换机类型
+ * 基于不同路由语义的交换器类。
+ *
+ * @author dongyue
+ * @date 2020年04月13日21:23:42
  */
 public enum ExchangeType {
-    DEFAULT(0,"default exchange"),
+    DEFAULT(0, "default exchange"),
     DIRECT(1, "direct exchange"),
     FANOUT(2, "fanout exchange"),
     TOPIC(3, "topic exchange"),
-    HEADERS(4, "heads exchange");
+    HEADERS(4, "heads exchange"),
+    SYSTEM(5,"system exchange"),
+    CUSTOM(6,"custom exchange");
 
     private int val;
     private String desc;

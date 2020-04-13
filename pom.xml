@@ -27,6 +27,7 @@
     <netty.platform.version>4.1.0.Final</netty.platform.version>
     <apache.common.version>3.10</apache.common.version>
     <google.guava.version>28.2-jre</google.guava.version>
+    <springboot.platform.version>2.2.5.RELEASE</springboot.platform.version>
     <fast.json.version>1.2.68</fast.json.version>
   </properties>
 
