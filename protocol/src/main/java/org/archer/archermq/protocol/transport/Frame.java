@@ -5,13 +5,15 @@ import io.netty.buffer.ByteBuf;
 import org.archer.archermq.protocol.Channel;
 import org.archer.archermq.protocol.constants.FrameTypeEnum;
 
+import java.io.Serializable;
+
 /**
  * 通用帧接口定义
  *
  * @author dongyue
  * @date 2020年04月13日23:06:00
  */
-public interface Frame {
+public interface Frame extends Serializable {
 
     /**
      * 获取当前数据帧类型
@@ -40,7 +42,7 @@ public interface Frame {
      *
      * @return 当前帧的载荷长度
      */
-    long size();
+    int size();
 
     /**
      * 获取当前帧的内容
@@ -49,5 +51,5 @@ public interface Frame {
      */
     ByteBuf content();
 
-
+    byte frameEnd();
 }

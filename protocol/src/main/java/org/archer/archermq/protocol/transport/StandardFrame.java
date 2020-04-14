@@ -4,7 +4,17 @@ import io.netty.buffer.ByteBuf;
 import org.archer.archermq.protocol.Channel;
 import org.archer.archermq.protocol.constants.FrameTypeEnum;
 
-public class StandardFrame implements Frame{
+import java.util.Objects;
+
+/**
+ * 标准帧实现
+ *
+ * @author dongyue
+ * @date 2020年04月14日12:49:26
+ */
+public class StandardFrame implements Frame {
+
+//    private final long ser
 
     private byte rawType;
     private FrameTypeEnum frameType;
@@ -12,15 +22,19 @@ public class StandardFrame implements Frame{
     private short rawChannelId;
     private Channel channel;
 
-    private long size;
+    private int size;
 
     private ByteBuf payload;
 
+    private byte rawFrameEnd;
 
 
     @Override
     public FrameTypeEnum type() {
-        return FrameTypeEnum.getByVal((int) rawType);
+        if(Objects.isNull(frameType)){
+            FrameTypeEnum.getByVal((int) rawType);
+        }
+        return frameType;
     }
 
     @Override
@@ -34,7 +48,7 @@ public class StandardFrame implements Frame{
     }
 
     @Override
-    public long size() {
+    public int size() {
         return size;
     }
 
@@ -42,4 +56,11 @@ public class StandardFrame implements Frame{
     public ByteBuf content() {
         return payload;
     }
+
+    @Override
+    public byte frameEnd() {
+        return rawFrameEnd;
+    }
+
+
 }

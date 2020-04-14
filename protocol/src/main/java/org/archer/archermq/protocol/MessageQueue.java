@@ -10,6 +10,11 @@ package org.archer.archermq.protocol;
 public interface MessageQueue extends LifeCycle {
 
     /**
+     * 标准消息队列前辍是"amq."
+     */
+    String STANDARD_MESSAGE_QUEUE_NAME_PREFIX = "amq.";
+
+    /**
      * 获取当前消息队列所绑定的交换器，按照AMQP协议，mq和exchange之间是一对多的关系
      *
      * @return 当前所绑定的交换器

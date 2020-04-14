@@ -14,6 +14,19 @@ import org.archer.archermq.protocol.constants.ExchangeTypeEnum;
 public interface Exchange extends LifeCycle {
 
     /**
+     * 标准交换器实例前辍是"amq."
+     */
+    String STANDARD_EXCHANGE_NAME_PREFIX = "amq.";
+
+    /**
+     * 用户定义的交换器类型前辍必须是"x-"
+     */
+    String CUSTOM_EXCHANGE_NAME_PREFIX = "x-";
+
+
+
+
+    /**
      * 获取当前的交换器的类型
      *
      * @return 当前交换器的类型
