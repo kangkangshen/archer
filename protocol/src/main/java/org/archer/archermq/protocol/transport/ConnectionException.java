@@ -9,4 +9,7 @@ package org.archer.archermq.protocol.transport;
  * @date 2020年04月14日13:18:54
  */
 public class ConnectionException extends RuntimeException {
+
+
+
 }

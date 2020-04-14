@@ -31,6 +31,8 @@
     <google.guava.version>28.2-jre</google.guava.version>
     <springboot.platform.version>2.2.5.RELEASE</springboot.platform.version>
     <fast.json.version>1.2.68</fast.json.version>
+    <slf4j.plaform.version>1.7.26</slf4j.plaform.version>
+    <aspectj.platform.version>1.9.5</aspectj.platform.version>
   </properties>
 
   <dependencies>
@@ -48,6 +50,36 @@
       <artifactId>spring-core</artifactId>
       <version>${spring.platform.version}</version>
     </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.springframework/spring-beans -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+      <version>${spring.platform.version}</version>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>${spring.platform.version}</version>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.springframework/spring-aop -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-aop</artifactId>
+      <version>${spring.platform.version}</version>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.aspectj/aspectjweaver -->
+    <dependency>
+      <groupId>org.aspectj</groupId>
+      <artifactId>aspectjweaver</artifactId>
+      <version>${aspectj.platform.version}</version>
+    </dependency>
+
+
 
     <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
     <dependency>
