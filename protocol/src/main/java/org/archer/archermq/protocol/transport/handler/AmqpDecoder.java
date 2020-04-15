@@ -30,18 +30,21 @@ public class AmqpDecoder extends ChannelInboundHandlerAdapter {
      * 这里最大长度应当是int的无符号最大值，一般情况下，使用该值足矣
      * todo dongyue
      */
-    @Value("max.frame.length")
+    @Value("amqp.max.frame.length")
     private int maxFrameLength = Integer.MAX_VALUE;
 
-    @Value("length.field.offset")
+    @Value("amqp.length.field.offset")
     private int lengthFieldOffset = 3;
 
-    @Value("length.field.length")
+    @Value("amqp.length.field.length")
     private int lengthFieldLength = 4;
+
+    @Value("amqp.length.adjustment")
+    private int lengthAdjustment = 1;
 
     @Log(layer = LogConstants.TRANSPORT_LAYER)
     public AmqpDecoder() {
-        decoderDelegate = new LengthFieldBasedFrameDecoder(maxFrameLength, lengthFieldOffset, lengthFieldLength);
+        decoderDelegate = new LengthFieldBasedFrameDecoder(maxFrameLength, lengthFieldOffset, lengthFieldLength, lengthAdjustment, 0);
     }
 
     @Log(layer = LogConstants.TRANSPORT_LAYER)
@@ -147,5 +150,10 @@ public class AmqpDecoder extends ChannelInboundHandlerAdapter {
     @Log(layer = LogConstants.TRANSPORT_LAYER)
     public void setLengthFieldLength(int lengthFieldLength) {
         this.lengthFieldLength = lengthFieldLength;
+    }
+
+    @Log(layer = LogConstants.TRANSPORT_LAYER)
+    public void setLengthAdjustment(int lengthAdjustment) {
+        this.lengthAdjustment = lengthAdjustment;
     }
 }
