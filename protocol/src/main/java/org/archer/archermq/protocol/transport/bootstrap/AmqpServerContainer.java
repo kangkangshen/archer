@@ -46,11 +46,11 @@ public class AmqpServerContainer implements InitializingBean {
     @Override
     @Log(layer = LogConstants.TRANSPORT_LAYER)
     public void afterPropertiesSet() throws Exception {
-
         EventLoopGroup bossGroup = new NioEventLoopGroup(serverListenThreads);
         EventLoopGroup workerGroup = new NioEventLoopGroup(serverHandleThreads);
         try {
             serverBootstrap = new ServerBootstrap();
+            serverBootstrapConfig = serverBootstrap.config();
             serverBootstrap.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
                     .childHandler(new ChannelInitializer<SocketChannel>() {
@@ -69,4 +69,11 @@ public class AmqpServerContainer implements InitializingBean {
         }
     }
 
+    public ServerBootstrap getServerBootstrap() {
+        return serverBootstrap;
+    }
+
+    public ServerBootstrapConfig getServerBootstrapConfig() {
+        return serverBootstrapConfig;
+    }
 }
