@@ -50,4 +50,8 @@ public class BizLogUtil {
         logInfoHolder.remove();
     }
 
+    public static LogInfo get(){
+        return logInfoHolder.get();
+    }
+
 }

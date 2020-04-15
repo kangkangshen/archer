@@ -11,6 +11,9 @@ public interface FeatureKeys {
      */
     interface Message{
         String PRIORITY = "priority";
+
+
+        String TRACE_ID = "traceId";
     }
 
 

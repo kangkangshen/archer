@@ -40,6 +40,11 @@ public interface LogConstants {
 
     String EXCEPTION_STACK = "stack";
 
+    String CONFIG_ITEM_NAME = "config item name";
+
+    String CONFIG_ITEM_BEFORE = "config item before";
+
+    String CONFIG_ITEM_AFTER = "config item after";
 
 
 }

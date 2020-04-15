@@ -23,13 +23,9 @@ import java.util.Objects;
  * @author dongyue
  * @date 2020年04月14日19:28:34
  */
-
 @Aspect
 @Component
 public class TraceInspectAspect {
-
-
-    private ThreadLocal<LogInfo> traceInvokeHolder = new ThreadLocal<>();
 
 
 
@@ -44,7 +40,7 @@ public class TraceInspectAspect {
         Method currMethod = methodSignature.getMethod();
         Trace currTrace = currMethod.getDeclaredAnnotation(Trace.class);
 
-        LogInfo logInfo = currTrace.begin()?BizLogUtil.start():traceInvokeHolder.get();
+        LogInfo logInfo = currTrace.begin()?BizLogUtil.start():BizLogUtil.get();
 
         //1. layer,type 分析
         logInfo.setLayer(currTrace.layer());
@@ -62,9 +58,6 @@ public class TraceInspectAspect {
         //4.根据调用信息，生成traceId
         logInfo.setTraceId(HashUtil.md5());
 
-        //保存
-        traceInvokeHolder.set(logInfo);
-
     }
 
     @After("traceInspectAspect()")
@@ -75,7 +68,7 @@ public class TraceInspectAspect {
         Method currMethod = methodSignature.getMethod();
         Trace currTrace = currMethod.getDeclaredAnnotation(Trace.class);
         if(currTrace.end()){
-            LogInfo logInfo = Objects.requireNonNull(traceInvokeHolder.get());
+            LogInfo logInfo = Objects.requireNonNull(BizLogUtil.get());
             logInfo.write();
         }
 
@@ -84,7 +77,7 @@ public class TraceInspectAspect {
 
     @AfterThrowing(value = "traceInspectAspect()",throwing = "e")
     public void traceOnAfterThrowing(JoinPoint point, Exception e){
-        LogInfo logInfo = Objects.requireNonNull(traceInvokeHolder.get());
+        LogInfo logInfo = Objects.requireNonNull(BizLogUtil.get());
         logInfo.setType(LogConstants.EXCEPTION_THROW);
         logInfo.addContent(LogConstants.EXCEPTION_STACK,JSON.toJSONString(e.getStackTrace()));
         logInfo.write();

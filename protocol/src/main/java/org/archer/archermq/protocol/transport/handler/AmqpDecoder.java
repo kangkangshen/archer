@@ -152,4 +152,17 @@ public class AmqpDecoder extends ChannelInboundHandlerAdapter {
     public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
         decoderDelegate.handlerRemoved(ctx);
     }
+
+
+    public void setMaxFrameLength(int maxFrameLength) {
+        this.maxFrameLength = maxFrameLength;
+    }
+
+    public void setLengthFieldOffset(int lengthFieldOffset) {
+        this.lengthFieldOffset = lengthFieldOffset;
+    }
+
+    public void setLengthFieldLength(int lengthFieldLength) {
+        this.lengthFieldLength = lengthFieldLength;
+    }
 }

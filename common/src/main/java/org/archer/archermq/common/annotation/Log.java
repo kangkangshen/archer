@@ -1,6 +1,8 @@
 package org.archer.archermq.common.annotation;
 
 
+import org.archer.archermq.common.log.LogConstants;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -13,8 +15,9 @@ import java.lang.annotation.Target;
  */
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD,ElementType.TYPE})
+@Target(ElementType.METHOD)
 public @interface Log {
 
+    String layer() default LogConstants.MODEL_LAYER;
 
 }
