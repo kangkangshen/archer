@@ -8,6 +8,7 @@ import org.archer.archermq.common.log.BizLogUtil;
 import org.archer.archermq.common.log.LogConstants;
 import org.archer.archermq.common.log.LogInfo;
 import org.archer.archermq.common.utils.HashUtil;
+import org.archer.archermq.common.utils.TraceUtil;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -56,7 +57,7 @@ public class TraceInspectAspect {
 
 
         //4.根据调用信息，生成traceId
-        logInfo.setTraceId(HashUtil.md5());
+        logInfo.setTraceId(TraceUtil.getThreadInfo());
 
     }
 
