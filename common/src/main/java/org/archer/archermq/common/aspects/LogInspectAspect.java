@@ -1,6 +1,8 @@
 package org.archer.archermq.common.aspects;
 
 
+import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
 import org.archer.archermq.common.annotation.Log;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -61,25 +64,26 @@ public class LogInspectAspect {
             logInfo.addContent(LogConstants.CONFIG_ITEM_AFTER,point.getArgs()[0].toString());
         } else if (LogConstants.METHOD_INVOKE.equals(logInfo.getType())) {
             //method invoke
-
-
+            logInfo.addContent(LogConstants.CLASS_NAME,method.getDeclaringClass().getName());
+            logInfo.addContent(LogConstants.METHOD_NAME,method.getName());
+            logInfo.addContent(LogConstants.ARGS_VAL,handleInvokeArgs(methodSignature.getParameterNames(),point.getArgs()));
         }
 
     }
 
-    @After("logInspectAspect()")
-    public void logOnAfter(JoinPoint point){
-        MethodSignature methodSignature = (MethodSignature) point.getSignature();
-        Method method = methodSignature.getMethod();
+    @AfterReturning(value = "logInspectAspect()",returning = "result")
+    public void logOnAfterReturning(JoinPoint point,Object result){
         LogInfo logInfo = BizLogUtil.get();
-
-
+        logInfo.setResult(JSON.toJSONString(result));
         logInfo.write();
     }
 
-    @AfterThrowing("logInspectAspect()")
-    public void logOnAfterThrowing(){
-
+    @AfterThrowing(value = "logInspectAspect()",throwing = "e")
+    public void logOnAfterThrowing(JoinPoint point,Throwable e){
+        LogInfo logInfo = Objects.requireNonNull(BizLogUtil.get());
+        logInfo.setType(LogConstants.EXCEPTION_THROW);
+        logInfo.addContent(LogConstants.EXCEPTION_STACK,JSON.toJSONString(e.getStackTrace()));
+        logInfo.write();
     }
 
 
@@ -131,6 +135,17 @@ public class LogInspectAspect {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private String handleInvokeArgs(String[]argNames,Object[] args){
+        Map<String,Object> tmpMap = Maps.newHashMap();
+        if(Objects.isNull(argNames)){
+            return StringUtils.EMPTY;
+        }
+        for(int i = 0; i<argNames.length;i++){
+            tmpMap.put(argNames[i],args[i]);
+        }
+        return JSON.toJSONString(tmpMap);
     }
 
 }

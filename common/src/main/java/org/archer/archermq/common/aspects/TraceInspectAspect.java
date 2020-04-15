@@ -60,19 +60,17 @@ public class TraceInspectAspect {
 
     }
 
-    @After("traceInspectAspect()")
-    public void traceOnAfter(JoinPoint point){
+    @AfterReturning(value = "traceInspectAspect()",returning = "result")
+    public void traceOnAfterReturning(JoinPoint point,Object result){
         //批量更新至数据库等存储设置
-
+        LogInfo logInfo = Objects.requireNonNull(BizLogUtil.get());
+        logInfo.setResult(JSON.toJSONString(result));
         MethodSignature methodSignature = (MethodSignature) point.getSignature();
         Method currMethod = methodSignature.getMethod();
         Trace currTrace = currMethod.getDeclaredAnnotation(Trace.class);
         if(currTrace.end()){
-            LogInfo logInfo = Objects.requireNonNull(BizLogUtil.get());
             logInfo.write();
         }
-
-
     }
 
     @AfterThrowing(value = "traceInspectAspect()",throwing = "e")

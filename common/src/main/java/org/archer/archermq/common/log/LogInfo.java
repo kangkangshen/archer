@@ -18,6 +18,8 @@ public class LogInfo {
 
     private String traceId;
 
+    private String result;
+
 
 
 
@@ -73,6 +75,14 @@ public class LogInfo {
 
     public void setTraceId(String traceId) {
         this.traceId = traceId;
+    }
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
     }
 
     @Override
