@@ -22,6 +22,7 @@ import java.util.Set;
 
 /**
  * 日志记录切面
+ * todo dongyue：暂不支持对constructor打日志
  *
  * @author dongyue
  * @date 2020年04月14日19:22:11

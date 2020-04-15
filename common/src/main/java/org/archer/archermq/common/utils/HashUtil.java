@@ -22,5 +22,9 @@ public class HashUtil {
         return null;
     }
 
+    public static String sha1(){
+        return null;
+    }
+
 
 }
