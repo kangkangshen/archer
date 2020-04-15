@@ -12,6 +12,10 @@ import org.springframework.stereotype.Component;
 
 /***
  * 最初进入的字节解码器，用于将字节转换成帧对象.
+ * 要读取一个帧，我们必须:
+ * 1. 读取header,检查帧类型(frame type)和通道(channel).
+ * 2. 根据帧类型，我们读取负载并进行处理.
+ * 3. 读取帧结束字节.
  *
  * @date 2020年04月14日16:53:43
  * @author dongyue

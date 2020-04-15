@@ -33,6 +33,7 @@
     <fast.json.version>1.2.68</fast.json.version>
     <slf4j.plaform.version>1.7.26</slf4j.plaform.version>
     <aspectj.platform.version>1.9.5</aspectj.platform.version>
+    <lombok.platform.version>1.18.10</lombok.platform.version>
   </properties>
 
   <dependencies>
@@ -102,8 +103,13 @@
       <version>${fast.json.version}</version>
     </dependency>
 
-
-
+    <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>${lombok.platform.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
 
 

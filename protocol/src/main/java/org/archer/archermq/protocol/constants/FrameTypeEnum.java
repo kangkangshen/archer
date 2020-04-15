@@ -12,9 +12,10 @@ import java.util.Objects;
  */
 public enum FrameTypeEnum implements EnumSpec<Integer> {
 
-    METHOD(0,"method frame"),
-    CONTENT(1,"content frame"),
-    HEARTBEAT(2,"heart beat frame");
+    METHOD(1,"method frame"),
+    CONTENT_HEADER(2,"content header frame"),
+    CONTENT_BODY(3,"content body frame"),
+    HEARTBEAT(4,"heart beat frame");
 
 
     private final int val;

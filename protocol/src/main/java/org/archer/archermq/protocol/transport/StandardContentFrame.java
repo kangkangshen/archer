@@ -1,6 +1,9 @@
 package org.archer.archermq.protocol.transport;
 
 
+import io.netty.buffer.ByteBuf;
+import lombok.Data;
+
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +18,7 @@ import java.util.Map;
  * @author dongyue
  * @date 2020年04月14日12:59:07
  */
+@Data
 public class StandardContentFrame extends StandardFrame{
 
     StandardContentHeaderFrame headerFrame;
@@ -22,16 +26,11 @@ public class StandardContentFrame extends StandardFrame{
     List<StandardContentBodyFrame> bodyFrames;
 
 
-
-
-
-
-
-
     /**
      * 标准内容头帧实现
      *
      */
+    @Data
     public static class StandardContentHeaderFrame extends StandardFrame{
 
         private short rawClassId;
@@ -50,23 +49,14 @@ public class StandardContentFrame extends StandardFrame{
     /**
      * 标准内容体帧实现
      */
+    @Data
     public static class StandardContentBodyFrame extends StandardFrame{
 
-    }
+        private ByteBuf binPayload;
 
-    public StandardContentHeaderFrame getHeaderFrame() {
-        return headerFrame;
-    }
+        private byte frameEnd;
 
-    public void setHeaderFrame(StandardContentHeaderFrame headerFrame) {
-        this.headerFrame = headerFrame;
-    }
 
-    public List<StandardContentBodyFrame> getBodyFrames() {
-        return bodyFrames;
-    }
 
-    public void setBodyFrames(List<StandardContentBodyFrame> bodyFrames) {
-        this.bodyFrames = bodyFrames;
     }
 }

@@ -32,7 +32,7 @@ public class StandardFrame implements Frame {
     @Override
     public FrameTypeEnum type() {
         if(Objects.isNull(frameType)){
-            FrameTypeEnum.getByVal((int) rawType);
+            frameType = FrameTypeEnum.getByVal((int) rawType);
         }
         return frameType;
     }
