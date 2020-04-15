@@ -62,5 +62,31 @@ public class StandardFrame implements Frame {
         return rawFrameEnd;
     }
 
+    public void setRawType(byte rawType) {
+        this.rawType = rawType;
+    }
 
+    public void setFrameType(FrameTypeEnum frameType) {
+        this.frameType = frameType;
+    }
+
+    public void setRawChannelId(short rawChannelId) {
+        this.rawChannelId = rawChannelId;
+    }
+
+    public void setChannel(Channel channel) {
+        this.channel = channel;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public void setPayload(ByteBuf payload) {
+        this.payload = payload;
+    }
+
+    public void setRawFrameEnd(byte rawFrameEnd) {
+        this.rawFrameEnd = rawFrameEnd;
+    }
 }

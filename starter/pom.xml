@@ -29,6 +29,14 @@
             <version>${springboot.platform.version}</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+            <version>${springboot.platform.version}</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>

@@ -7,6 +7,7 @@ package org.archer.archermq.common.utils;
  * @date 2020年04月14日13:35:34
  */
 public class ObjectPoolUtil {
+
     public static int DEFAULT_MAX_HOLD_OBJECT_NUMS = 16;
 
 

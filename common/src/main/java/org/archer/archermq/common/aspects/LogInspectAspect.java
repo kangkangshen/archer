@@ -10,4 +10,6 @@ package org.archer.archermq.common.aspects;
 public class LogInspectAspect {
 
 
+
+
 }

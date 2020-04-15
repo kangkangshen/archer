@@ -28,12 +28,8 @@ import java.util.Objects;
 @Component
 public class TraceInspectAspect {
 
-//    @Value("time.format.pattern")
-//    private String timePattern = "yyyy-MM-dd hh:mm:ss";
 
     private ThreadLocal<LogInfo> traceInvokeHolder = new ThreadLocal<>();
-
-//    private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(timePattern);
 
 
 

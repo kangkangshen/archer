@@ -14,7 +14,11 @@ public class StandardHeartbeatFrame extends StandardFrame{
 
     private long createdTime;
 
+    public long getCreatedTime() {
+        return createdTime;
+    }
 
-
-
+    public void setCreatedTime(long createdTime) {
+        this.createdTime = createdTime;
+    }
 }
