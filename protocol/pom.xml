@@ -42,6 +42,14 @@
             <version>${configcenter.plaform.version}</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.apache.dubbo/dubbo-configcenter-zookeeper -->
+        <dependency>
+            <groupId>org.apache.dubbo</groupId>
+            <artifactId>dubbo-configcenter-zookeeper</artifactId>
+            <version>${configcenter.plaform.version}</version>
+        </dependency>
+
+
         <dependency>
             <groupId>org.archer</groupId>
             <artifactId>common</artifactId>

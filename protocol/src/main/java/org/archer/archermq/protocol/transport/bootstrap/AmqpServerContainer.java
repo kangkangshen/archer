@@ -41,6 +41,8 @@ public class AmqpServerContainer implements InitializingBean {
     private int serverRoleType = 1;
     private ServerRoleTypeEnum serverRoleTypeEnum;
 
+    private
+
     @Autowired
     private AmqpDecoder amqpDecoder;
 
