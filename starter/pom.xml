@@ -35,6 +35,15 @@
             <artifactId>spring-boot-starter</artifactId>
             <version>${springboot.platform.version}</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework.amqp/spring-rabbit -->
+        <dependency>
+            <groupId>org.springframework.amqp</groupId>
+            <artifactId>spring-rabbit</artifactId>
+            <version>${springboot.platform.version}</version>
+        </dependency>
+
+
+
 
 
     </dependencies>

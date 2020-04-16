@@ -22,5 +22,13 @@ public interface LifeCycle {
      */
     String currPhaseStatus();
 
+    /**
+     * 触发当前的生命周期事件,该事件将会由对应的事件监听者所截获
+     *
+     */
+    void triggerEvent();
+
+    void acceptListener(LifeCycleListener listener);
+
 
 }

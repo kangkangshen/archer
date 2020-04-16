@@ -20,6 +20,24 @@ public interface VirtualHost extends LifeCycle {
     Namespace nameSpace();
 
     /**
+     * 获取当前虚拟主机的名字，一般来说，我们通过namespace+name唯一确定一个virtualHost
+     *
+     * @return 当前虚拟主机的名字
+     */
+    String name();
+
+    /**
+     * 一般来说，我们通过我们通过namespace+name唯一确定一个virtualHost，name是具有一定含义的，id只具备索引功能
+     * 默认情况下，id就是name
+     *
+     * @return 当前virtualHost的id
+     */
+    default String id() {
+        return name();
+    }
+
+
+    /**
      * 获取当前虚拟主机所关联的交换器列表
      *
      * @return 当前虚拟主机所关联的交换器列表
