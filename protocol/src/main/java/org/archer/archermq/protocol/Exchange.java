@@ -27,7 +27,7 @@ public interface Exchange extends LifeCycle {
      */
     String CUSTOM_EXCHANGE_NAME_PREFIX = "x-";
 
-
+    String name();
 
 
     /**

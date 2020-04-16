@@ -23,7 +23,7 @@ public class BaseLifeCycleSupport implements LifeCycle {
 
     private String currPhaseStatus;
 
-    private Map<String,LifeCycleListener> listeners = Maps.newConcurrentMap();
+    private final Map<String,LifeCycleListener> listeners = Maps.newConcurrentMap();
 
     @Override
     public String currPhase() {
