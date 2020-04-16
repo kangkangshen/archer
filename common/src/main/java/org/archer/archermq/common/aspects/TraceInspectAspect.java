@@ -57,7 +57,7 @@ public class TraceInspectAspect {
 
 
         //4.根据调用信息，生成traceId
-        logInfo.setTraceId(TraceUtil.getThreadInfo());
+        logInfo.setTraceId(TraceUtil.getTraceInfo());
 
     }
 

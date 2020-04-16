@@ -3,6 +3,8 @@ package org.archer.archermq.common.utils;
 import com.twitter.hashing.KeyHasher;
 import com.twitter.hashing.KeyHashers;
 
+import java.util.Date;
+
 /**
  * 哈希工具类，包含生成MD5,UUID,SHA1等哈希值
  *
