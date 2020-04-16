@@ -12,6 +12,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.archer.archermq.common.annotation.Log;
 import org.archer.archermq.common.log.LogConstants;
+import org.archer.archermq.protocol.constants.ServerRoleTypeEnum;
 import org.archer.archermq.protocol.transport.handler.AmqpDecoder;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,10 @@ public class AmqpServerContainer implements InitializingBean {
 
     @Value("server.handle.threads")
     private int serverHandleThreads = 8;
+
+    @Value("server.role.type")
+    private int serverRoleType = 1;
+    private ServerRoleTypeEnum serverRoleTypeEnum;
 
     @Autowired
     private AmqpDecoder amqpDecoder;
