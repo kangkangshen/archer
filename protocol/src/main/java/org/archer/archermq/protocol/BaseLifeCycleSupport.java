@@ -4,6 +4,7 @@ package org.archer.archermq.protocol;
 import com.google.common.collect.Maps;
 import org.archer.archermq.common.annotation.Log;
 import org.archer.archermq.common.log.LogConstants;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 
@@ -11,19 +12,21 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import static org.archer.archermq.protocol.constants.ExceptionMessages.CURRENT_STATE_NOT_ALLOW_CHANGE_TO_TARGET_STATE;
+
 /**
  * 生命周期基类
  *
  * @author dongyue
  * @date 2020年04月16日18:59:52
  */
-public class BaseLifeCycleSupport implements LifeCycle {
+public abstract class BaseLifeCycleSupport implements LifeCycle {
 
     private String currPhase;
 
     private String currPhaseStatus;
 
-    private final Map<String,LifeCycleListener> listeners = Maps.newConcurrentMap();
+    private final Map<String, LifeCycleListener> listeners = Maps.newConcurrentMap();
 
     @Override
     public String currPhase() {
@@ -41,9 +44,9 @@ public class BaseLifeCycleSupport implements LifeCycle {
         event.setPhase(new String(currPhase));
         event.setPhaseStatus(new String(currPhaseStatus));
         event.setTarget(this);
-        if(!CollectionUtils.isEmpty(listeners)){
-            listeners.forEach((name,listener)->{
-                if(listener.interested(event)){
+        if (!CollectionUtils.isEmpty(listeners)) {
+            listeners.forEach((name, listener) -> {
+                if (listener.interested(event)) {
                     listener.responseEvent(event);
                 }
             });
@@ -53,8 +56,8 @@ public class BaseLifeCycleSupport implements LifeCycle {
     @Override
     @Log(layer = LogConstants.TRANSPORT_LAYER)
     public void acceptListener(LifeCycleListener listener) {
-        if(Objects.nonNull(listener)){
-            listeners.put(listener.name(),listener);
+        if (Objects.nonNull(listener)) {
+            listeners.put(listener.name(), listener);
         }
     }
 
@@ -62,19 +65,37 @@ public class BaseLifeCycleSupport implements LifeCycle {
         return currPhase;
     }
 
-    public void setCurrPhase(String currPhase) {
-        this.currPhase = currPhase;
+    public void setCurrPhase(String nextPhase) {
+        this.currPhase = nextPhase;
     }
 
     public String getCurrPhaseStatus() {
         return currPhaseStatus;
     }
 
-    public void setCurrPhaseStatus(String currPhaseStatus) {
-        this.currPhaseStatus = currPhaseStatus;
+    public void setCurrPhaseStatus(String nextPhaseStatus) {
+        this.currPhaseStatus = nextPhaseStatus;
     }
 
-    public Set<String> interestedListenerNames(){
+    public void updateCurrState(String nextPhase, String nextPhaseStatus) {
+        Assert.isTrue(couldChangeState(nextPhase, nextPhaseStatus), CURRENT_STATE_NOT_ALLOW_CHANGE_TO_TARGET_STATE);
+        setCurrPhase(nextPhase);
+        setCurrPhaseStatus(nextPhaseStatus);
+    }
+
+    /**
+     * 检查当前状态是否允许变更到下一状态
+     *
+     * @param nextPhase       下一状态的phase
+     * @param nextPhaseStatus 下一状态的phaseStatus
+     * @return 是否当前当前状态能够流转到下一状态，每一个支持生命周期的都应重写此方法
+     */
+    protected boolean couldChangeState(String nextPhase, String nextPhaseStatus) {
+        return true;
+    }
+
+
+    public Set<String> interestedListenerNames() {
         return listeners.keySet();
     }
 }

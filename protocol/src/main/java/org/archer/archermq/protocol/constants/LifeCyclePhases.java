@@ -8,6 +8,13 @@ package org.archer.archermq.protocol.constants;
  */
 public interface LifeCyclePhases {
 
+
+    interface Server{
+        String STARTING = "starting";
+
+        String RUNNING = "running";
+    }
+
     interface Exchange{
         /**
          * 如果不存在就创建，否则继续

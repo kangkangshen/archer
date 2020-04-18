@@ -1,7 +1,12 @@
 package org.archer.archermq.protocol.transport.handler;
 
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.MessageToMessageEncoder;
+import org.archer.archermq.protocol.transport.Frame;
 import org.archer.archermq.protocol.transport.FrameHandler;
 import org.archer.archermq.protocol.transport.StandardMethodFrame;
+
+import java.util.List;
 
 
 /**
@@ -15,11 +20,15 @@ import org.archer.archermq.protocol.transport.StandardMethodFrame;
  * @author dongyue
  * @date 2020年04月15日17:17:27
  */
-public class StandardMethodFrameHandler implements FrameHandler<StandardMethodFrame> {
+public class StandardMethodFrameHandler extends MessageToMessageEncoder<Frame> implements FrameHandler<StandardMethodFrame> {
     @Override
     public Object handleFrame(StandardMethodFrame frame) {
         return null;
     }
 
 
+    @Override
+    protected void encode(ChannelHandlerContext ctx, Frame msg, List<Object> out) throws Exception {
+
+    }
 }

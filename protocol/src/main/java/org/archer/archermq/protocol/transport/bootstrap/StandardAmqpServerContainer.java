@@ -12,6 +12,10 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.archer.archermq.common.annotation.Log;
 import org.archer.archermq.common.log.LogConstants;
+import org.archer.archermq.protocol.BaseLifeCycleSupport;
+import org.archer.archermq.protocol.LifeCycle;
+import org.archer.archermq.protocol.Server;
+import org.archer.archermq.protocol.constants.LifeCyclePhases;
 import org.archer.archermq.protocol.constants.ServerRoleTypeEnum;
 import org.archer.archermq.protocol.transport.handler.AmqpDecoder;
 import org.springframework.beans.factory.InitializingBean;
@@ -26,7 +30,7 @@ import org.springframework.stereotype.Component;
  * @date 2020年04月15日17:48:30
  */
 @Component
-public class AmqpServerContainer implements InitializingBean {
+public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements InitializingBean,Server {
 
     @Value("amqp.server.port")
     private int amqpServerPort = 5672;
@@ -41,7 +45,9 @@ public class AmqpServerContainer implements InitializingBean {
     private int serverRoleType = 1;
     private ServerRoleTypeEnum serverRoleTypeEnum;
 
-    private
+    @Autowired
+    private Server server;
+
 
     @Autowired
     private AmqpDecoder amqpDecoder;
@@ -52,7 +58,24 @@ public class AmqpServerContainer implements InitializingBean {
 
     @Override
     @Log(layer = LogConstants.TRANSPORT_LAYER)
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
+        updateCurrState(LifeCyclePhases.Server.STARTING, LifeCyclePhases.Status.START);
+        triggerEvent();
+        start();
+        updateCurrState(LifeCyclePhases.Server.RUNNING,LifeCyclePhases.Status.START);
+        triggerEvent();
+    }
+
+    public ServerBootstrap getServerBootstrap() {
+        return serverBootstrap;
+    }
+
+    public ServerBootstrapConfig getServerBootstrapConfig() {
+        return serverBootstrapConfig;
+    }
+
+    @Override
+    public void start() {
         EventLoopGroup bossGroup = new NioEventLoopGroup(serverListenThreads);
         EventLoopGroup workerGroup = new NioEventLoopGroup(serverHandleThreads);
         try {
@@ -70,17 +93,13 @@ public class AmqpServerContainer implements InitializingBean {
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
             ChannelFuture f = serverBootstrap.bind(amqpServerPort).sync();
             f.channel().closeFuture().sync();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            workerGroup.shutdownGracefully();
+            bossGroup.shutdownGracefully();
         } finally {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
         }
-    }
-
-    public ServerBootstrap getServerBootstrap() {
-        return serverBootstrap;
-    }
-
-    public ServerBootstrapConfig getServerBootstrapConfig() {
-        return serverBootstrapConfig;
     }
 }

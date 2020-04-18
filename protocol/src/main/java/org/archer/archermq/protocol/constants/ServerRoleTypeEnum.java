@@ -5,8 +5,8 @@ import org.archer.archermq.common.EnumSpec;
 import java.util.Objects;
 
 public enum ServerRoleTypeEnum implements EnumSpec<Integer> {
-    EXCHANGE(1,"exchange role"),
-    QUEUE(2,"queue rule");
+    PIONEER(1,"pioneer"),
+    SOLDIER(2,"soldier");
 
     private final Integer val;
     private final String desc;
