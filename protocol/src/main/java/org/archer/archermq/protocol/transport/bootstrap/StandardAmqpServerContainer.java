@@ -10,6 +10,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import org.apache.dubbo.configcenter.ConfigChangeEvent;
 import org.archer.archermq.common.annotation.Log;
 import org.archer.archermq.common.log.LogConstants;
 import org.archer.archermq.protocol.BaseLifeCycleSupport;
@@ -42,11 +43,10 @@ public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements
     private int serverHandleThreads = 8;
 
     @Value("server.role.type")
-    private int serverRoleType = 1;
+    private int serverRoleType;
     private ServerRoleTypeEnum serverRoleTypeEnum;
 
-    @Autowired
-    private Server server;
+    private ConfigChangeEvent
 
 
     @Autowired
@@ -76,6 +76,13 @@ public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements
 
     @Override
     public void start() {
+
+
+
+
+
+
+
         EventLoopGroup bossGroup = new NioEventLoopGroup(serverListenThreads);
         EventLoopGroup workerGroup = new NioEventLoopGroup(serverHandleThreads);
         try {

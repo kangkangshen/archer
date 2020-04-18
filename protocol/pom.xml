@@ -34,21 +34,6 @@
             <version>${netty.platform.version}</version>
         </dependency>
 
-        <!--    配置中心client依赖 -->
-        <!-- https://mvnrepository.com/artifact/org.apache.dubbo/dubbo-configcenter-api -->
-        <dependency>
-            <groupId>org.apache.dubbo</groupId>
-            <artifactId>dubbo-configcenter-api</artifactId>
-            <version>${configcenter.plaform.version}</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.apache.dubbo/dubbo-configcenter-zookeeper -->
-        <dependency>
-            <groupId>org.apache.dubbo</groupId>
-            <artifactId>dubbo-configcenter-zookeeper</artifactId>
-            <version>${configcenter.plaform.version}</version>
-        </dependency>
-
 
         <dependency>
             <groupId>org.archer</groupId>

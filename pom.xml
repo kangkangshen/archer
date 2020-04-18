@@ -34,7 +34,7 @@
     <slf4j.plaform.version>1.7.26</slf4j.plaform.version>
     <aspectj.platform.version>1.9.5</aspectj.platform.version>
     <lombok.platform.version>1.18.10</lombok.platform.version>
-    <configcenter.plaform.version>2.7.4</configcenter.plaform.version>
+
   </properties>
 
   <dependencies>
