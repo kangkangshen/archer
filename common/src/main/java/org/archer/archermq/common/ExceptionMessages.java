@@ -1,4 +1,4 @@
-package org.archer.archermq.protocol;
+package org.archer.archermq.common;
 
 
 /**

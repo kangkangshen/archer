@@ -9,11 +9,5 @@ public class AmqpServerContainerTest {
     @Test
     public void afterPropertiesSet() {
 
-        AmqpServerContainer amqpServerContainer = new AmqpServerContainer();
-        try {
-            amqpServerContainer.afterPropertiesSet();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

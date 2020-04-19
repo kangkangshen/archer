@@ -40,6 +40,12 @@
             <artifactId>common</artifactId>
             <version>${archermq.middlewire.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.archer</groupId>
+            <artifactId>config</artifactId>
+            <version>${archermq.middlewire.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

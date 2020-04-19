@@ -10,11 +10,9 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import org.apache.dubbo.configcenter.ConfigChangeEvent;
 import org.archer.archermq.common.annotation.Log;
 import org.archer.archermq.common.log.LogConstants;
 import org.archer.archermq.protocol.BaseLifeCycleSupport;
-import org.archer.archermq.protocol.LifeCycle;
 import org.archer.archermq.protocol.Server;
 import org.archer.archermq.protocol.constants.LifeCyclePhases;
 import org.archer.archermq.protocol.constants.ServerRoleTypeEnum;
@@ -45,8 +43,6 @@ public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements
     @Value("server.role.type")
     private int serverRoleType;
     private ServerRoleTypeEnum serverRoleTypeEnum;
-
-    private ConfigChangeEvent
 
 
     @Autowired

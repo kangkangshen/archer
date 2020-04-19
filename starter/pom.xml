@@ -22,12 +22,6 @@
     </properties>
 
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/org.springframework.amqp/spring-amqp -->
-        <dependency>
-            <groupId>org.springframework.amqp</groupId>
-            <artifactId>spring-amqp</artifactId>
-            <version>${springboot.platform.version}</version>
-        </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter -->
         <dependency>
@@ -46,11 +40,11 @@
             <artifactId>spring-boot-autoconfigure</artifactId>
             <version>${springboot.platform.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.springframework.amqp/spring-rabbit -->
+
         <dependency>
-            <groupId>org.springframework.amqp</groupId>
-            <artifactId>spring-rabbit</artifactId>
-            <version>${springboot.platform.version}</version>
+            <groupId>org.archer</groupId>
+            <artifactId>protocol</artifactId>
+            <version>${archermq.middlewire.version}</version>
         </dependency>
 
 
