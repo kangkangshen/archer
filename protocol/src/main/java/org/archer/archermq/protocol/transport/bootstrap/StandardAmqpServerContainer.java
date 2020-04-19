@@ -17,10 +17,12 @@ import org.archer.archermq.protocol.Server;
 import org.archer.archermq.protocol.constants.LifeCyclePhases;
 import org.archer.archermq.protocol.constants.ServerRoleTypeEnum;
 import org.archer.archermq.protocol.transport.handler.AmqpDecoder;
+import org.archer.archermq.protocol.transport.handler.LoadBalanceHandler;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 /**
  * 基于netty实现的amqpServerContainer
@@ -48,6 +50,9 @@ public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements
     @Autowired
     private AmqpDecoder amqpDecoder;
 
+    @Autowired
+    private LoadBalanceHandler loadBalanceHandler;
+
     private ServerBootstrap serverBootstrap;
 
     private ServerBootstrapConfig serverBootstrapConfig;
@@ -55,6 +60,8 @@ public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements
     @Override
     @Log(layer = LogConstants.TRANSPORT_LAYER)
     public void afterPropertiesSet() {
+        serverRoleTypeEnum = ServerRoleTypeEnum.getByVal(serverRoleType);
+        Assert.notNull(serverRoleTypeEnum,"wrong server role type");
         updateCurrState(LifeCyclePhases.Server.STARTING, LifeCyclePhases.Status.START);
         triggerEvent();
         start();
@@ -73,12 +80,6 @@ public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements
     @Override
     public void start() {
 
-
-
-
-
-
-
         EventLoopGroup bossGroup = new NioEventLoopGroup(serverListenThreads);
         EventLoopGroup workerGroup = new NioEventLoopGroup(serverHandleThreads);
         try {
@@ -90,6 +91,10 @@ public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline().addLast(amqpDecoder);
+                            if(ServerRoleTypeEnum.PIONEER.equals(serverRoleTypeEnum)){
+                                //作为将军，肯定要多感谢事情啦，就比如派活啦 blablabla。。。
+                                ch.pipeline().addLast(loadBalanceHandler);
+                            }
                         }
                     })
                     .option(ChannelOption.SO_BACKLOG, 128)
@@ -104,5 +109,10 @@ public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
         }
+    }
+
+
+    public ServerRoleTypeEnum getServerRoleTypeEnum() {
+        return serverRoleTypeEnum;
     }
 }

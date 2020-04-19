@@ -46,5 +46,11 @@ public interface LogConstants {
 
     String CONFIG_ITEM_AFTER = "config item after";
 
+    String REGISTERED_FRAME_HANDLER = "registered frame handler";
+
+    String USING_FRAME_HANDLER = "using frame handler";
+
+    String BACKUP_FRAME_HANDLER = "backup frame handler";
+
 
 }

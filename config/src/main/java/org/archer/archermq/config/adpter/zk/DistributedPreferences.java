@@ -20,7 +20,7 @@ import java.util.prefs.Preferences;
  */
 public class DistributedPreferences extends AbstractPreferences {
 
-    private CuratorFramework curatorClient;
+    private final CuratorFramework curatorClient;
 
     static Preferences systemRoot;
 

@@ -16,8 +16,14 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Optional;
 import java.util.prefs.Preferences;
 
+/**
+ * zk相关一揽子配置类全集，包含属性配置，zk客户端bean生成
+ *
+ * @date 2020年04月19日18:48:16
+ * @author dongyue
+ */
 @Configuration
-public class Configs {
+public class ZkConfigs {
 
     @Value("zk.server.path")
     private String zkServerPath;
