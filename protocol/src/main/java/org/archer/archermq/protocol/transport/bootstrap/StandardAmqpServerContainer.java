@@ -16,6 +16,8 @@ import org.archer.archermq.protocol.BaseLifeCycleSupport;
 import org.archer.archermq.protocol.Server;
 import org.archer.archermq.protocol.constants.LifeCyclePhases;
 import org.archer.archermq.protocol.constants.ServerRoleTypeEnum;
+import org.archer.archermq.protocol.transport.FrameDispatcher;
+import org.archer.archermq.protocol.transport.FrameHandler;
 import org.archer.archermq.protocol.transport.handler.AmqpDecoder;
 import org.archer.archermq.protocol.transport.handler.LoadBalanceHandler;
 import org.springframework.beans.factory.InitializingBean;
@@ -52,6 +54,9 @@ public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements
 
     @Autowired
     private LoadBalanceHandler loadBalanceHandler;
+
+    @Autowired
+    private FrameDispatcher frameDispatcher;
 
     private ServerBootstrap serverBootstrap;
 
@@ -94,6 +99,7 @@ public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements
                                 //作为将军，肯定要多感谢事情啦，就比如派活啦 blablabla。。。
                                 ch.pipeline().addLast(loadBalanceHandler);
                             }
+                            ch.pipeline().addLast(frameDispatcher);
                         }
                     })
                     .option(ChannelOption.SO_BACKLOG, 128)
