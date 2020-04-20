@@ -84,7 +84,6 @@ public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements
         EventLoopGroup workerGroup = new NioEventLoopGroup(serverHandleThreads);
         try {
             serverBootstrap = new ServerBootstrap();
-            serverBootstrapConfig = serverBootstrap.config();
             serverBootstrap.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
                     .childHandler(new ChannelInitializer<SocketChannel>() {
@@ -99,6 +98,7 @@ public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements
                     })
                     .option(ChannelOption.SO_BACKLOG, 128)
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
+            serverBootstrapConfig = serverBootstrap.config();
             ChannelFuture f = serverBootstrap.bind(amqpServerPort).sync();
             f.channel().closeFuture().sync();
         } catch (InterruptedException e) {

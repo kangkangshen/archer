@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import org.archer.archermq.common.annotation.Log;
 import org.archer.archermq.common.log.BizLogUtil;
 import org.archer.archermq.common.log.LogConstants;
 import org.archer.archermq.common.log.LogInfo;
@@ -20,6 +21,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -33,15 +36,26 @@ public class StandardFrameDispatcher extends ChannelInboundHandlerAdapter implem
 
     private ApplicationContext applicationContext;
 
-    private final Map<FrameTypeEnum, FrameHandler<?>> frameHandlerMap = Maps.newConcurrentMap();
+    private final Map<FrameTypeEnum, FrameHandler> frameHandlerMap = Maps.newConcurrentMap();
 
-    private final Multimap<FrameTypeEnum,FrameHandler<?>> backupFrameHanderMap = ArrayListMultimap.create();
+    private final Multimap<FrameTypeEnum,FrameHandler> backupFrameHandlerMap = ArrayListMultimap.create();
 
 
     @Override
+    @Log(layer = LogConstants.TRANSPORT_LAYER)
     public void dispatchFrame(Frame rawFrame) {
+        //目前仅支持直接分派，未来会加进去更多的分派规则
         FrameTypeEnum frameTypeEnum = rawFrame.type();
+            if(CollectionUtils.isEmpty(frameHandlerMap)){
+                throw new UnsupportedOperationException("there is no one frame handler,may be some code change this frameHandlerMap");
+            }
 
+            FrameHandler frameHandler = frameHandlerMap.get(frameTypeEnum);
+            //double check
+            if(Objects.nonNull(frameHandler)&&frameHandler.canHandle(frameTypeEnum)){
+                Assert.isTrue(frameHandler.validate(rawFrame),"frame validate failed"+JSON.toJSONString(rawFrame));
+                frameHandler.handleFrame(rawFrame);
+            }
 
     }
 
@@ -67,7 +81,7 @@ public class StandardFrameDispatcher extends ChannelInboundHandlerAdapter implem
                         if(Objects.isNull(frameHandlerMap.putIfAbsent(frameType,handler))){
                             usingFrameHandler.add(beanName);
                         }else{
-                            backupFrameHanderMap.put(frameType,handler);
+                            backupFrameHandlerMap.put(frameType,handler);
                             backupFrameHandler.add(beanName);
                         }
                     }
@@ -94,11 +108,11 @@ public class StandardFrameDispatcher extends ChannelInboundHandlerAdapter implem
 
     }
 
-    public Map<FrameTypeEnum, FrameHandler<?>> getFrameHandlerMap() {
+    public Map<FrameTypeEnum, FrameHandler> getFrameHandlerMap() {
         return frameHandlerMap;
     }
 
-    public Multimap<FrameTypeEnum, FrameHandler<?>> getBackupFrameHanderMap() {
-        return backupFrameHanderMap;
+    public Multimap<FrameTypeEnum, FrameHandler> getBackupFrameHandlerMap() {
+        return backupFrameHandlerMap;
     }
 }
