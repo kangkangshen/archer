@@ -1,13 +1,18 @@
 package org.archer.archermq.protocol.transport.handler;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import org.archer.archermq.common.annotation.Log;
 import org.archer.archermq.common.log.LogConstants;
+import org.archer.archermq.protocol.transport.Frame;
+import org.archer.archermq.protocol.transport.FrameBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 
 
 /***
@@ -21,139 +26,43 @@ import org.springframework.stereotype.Component;
  * @author dongyue
  */
 @Component
-public class AmqpDecoder extends ChannelInboundHandlerAdapter {
+public class AmqpDecoder extends LengthFieldBasedFrameDecoder {
 
-
-    private final ByteToMessageDecoder decoderDelegate;
-
-    /**
-     * 这里最大长度应当是int的无符号最大值，一般情况下，使用该值足矣
-     * todo dongyue
-     */
-    @Value("amqp.max.frame.length")
-    private int maxFrameLength = Integer.MAX_VALUE;
-
-    @Value("amqp.length.field.offset")
-    private int lengthFieldOffset = 3;
-
-    @Value("amqp.length.field.length")
-    private int lengthFieldLength = 4;
-
-    @Value("amqp.length.adjustment")
-    private int lengthAdjustment = 1;
-
-    @Log(layer = LogConstants.TRANSPORT_LAYER)
     public AmqpDecoder() {
-        decoderDelegate = new LengthFieldBasedFrameDecoder(maxFrameLength, lengthFieldOffset, lengthFieldLength, lengthAdjustment, 0);
+        super(Integer.MAX_VALUE, 3, 4, 1, 0, true);
+    }
+
+
+    @Override
+    protected Object decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
+        ByteBuf rawByteFrame = (ByteBuf) super.decode(ctx, in);
+        if(Objects.isNull(rawByteFrame)){
+            return null;
+        }
+        byte rawType = in.readByte();
+        short channelId = in.readShort();
+        int size = in.readInt();
+        ByteBuf payload = in.copy(7,size);
+        in.skipBytes(size);
+        byte frameEnd = in.readByte();
+        return FrameBuilder.allocateFrame(rawType,channelId,size,payload,frameEnd);
     }
 
     @Log(layer = LogConstants.TRANSPORT_LAYER)
     public void setSingleDecode(boolean singleDecode) {
-        decoderDelegate.setSingleDecode(singleDecode);
+        super.setSingleDecode(singleDecode);
     }
 
     public boolean isSingleDecode() {
-        return decoderDelegate.isSingleDecode();
+        return super.isSingleDecode();
     }
 
     public void setCumulator(ByteToMessageDecoder.Cumulator cumulator) {
-        decoderDelegate.setCumulator(cumulator);
+        super.setCumulator(cumulator);
     }
 
     @Log(layer = LogConstants.TRANSPORT_LAYER)
     public void setDiscardAfterReads(int discardAfterReads) {
-        decoderDelegate.setDiscardAfterReads(discardAfterReads);
-    }
-
-    @Override
-    @Log(layer = LogConstants.TRANSPORT_LAYER)
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        decoderDelegate.channelRead(ctx, msg);
-    }
-
-    @Override
-    @Log(layer = LogConstants.TRANSPORT_LAYER)
-    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-        decoderDelegate.channelReadComplete(ctx);
-    }
-
-    @Override
-    @Log(layer = LogConstants.TRANSPORT_LAYER)
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        decoderDelegate.channelInactive(ctx);
-    }
-
-    @Override
-    @Log(layer = LogConstants.TRANSPORT_LAYER)
-    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-        decoderDelegate.userEventTriggered(ctx, evt);
-    }
-
-    @Override
-    @Log(layer = LogConstants.TRANSPORT_LAYER)
-    public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
-        decoderDelegate.channelRegistered(ctx);
-    }
-
-    @Override
-    @Log(layer = LogConstants.TRANSPORT_LAYER)
-    public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
-        decoderDelegate.channelUnregistered(ctx);
-    }
-
-    @Override
-    @Log(layer = LogConstants.TRANSPORT_LAYER)
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        decoderDelegate.channelActive(ctx);
-    }
-
-    @Override
-    @Log(layer = LogConstants.TRANSPORT_LAYER)
-    public void channelWritabilityChanged(ChannelHandlerContext ctx) throws Exception {
-        decoderDelegate.channelWritabilityChanged(ctx);
-    }
-
-    @Override
-    @Log(layer = LogConstants.TRANSPORT_LAYER)
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        decoderDelegate.exceptionCaught(ctx, cause);
-    }
-
-    @Override
-    @Log(layer = LogConstants.TRANSPORT_LAYER)
-    public boolean isSharable() {
-        return decoderDelegate.isSharable();
-    }
-
-    @Override
-    @Log(layer = LogConstants.TRANSPORT_LAYER)
-    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
-        decoderDelegate.handlerAdded(ctx);
-    }
-
-    @Override
-    @Log(layer = LogConstants.TRANSPORT_LAYER)
-    public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
-        decoderDelegate.handlerRemoved(ctx);
-    }
-
-    @Log(layer = LogConstants.TRANSPORT_LAYER)
-    public void setMaxFrameLength(int maxFrameLength) {
-        this.maxFrameLength = maxFrameLength;
-    }
-
-    @Log(layer = LogConstants.TRANSPORT_LAYER)
-    public void setLengthFieldOffset(int lengthFieldOffset) {
-        this.lengthFieldOffset = lengthFieldOffset;
-    }
-
-    @Log(layer = LogConstants.TRANSPORT_LAYER)
-    public void setLengthFieldLength(int lengthFieldLength) {
-        this.lengthFieldLength = lengthFieldLength;
-    }
-
-    @Log(layer = LogConstants.TRANSPORT_LAYER)
-    public void setLengthAdjustment(int lengthAdjustment) {
-        this.lengthAdjustment = lengthAdjustment;
+        super.setDiscardAfterReads(discardAfterReads);
     }
 }

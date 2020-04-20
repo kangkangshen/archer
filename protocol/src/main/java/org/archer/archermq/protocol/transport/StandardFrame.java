@@ -1,6 +1,7 @@
 package org.archer.archermq.protocol.transport;
 
 import io.netty.buffer.ByteBuf;
+import lombok.Data;
 import org.archer.archermq.protocol.Channel;
 import org.archer.archermq.protocol.constants.FrameTypeEnum;
 
@@ -64,18 +65,11 @@ public class StandardFrame implements Frame {
 
     public void setRawType(byte rawType) {
         this.rawType = rawType;
-    }
-
-    public void setFrameType(FrameTypeEnum frameType) {
-        this.frameType = frameType;
+        this.frameType = FrameTypeEnum.getByVal((int) rawType);
     }
 
     public void setRawChannelId(short rawChannelId) {
         this.rawChannelId = rawChannelId;
-    }
-
-    public void setChannel(Channel channel) {
-        this.channel = channel;
     }
 
     public void setSize(int size) {

@@ -26,7 +26,7 @@ public class StandardMethodFrameHandler implements FrameHandler {
 
     @Override
     public boolean canHandle(FrameTypeEnum targetType) {
-        return false;
+        return FrameTypeEnum.METHOD.equals(targetType);
     }
 
     @Override

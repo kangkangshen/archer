@@ -4,10 +4,10 @@ import org.archer.archermq.protocol.constants.FrameTypeEnum;
 import org.archer.archermq.protocol.transport.Frame;
 import org.archer.archermq.protocol.transport.FrameHandler;
 
-public class StandardContentHeaderFrameHandler implements FrameHandler {
+public class StandardContentFrameHandler implements FrameHandler {
     @Override
     public boolean canHandle(FrameTypeEnum targetType) {
-        return false;
+        return FrameTypeEnum.CONTENT_BODY.equals(targetType)||FrameTypeEnum.CONTENT_HEADER.equals(targetType);
     }
 
     @Override

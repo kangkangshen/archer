@@ -7,7 +7,7 @@ import org.archer.archermq.protocol.transport.FrameHandler;
 public class StandardHeartbeatFrameHandler implements FrameHandler {
     @Override
     public boolean canHandle(FrameTypeEnum targetType) {
-        return false;
+        return FrameTypeEnum.HEARTBEAT.equals(targetType);
     }
 
     @Override

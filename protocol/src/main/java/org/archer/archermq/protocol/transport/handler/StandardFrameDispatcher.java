@@ -6,6 +6,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.archer.archermq.common.annotation.Log;
 import org.archer.archermq.common.log.BizLogUtil;
@@ -40,6 +41,11 @@ public class StandardFrameDispatcher extends ChannelInboundHandlerAdapter implem
 
     private final Multimap<FrameTypeEnum,FrameHandler> backupFrameHandlerMap = ArrayListMultimap.create();
 
+
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        super.channelRead(ctx, msg);
+    }
 
     @Override
     @Log(layer = LogConstants.TRANSPORT_LAYER)
