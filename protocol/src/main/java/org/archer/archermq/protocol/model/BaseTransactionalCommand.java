@@ -7,4 +7,6 @@ package org.archer.archermq.protocol.model;
  * @date 2020年04月20日18:22:55
  */
 public abstract class BaseTransactionalCommand {
+
+
 }
