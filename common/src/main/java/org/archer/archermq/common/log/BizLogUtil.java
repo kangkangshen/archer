@@ -69,6 +69,31 @@ public class BizLogUtil {
         logInfo.addContent(LogConstants.EXCEPTION_STACK, stackTraceString);
     }
 
+    public static void recordInstanceCreated(Object o){
+        LogInfo logInfo = logInfoHolder.get();
+        if (Objects.isNull(logInfo)) {
+            logInfo = new LogInfo();
+            logInfo.setCreateTime(new Date());
+            logInfoHolder.set(logInfo);
+        }
+
+        logInfo.setType(LogConstants.INSTANCE_CREATED);
+        logInfo.addContent(LogConstants.INSTANCE,o.toString());
+
+    }
+
+    public static void recordInstanceDestroyed(Object o){
+        LogInfo logInfo = logInfoHolder.get();
+        if (Objects.isNull(logInfo)) {
+            logInfo = new LogInfo();
+            logInfo.setCreateTime(new Date());
+            logInfoHolder.set(logInfo);
+        }
+
+        logInfo.setType(LogConstants.INSTANCE_DESTROYED);
+        logInfo.addContent(LogConstants.INSTANCE,o.toString());
+    }
+
     public static LogInfo get() {
         return logInfoHolder.get();
     }

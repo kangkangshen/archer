@@ -72,8 +72,6 @@ public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements
 
         start();
 
-        updateCurrState(LifeCyclePhases.Server.RUNNING, LifeCyclePhases.Status.START);
-        triggerEvent();
     }
 
     public ServerBootstrap getServerBootstrap() {
@@ -86,9 +84,13 @@ public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements
 
     @Override
     public void start() {
-        LogInfo logInfo = BizLogUtil.start().setLayer(LogConstants.TRANSPORT_LAYER).setType(LogConstants.INSTANCE_CREATED);
+
         updateCurrState(LifeCyclePhases.Server.STARTING, LifeCyclePhases.Status.START);
         triggerEvent();
+
+        BizLogUtil.start().setLayer(LogConstants.TRANSPORT_LAYER);
+        BizLogUtil.recordInstanceCreated(this);
+
         try {
             EventLoopGroup bossGroup = new NioEventLoopGroup(serverListenThreads);
             EventLoopGroup workerGroup = new NioEventLoopGroup(serverHandleThreads);
@@ -109,19 +111,22 @@ public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements
                     .option(ChannelOption.SO_BACKLOG, 128)
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
             serverBootstrapConfig = serverBootstrap.config();
-            ChannelFuture bindFuture = null;
-            bindFuture = serverBootstrap.bind(amqpServerPort).sync();
+            ChannelFuture bindFuture = serverBootstrap.bind(amqpServerPort).sync();
             this.currChannel = bindFuture.channel();
 
-            updateCurrState(LifeCyclePhases.Server.STARTING, LifeCyclePhases.Status.FINISH);
+            updateCurrState(LifeCyclePhases.Server.RUNNING, LifeCyclePhases.Status.START);
             triggerEvent();
-            BizLogUtil.end();
+
         } catch (InterruptedException e) {
+
+            BizLogUtil.recordException(e);
+            BizLogUtil.end();
+
             updateCurrState(LifeCyclePhases.Server.STARTING, LifeCyclePhases.Status.ABNORMAL);
             triggerEvent();
-            e.printStackTrace();
-            logInfo.setType(LogConstants.EXCEPTION_THROW).addContent(LogConstants.EXCEPTION_STACK, JSON.toJSONString(e.getStackTrace()));
-            BizLogUtil.end();
+
+            destroy();
+
         }
 
 
@@ -130,19 +135,42 @@ public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements
     @Override
     @PreDestroy
     public void destroy() {
+
+        updateCurrState(LifeCyclePhases.Server.TERMINATE, LifeCyclePhases.Status.START);
+        triggerEvent();
+
+        BizLogUtil.start().setLayer(LogConstants.TRANSPORT_LAYER);
+        BizLogUtil.recordInstanceDestroyed(this);
+
         try {
-            updateCurrState(LifeCyclePhases.Server.TERMINATE, LifeCyclePhases.Status.START);
-            triggerEvent();
+
             this.currChannel.close().sync();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+
+            serverBootstrapConfig.group().shutdownGracefully();
+            serverBootstrapConfig.childGroup().shutdownGracefully();
+
+            updateCurrState(LifeCyclePhases.Server.TERMINATE, LifeCyclePhases.Status.FINISH);
+            triggerEvent();
+
+
+        } catch (Exception e) {
+
+            BizLogUtil.recordException(e);
+            BizLogUtil.end();
+
+            serverBootstrapConfig.group().shutdownGracefully();
+            serverBootstrapConfig.childGroup().shutdownGracefully();
+
             updateCurrState(LifeCyclePhases.Server.TERMINATE, LifeCyclePhases.Status.ABNORMAL);
             triggerEvent();
+
+            e.printStackTrace();
+
+            //rethrow it
+            throw new RuntimeException(e);
+
         }
-        serverBootstrapConfig.group().shutdownGracefully();
-        serverBootstrapConfig.childGroup().shutdownGracefully();
-        updateCurrState(LifeCyclePhases.Server.TERMINATE, LifeCyclePhases.Status.FINISH);
-        triggerEvent();
+
     }
 
 
@@ -150,5 +178,13 @@ public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements
         return serverRoleTypeEnum;
     }
 
-
+    @Override
+    public String toString() {
+        return "StandardAmqpServerContainer{" +
+                "amqpServerPort=" + amqpServerPort +
+                ", serverListenThreads=" + serverListenThreads +
+                ", serverHandleThreads=" + serverHandleThreads +
+                ", serverRoleType=" + serverRoleType +
+                '}';
+    }
 }

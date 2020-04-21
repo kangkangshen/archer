@@ -9,6 +9,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import lombok.SneakyThrows;
 import org.archer.archermq.common.annotation.Log;
+import org.archer.archermq.common.log.BizLogUtil;
 import org.archer.archermq.common.log.LogConstants;
 import org.archer.archermq.protocol.BaseLifeCycleSupport;
 import org.archer.archermq.protocol.InternalClient;
@@ -39,13 +40,10 @@ public class SimpleAmqpClientContainer extends BaseLifeCycleSupport implements I
     private Channel currChannel;
 
     @Override
-    @Log(layer = LogConstants.TRANSPORT_LAYER)
     public void afterPropertiesSet() {
-        updateCurrState(LifeCyclePhases.Server.STARTING, LifeCyclePhases.Status.START);
-        triggerEvent();
+
         start();
-        updateCurrState(LifeCyclePhases.Server.RUNNING,LifeCyclePhases.Status.START);
-        triggerEvent();
+
     }
 
     public Bootstrap getInternalClientBootstrap() {
@@ -59,14 +57,20 @@ public class SimpleAmqpClientContainer extends BaseLifeCycleSupport implements I
     @Override
     public void start() {
 
-        EventLoopGroup workerGroup = new NioEventLoopGroup(amqpInternalClientThreads);
+        updateCurrState(LifeCyclePhases.Server.STARTING, LifeCyclePhases.Status.START);
+        triggerEvent();
+
+        BizLogUtil.start().setLayer(LogConstants.TRANSPORT_LAYER);
+        BizLogUtil.recordInstanceCreated(this);
+
         try {
+            EventLoopGroup workerGroup = new NioEventLoopGroup(amqpInternalClientThreads);
             internalClientBootstrap = new Bootstrap();
             internalClientBootstrap.group(workerGroup)
                     .channel(NioSocketChannel.class)
                     .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
-                        protected void initChannel(SocketChannel ch) throws Exception {
+                        protected void initChannel(SocketChannel ch) {
                             ch.pipeline().addLast(amqpDecoder);
                         }
                     })
@@ -75,19 +79,64 @@ public class SimpleAmqpClientContainer extends BaseLifeCycleSupport implements I
             internalClientBootstrapConfig = internalClientBootstrap.config();
             ChannelFuture bindFeature = internalClientBootstrap.bind(amqpInternalClientPort).sync();
             this.currChannel = bindFeature.channel();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            workerGroup.shutdownGracefully();
-        } finally {
-            workerGroup.shutdownGracefully();
+
+            updateCurrState(LifeCyclePhases.Server.RUNNING, LifeCyclePhases.Status.START);
+            triggerEvent();
+
+        } catch (Exception e) {
+
+            BizLogUtil.recordException(e);
+            BizLogUtil.end();
+
+            updateCurrState(LifeCyclePhases.Server.STARTING, LifeCyclePhases.Status.ABNORMAL);
+            triggerEvent();
+
+            destroy();
+
         }
     }
 
-    @SneakyThrows
     @Override
     @PreDestroy
     public void destroy() {
-        this.currChannel.close().sync();
+
+        updateCurrState(LifeCyclePhases.Server.TERMINATE, LifeCyclePhases.Status.START);
+        triggerEvent();
+
+        BizLogUtil.start().setLayer(LogConstants.TRANSPORT_LAYER);
+        BizLogUtil.recordInstanceDestroyed(this);
+
+        try {
+
+            this.currChannel.close().sync();
+            this.internalClientBootstrapConfig.group().shutdownGracefully();
+
+            updateCurrState(LifeCyclePhases.Server.TERMINATE, LifeCyclePhases.Status.FINISH);
+            triggerEvent();
+
+        } catch (Exception e) {
+
+            BizLogUtil.recordException(e);
+            BizLogUtil.end();
+
+            this.internalClientBootstrapConfig.group().shutdownGracefully();
+
+            updateCurrState(LifeCyclePhases.Server.TERMINATE, LifeCyclePhases.Status.ABNORMAL);
+            triggerEvent();
+
+            e.printStackTrace();
+
+            //rethrow it
+            throw new RuntimeException(e);
+
+        }
     }
 
+    @Override
+    public String toString() {
+        return "SimpleAmqpClientContainer{" +
+                "amqpInternalClientPort=" + amqpInternalClientPort +
+                ", amqpInternalClientThreads=" + amqpInternalClientThreads +
+                '}';
+    }
 }

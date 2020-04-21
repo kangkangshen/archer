@@ -24,6 +24,8 @@ public interface LogConstants {
 
     String INSTANCE_CREATED = "instance created";
 
+    String INSTANCE_DESTROYED = "instance destroyed";
+
     String EXCEPTION_THROW = "exception throw";
 
     String METHOD_INVOKE = "method invoke";
@@ -39,6 +41,8 @@ public interface LogConstants {
     String ARGS_VAL = "args";
 
     String EXCEPTION_STACK = "stack";
+
+    String INSTANCE = "instance";
 
     String CONFIG_ITEM_NAME = "config item name";
 
