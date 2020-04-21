@@ -16,10 +16,5 @@ import org.springframework.context.annotation.ImportResource;
 public class ArchermqApp {
     public static void main(String[] args) {
         SpringApplication.run(ArchermqApp.class,args);
-        try {
-            Thread.sleep(10*60*1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 }
