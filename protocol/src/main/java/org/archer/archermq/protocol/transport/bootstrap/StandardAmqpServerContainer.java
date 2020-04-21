@@ -3,10 +3,7 @@ package org.archer.archermq.protocol.transport.bootstrap;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.bootstrap.ServerBootstrapConfig;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -17,9 +14,6 @@ import org.archer.archermq.protocol.Server;
 import org.archer.archermq.protocol.constants.LifeCyclePhases;
 import org.archer.archermq.protocol.constants.ServerRoleTypeEnum;
 import org.archer.archermq.protocol.transport.FrameDispatcher;
-import org.archer.archermq.protocol.transport.FrameHandler;
-import org.archer.archermq.protocol.transport.handler.AmqpDecoder;
-import org.archer.archermq.protocol.transport.handler.LoadBalanceHandler;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,25 +29,25 @@ import org.springframework.util.Assert;
 @Component
 public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements InitializingBean,Server {
 
-    @Value("amqp.server.port")
-    private int amqpServerPort = 5672;
+    @Value("${amqp.server.port:5672}")
+    private int amqpServerPort;
 
-    @Value("server.listen.threads")
-    private int serverListenThreads = 8;
+    @Value("${server.listen.threads:8}")
+    private int serverListenThreads;
 
-    @Value("server.handle.threads")
-    private int serverHandleThreads = 8;
+    @Value("${server.handle.threads:8}")
+    private int serverHandleThreads;
 
-    @Value("server.role.type")
+    @Value("${server.role.type}")
     private int serverRoleType;
     private ServerRoleTypeEnum serverRoleTypeEnum;
 
 
     @Autowired
-    private AmqpDecoder amqpDecoder;
+    private ChannelInboundHandler amqpDecoder;
 
     @Autowired
-    private LoadBalanceHandler loadBalanceHandler;
+    private ChannelInboundHandler loadBalanceHandler;
 
     @Autowired
     private FrameDispatcher frameDispatcher;

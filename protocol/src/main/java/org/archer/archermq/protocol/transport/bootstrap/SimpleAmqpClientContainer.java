@@ -3,35 +3,31 @@ package org.archer.archermq.protocol.transport.bootstrap;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.BootstrapConfig;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
 import org.archer.archermq.common.annotation.Log;
 import org.archer.archermq.common.log.LogConstants;
 import org.archer.archermq.protocol.BaseLifeCycleSupport;
 import org.archer.archermq.protocol.InternalClient;
 import org.archer.archermq.protocol.constants.LifeCyclePhases;
-import org.archer.archermq.protocol.transport.handler.AmqpDecoder;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-@Component
+//@Component
 public class SimpleAmqpClientContainer extends BaseLifeCycleSupport implements InitializingBean, InternalClient {
 
-    @Value("amqp.internal.client.port")
-    private int amqpServerPort = 5673;
+    @Value("${amqp.internal.client.port:5673}")
+    private int amqpInternalClientPort;
 
-    @Value("internal.client.handle.threads")
-    private int serverHandleThreads = 2;
+    @Value("${amqp.internal.client.threads:2}")
+    private int amqpInternalClientThreads;
 
     @Autowired
-    private AmqpDecoder amqpDecoder;
+    private ChannelInboundHandler amqpDecoder;
 
     private Bootstrap internalClientBootstrap;
 
@@ -58,11 +54,11 @@ public class SimpleAmqpClientContainer extends BaseLifeCycleSupport implements I
     @Override
     public void start() {
 
-        EventLoopGroup workerGroup = new NioEventLoopGroup(serverHandleThreads);
+        EventLoopGroup workerGroup = new NioEventLoopGroup(amqpInternalClientThreads);
         try {
             internalClientBootstrap = new Bootstrap();
             internalClientBootstrap.group(workerGroup)
-                    .channel(NioServerSocketChannel.class)
+                    .channel(NioSocketChannel.class)
                     .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
@@ -72,7 +68,7 @@ public class SimpleAmqpClientContainer extends BaseLifeCycleSupport implements I
                     .option(ChannelOption.SO_BACKLOG, 128)
                     .option(ChannelOption.SO_KEEPALIVE, true);
             internalClientBootstrapConfig = internalClientBootstrap.config();
-            ChannelFuture f = internalClientBootstrap.bind(amqpServerPort).sync();
+            ChannelFuture f = internalClientBootstrap.bind(amqpInternalClientPort).sync();
             f.channel().closeFuture().sync();
         } catch (InterruptedException e) {
             e.printStackTrace();

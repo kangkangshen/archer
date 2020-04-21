@@ -12,8 +12,7 @@ import org.springframework.context.annotation.ImportResource;
  * @author dongyue
  * @date 2020年04月15日09:59:24
  */
-@SpringBootApplication
-@SpringBootConfiguration
+@SpringBootApplication()
 public class ArchermqApp {
     public static void main(String[] args) {
         SpringApplication.run(ArchermqApp.class,args);

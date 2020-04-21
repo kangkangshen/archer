@@ -14,14 +14,11 @@ public class LogInfo {
 
     private String type;
 
-    private StringBuffer content;
+    private StringBuffer content = new StringBuffer();
 
     private String traceId;
 
     private String result;
-
-
-
 
 
     public Date getCreateTime() {
@@ -59,12 +56,12 @@ public class LogInfo {
         return this;
     }
 
-    public LogInfo addContent(String logContentKey,String content){
+    public LogInfo addContent(String logContentKey, String content) {
         this.content.append(logContentKey).append(DEFAULT_DELIMITER).append(content);
         return this;
     }
 
-    public LogInfo appendContent(String content){
+    public LogInfo appendContent(String content) {
         this.content.append(content);
         return this;
     }
@@ -96,7 +93,7 @@ public class LogInfo {
                 '}';
     }
 
-    public void write(){
+    public void write() {
 
         //todo dongyue
         System.out.println(toString());
