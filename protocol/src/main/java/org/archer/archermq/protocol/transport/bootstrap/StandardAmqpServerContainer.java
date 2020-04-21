@@ -120,7 +120,6 @@ public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements
         } catch (InterruptedException e) {
 
             BizLogUtil.recordException(e);
-            BizLogUtil.end();
 
             updateCurrState(LifeCyclePhases.Server.STARTING, LifeCyclePhases.Status.ABNORMAL);
             triggerEvent();
@@ -156,7 +155,6 @@ public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements
         } catch (Exception e) {
 
             BizLogUtil.recordException(e);
-            BizLogUtil.end();
 
             serverBootstrapConfig.group().shutdownGracefully();
             serverBootstrapConfig.childGroup().shutdownGracefully();

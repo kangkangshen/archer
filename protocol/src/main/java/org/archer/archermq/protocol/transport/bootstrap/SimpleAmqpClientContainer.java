@@ -86,7 +86,6 @@ public class SimpleAmqpClientContainer extends BaseLifeCycleSupport implements I
         } catch (Exception e) {
 
             BizLogUtil.recordException(e);
-            BizLogUtil.end();
 
             updateCurrState(LifeCyclePhases.Server.STARTING, LifeCyclePhases.Status.ABNORMAL);
             triggerEvent();
@@ -117,7 +116,6 @@ public class SimpleAmqpClientContainer extends BaseLifeCycleSupport implements I
         } catch (Exception e) {
 
             BizLogUtil.recordException(e);
-            BizLogUtil.end();
 
             this.internalClientBootstrapConfig.group().shutdownGracefully();
 

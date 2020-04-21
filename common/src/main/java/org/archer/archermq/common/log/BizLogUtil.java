@@ -79,6 +79,7 @@ public class BizLogUtil {
 
         logInfo.setType(LogConstants.INSTANCE_CREATED);
         logInfo.addContent(LogConstants.INSTANCE,o.toString());
+        end();
 
     }
 
