@@ -21,4 +21,6 @@ public interface Server extends LifeCycle {
 
     void start();
 
+    void destroy();
+
 }

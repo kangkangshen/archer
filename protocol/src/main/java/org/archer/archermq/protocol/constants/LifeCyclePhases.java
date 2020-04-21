@@ -9,13 +9,15 @@ package org.archer.archermq.protocol.constants;
 public interface LifeCyclePhases {
 
 
-    interface Server{
+    interface Server {
         String STARTING = "starting";
 
-        String RUNNING = "running";
+        String RUNNING = "run";
+
+        String TERMINATE = "terminate";
     }
 
-    interface Exchange{
+    interface Exchange {
         /**
          * 如果不存在就创建，否则继续
          */
@@ -33,9 +35,10 @@ public interface LifeCyclePhases {
     /**
      * 生命周期的阶段状态
      */
-    interface Status{
+    interface Status {
         String START = "start";
         String FINISH = "finish";
+        String ABNORMAL = "abnormal";
 
     }
 }

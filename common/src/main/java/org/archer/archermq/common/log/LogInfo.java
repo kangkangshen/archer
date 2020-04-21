@@ -1,7 +1,5 @@
 package org.archer.archermq.common.log;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.Date;
 
 public class LogInfo {
@@ -90,6 +88,7 @@ public class LogInfo {
                 ", type='" + type + '\'' +
                 ", content=" + content +
                 ", traceId='" + traceId + '\'' +
+                ", result='" + result + '\'' +
                 '}';
     }
 

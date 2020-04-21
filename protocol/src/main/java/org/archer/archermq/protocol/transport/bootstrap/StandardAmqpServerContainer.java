@@ -1,24 +1,31 @@
 package org.archer.archermq.protocol.transport.bootstrap;
 
 
+import com.alibaba.fastjson.JSON;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.bootstrap.ServerBootstrapConfig;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import lombok.SneakyThrows;
 import org.archer.archermq.common.annotation.Log;
+import org.archer.archermq.common.log.BizLogUtil;
 import org.archer.archermq.common.log.LogConstants;
+import org.archer.archermq.common.log.LogInfo;
 import org.archer.archermq.protocol.BaseLifeCycleSupport;
 import org.archer.archermq.protocol.Server;
 import org.archer.archermq.protocol.constants.LifeCyclePhases;
 import org.archer.archermq.protocol.constants.ServerRoleTypeEnum;
 import org.archer.archermq.protocol.transport.FrameDispatcher;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+
+import javax.annotation.PreDestroy;
 
 /**
  * 基于netty实现的amqpServerContainer
@@ -27,7 +34,7 @@ import org.springframework.util.Assert;
  * @date 2020年04月15日17:48:30
  */
 @Component
-public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements InitializingBean,Server {
+public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements InitializingBean, Server {
 
     @Value("${amqp.server.port:5672}")
     private int amqpServerPort;
@@ -56,15 +63,16 @@ public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements
 
     private ServerBootstrapConfig serverBootstrapConfig;
 
+    private Channel currChannel;
+
     @Override
-    @Log(layer = LogConstants.TRANSPORT_LAYER)
     public void afterPropertiesSet() {
         serverRoleTypeEnum = ServerRoleTypeEnum.getByVal(serverRoleType);
-        Assert.notNull(serverRoleTypeEnum,"wrong server role type");
-        updateCurrState(LifeCyclePhases.Server.STARTING, LifeCyclePhases.Status.START);
-        triggerEvent();
+        Assert.notNull(serverRoleTypeEnum, "wrong server role type");
+
         start();
-        updateCurrState(LifeCyclePhases.Server.RUNNING,LifeCyclePhases.Status.START);
+
+        updateCurrState(LifeCyclePhases.Server.RUNNING, LifeCyclePhases.Status.START);
         triggerEvent();
     }
 
@@ -78,10 +86,12 @@ public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements
 
     @Override
     public void start() {
-
-        EventLoopGroup bossGroup = new NioEventLoopGroup(serverListenThreads);
-        EventLoopGroup workerGroup = new NioEventLoopGroup(serverHandleThreads);
+        LogInfo logInfo = BizLogUtil.start().setLayer(LogConstants.TRANSPORT_LAYER).setType(LogConstants.INSTANCE_CREATED);
+        updateCurrState(LifeCyclePhases.Server.STARTING, LifeCyclePhases.Status.START);
+        triggerEvent();
         try {
+            EventLoopGroup bossGroup = new NioEventLoopGroup(serverListenThreads);
+            EventLoopGroup workerGroup = new NioEventLoopGroup(serverHandleThreads);
             serverBootstrap = new ServerBootstrap();
             serverBootstrap.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
@@ -89,7 +99,7 @@ public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline().addLast(amqpDecoder);
-                            if(ServerRoleTypeEnum.PIONEER.equals(serverRoleTypeEnum)){
+                            if (ServerRoleTypeEnum.PIONEER.equals(serverRoleTypeEnum)) {
                                 //作为将军，肯定要多感谢事情啦，就比如派活啦 blablabla。。。
                                 ch.pipeline().addLast(loadBalanceHandler);
                             }
@@ -99,20 +109,46 @@ public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements
                     .option(ChannelOption.SO_BACKLOG, 128)
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
             serverBootstrapConfig = serverBootstrap.config();
-            ChannelFuture f = serverBootstrap.bind(amqpServerPort).sync();
-            f.channel().closeFuture().sync();
+            ChannelFuture bindFuture = null;
+            bindFuture = serverBootstrap.bind(amqpServerPort).sync();
+            this.currChannel = bindFuture.channel();
+
+            updateCurrState(LifeCyclePhases.Server.STARTING, LifeCyclePhases.Status.FINISH);
+            triggerEvent();
+            BizLogUtil.end();
+        } catch (InterruptedException e) {
+            updateCurrState(LifeCyclePhases.Server.STARTING, LifeCyclePhases.Status.ABNORMAL);
+            triggerEvent();
+            e.printStackTrace();
+            logInfo.setType(LogConstants.EXCEPTION_THROW).addContent(LogConstants.EXCEPTION_STACK, JSON.toJSONString(e.getStackTrace()));
+            BizLogUtil.end();
+        }
+
+
+    }
+
+    @Override
+    @PreDestroy
+    public void destroy() {
+        try {
+            updateCurrState(LifeCyclePhases.Server.TERMINATE, LifeCyclePhases.Status.START);
+            triggerEvent();
+            this.currChannel.close().sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
-            workerGroup.shutdownGracefully();
-            bossGroup.shutdownGracefully();
-        } finally {
-            workerGroup.shutdownGracefully();
-            bossGroup.shutdownGracefully();
+            updateCurrState(LifeCyclePhases.Server.TERMINATE, LifeCyclePhases.Status.ABNORMAL);
+            triggerEvent();
         }
+        serverBootstrapConfig.group().shutdownGracefully();
+        serverBootstrapConfig.childGroup().shutdownGracefully();
+        updateCurrState(LifeCyclePhases.Server.TERMINATE, LifeCyclePhases.Status.FINISH);
+        triggerEvent();
     }
 
 
     public ServerRoleTypeEnum getServerRoleTypeEnum() {
         return serverRoleTypeEnum;
     }
+
+
 }

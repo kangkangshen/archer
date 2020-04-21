@@ -1,6 +1,10 @@
 package org.archer.archermq.common.log;
 
 
+import com.alibaba.fastjson.JSON;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Date;
 import java.util.Objects;
 
@@ -14,9 +18,9 @@ import java.util.Objects;
 public class BizLogUtil {
     private final static ThreadLocal<LogInfo> logInfoHolder = new ThreadLocal<>();
 
-    public static LogInfo start(){
+    public static LogInfo start() {
         LogInfo logInfo = logInfoHolder.get();
-        if(Objects.isNull(logInfo)){
+        if (Objects.isNull(logInfo)) {
             logInfo = new LogInfo();
             logInfoHolder.set(logInfo);
         }
@@ -24,9 +28,9 @@ public class BizLogUtil {
         return logInfo;
     }
 
-    public static LogInfo setLayer(String layer){
+    public static LogInfo setLayer(String layer) {
         LogInfo logInfo = logInfoHolder.get();
-        if(Objects.isNull(logInfo)){
+        if (Objects.isNull(logInfo)) {
             logInfo = new LogInfo();
             logInfoHolder.set(logInfo);
         }
@@ -35,9 +39,9 @@ public class BizLogUtil {
     }
 
 
-    public static LogInfo setContent(String content){
+    public static LogInfo setContent(String content) {
         LogInfo logInfo = logInfoHolder.get();
-        if(Objects.isNull(logInfo)){
+        if (Objects.isNull(logInfo)) {
             logInfo = new LogInfo();
             logInfoHolder.set(logInfo);
         }
@@ -45,12 +49,27 @@ public class BizLogUtil {
         return logInfo;
     }
 
-    public static void end(){
+    public static void end() {
         logInfoHolder.get().write();
         logInfoHolder.remove();
     }
 
-    public static LogInfo get(){
+    public static void recordException(Throwable e) {
+        LogInfo logInfo = logInfoHolder.get();
+        if (Objects.isNull(logInfo)) {
+            logInfo = new LogInfo();
+            logInfo.setCreateTime(new Date());
+            logInfoHolder.set(logInfo);
+        }
+        logInfo.setType(LogConstants.EXCEPTION_THROW);
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw,true);
+        e.printStackTrace(pw);
+        String stackTraceString = sw.getBuffer().toString();
+        logInfo.addContent(LogConstants.EXCEPTION_STACK, stackTraceString);
+    }
+
+    public static LogInfo get() {
         return logInfoHolder.get();
     }
 

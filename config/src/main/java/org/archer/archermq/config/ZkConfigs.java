@@ -25,23 +25,23 @@ import java.util.prefs.Preferences;
 @Configuration
 public class ZkConfigs {
 
-    @Value("zk.server.path")
+    @Value("${zk.server.path}")
     private String zkServerPath;
 
-    @Value("zk.server.namespace")
-    private String nameSpace = "";
+    @Value("${zk.server.namespace:}")
+    private String nameSpace ;
 
-    @Value("zk.retry.policy")
-    private String retryPolicy = "RetryForever";
+    @Value("${zk.retry.policy:RetryForever}")
+    private String retryPolicy;
 
-    @Value("zk.max.retry")
-    private int maxRetryTimes = 10;
+    @Value("${zk.max.retry:10}")
+    private int maxRetryTimes;
 
-    @Value("zk.retry.interval")
-    private int retryInterval = 3000;
+    @Value("${zk.retry.interval:3000}")
+    private int retryInterval;
 
-    @Value("zk.session.timeout")
-    private int sessionTimeout = 10000;
+    @Value("${zk.session.timeout:15000}")
+    private int sessionTimeout;
 
     @Bean
     public CuratorFramework curator(){

@@ -7,6 +7,7 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import lombok.SneakyThrows;
 import org.archer.archermq.common.annotation.Log;
 import org.archer.archermq.common.log.LogConstants;
 import org.archer.archermq.protocol.BaseLifeCycleSupport;
@@ -17,7 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-//@Component
+import javax.annotation.PreDestroy;
+
+@Component
 public class SimpleAmqpClientContainer extends BaseLifeCycleSupport implements InitializingBean, InternalClient {
 
     @Value("${amqp.internal.client.port:5673}")
@@ -32,6 +35,8 @@ public class SimpleAmqpClientContainer extends BaseLifeCycleSupport implements I
     private Bootstrap internalClientBootstrap;
 
     private BootstrapConfig internalClientBootstrapConfig;
+
+    private Channel currChannel;
 
     @Override
     @Log(layer = LogConstants.TRANSPORT_LAYER)
@@ -68,14 +73,21 @@ public class SimpleAmqpClientContainer extends BaseLifeCycleSupport implements I
                     .option(ChannelOption.SO_BACKLOG, 128)
                     .option(ChannelOption.SO_KEEPALIVE, true);
             internalClientBootstrapConfig = internalClientBootstrap.config();
-            ChannelFuture f = internalClientBootstrap.bind(amqpInternalClientPort).sync();
-            f.channel().closeFuture().sync();
+            ChannelFuture bindFeature = internalClientBootstrap.bind(amqpInternalClientPort).sync();
+            this.currChannel = bindFeature.channel();
         } catch (InterruptedException e) {
             e.printStackTrace();
             workerGroup.shutdownGracefully();
         } finally {
             workerGroup.shutdownGracefully();
         }
+    }
+
+    @SneakyThrows
+    @Override
+    @PreDestroy
+    public void destroy() {
+        this.currChannel.close().sync();
     }
 
 }
