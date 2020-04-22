@@ -33,7 +33,7 @@ import java.util.Set;
 @Component
 public class LogInspectAspect {
 
-    private static Logger logger = LoggerFactory.getLogger(LogConstants.SYS_ERR);
+    private static final Logger logger = LoggerFactory.getLogger(LogConstants.SYS_ERR);
 
     @Pointcut("@annotation(org.archer.archermq.common.annotation.Log)")
     public void logInspectAspect() {

@@ -12,6 +12,77 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class ExceptionMessages {
 
+    private final int id;
+    private final int errType;
+    private final String name;
+    private final String desc;
+
+    public ExceptionMessages(int id, int errType, String name, String desc) {
+        this.id = id;
+        this.errType = errType;
+        this.name = name;
+        this.desc = desc;
+    }
+
+    /**
+     * These codes are all associated with failures that affect the current channel but not other channels in the same connection;
+     */
+    public interface ChannelErrors {
+        ExceptionMessages CONTENT_TOO_LARGE = build("content-too-large", 311, 0, "The client attempted to transfer content larger than the server could accept at the present time. The client may retry at a later time.");
+        ExceptionMessages NO_CONSUMERS = build("no-consumers", 313, 0, "When the exchange cannot deliver to a consumer when the immediate flag is set. As a result of pending data on the queue or the absence of any consumers of the queue.");
+        ExceptionMessages ACCESS_REFUSED = build("access-refused", 403, 0, "The client attempted to work with a server entity to which it has no access due to security settings.");
+        ExceptionMessages NOT_FOUND = build("not-found", 404, 0, "The client attempted to work with a server entity that does not exist.");
+        ExceptionMessages RESOURCE_LOCKED = build("resource-locked", 405, 0, "The client attempted to work with a server entity to which it has no access because another client is working with it.");
+        ExceptionMessages PRECONDITION_FAILED = build("precondition-failed", 406, 0, "The client requested a method that was not allowed because some precondition failed.");
+
+    }
+
+    public interface ConnectionErrors {
+        ExceptionMessages CONNECTION_FORCED = build("connection-forced", 320, 1, "An operator intervened to close the connection for some reason. The client may retry at some later date.");
+        ExceptionMessages INVALID_PATH = build("invalid-path", 402, 1, "The client tried to work with an unknown virtual host.");
+        ExceptionMessages FRAME_ERR = build("frame-err", 501, 1, "The sender sent a malformed frame that the recipient could not decode. This strongly implies a programming error in the sending peer.");
+        ExceptionMessages SYNTAX_ERR = build("syntax-err", 502, 1, "The sender sent a frame that contained illegal values for one or more fields. This strongly implies a programming error in the sending peer.");
+        ExceptionMessages COMMAND_INVALID = build("command-invalid", 503, 1, "The client sent an invalid sequence of frames, attempting to perform an operation that was considered invalid by the server. This usually implies a programming error in the client.");
+        ExceptionMessages CHANNEL_ERR = build("channel-err", 504, 1, "The client attempted to work with a channel that had not been correctly opened. This most likely indicates a fault in the client layer.");
+        ExceptionMessages UNEXPECTED_FRAME = build("unexpected-frame", 505, 1, "The peer sent a frame that was not expected, usually in the context of a content header and body. This strongly indicates a fault in the peer's content processing.");
+        ExceptionMessages RESOURCE_ERR = build("resource-err", 506, 1, "The server could not complete the method because it lacked sufficient resources. This may be due to the client creating too many of some type of entity.");
+        ExceptionMessages NOT_ALLOWED = build("not-allowed", 530, 1, "The client tried to work with some entity in a manner that is prohibited by the server, due to security settings or by some other criteria.");
+        ExceptionMessages NOT_IMPLEMENTED = build("not-implemented", 540, 1, "The client tried to use functionality that is not implemented in the server.");
+        ExceptionMessages INTERNAL_ERR = build("internal-err", 541, 1, "The server could not complete the method because of an internal error. The server may require intervention by an operator in order to resume normal operations.");
+
+    }
+
+
+    public static ExceptionMessages build(String name, int id, int errType, String desc) {
+        return new ExceptionMessages(id, errType, name, desc);
+    }
+
+
+    public int getId() {
+        return id;
+    }
+
+    public int getErrType() {
+        return errType;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    @Override
+    public String toString() {
+        return "ExceptionMessages{" +
+                "id=" + id +
+                ", errType=" + errType +
+                ", name='" + name + '\'' +
+                ", desc='" + desc + '\'' +
+                '}';
+    }
 
     /**
      * 基于占位符的异常信息生成方法

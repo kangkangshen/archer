@@ -42,6 +42,14 @@ public interface MessageQueue extends LifeCycle {
     String name();
 
     /**
+     * 获取当前队列里面消息的个数，注意队列存储是分布式的，消息总数代表全体队列中的消息总数
+     * 该值是一个瞬时值。
+     *
+     * @return 当前消息队列里面的消息总数
+     */
+    int msgCount();
+
+    /**
      * 判断当前队列是不是持久队列
      * 如果指定这个属性，消息队列会在服务器重启之后仍然能够继续工作
      * 默认为true
@@ -59,7 +67,7 @@ public interface MessageQueue extends LifeCycle {
      *
      * @return 当前队列是否可以自动删除
      */
-    default boolean autoDelete(){
+    default boolean autoDelete() {
         return false;
     }
 

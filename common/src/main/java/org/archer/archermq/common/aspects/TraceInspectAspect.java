@@ -30,7 +30,7 @@ import java.util.Objects;
 @Component
 public class TraceInspectAspect {
 
-    private static Logger logger = LoggerFactory.getLogger(LogConstants.TRACE);
+    private static final Logger logger = LoggerFactory.getLogger(LogConstants.TRACE);
 
 
     @Pointcut("@annotation(org.archer.archermq.common.annotation.Trace)")

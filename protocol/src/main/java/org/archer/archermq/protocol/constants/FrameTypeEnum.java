@@ -15,7 +15,7 @@ public enum FrameTypeEnum implements EnumSpec<Integer> {
     METHOD(1,"method frame"),
     CONTENT_HEADER(2,"content header frame"),
     CONTENT_BODY(3,"content body frame"),
-    HEARTBEAT(4,"heart beat frame");
+    HEARTBEAT(8,"heart beat frame");
 
 
     private final int val;

@@ -15,6 +15,10 @@ import java.io.Serializable;
  */
 public interface Frame extends Serializable {
 
+    int FRAME_MIN_SIZE = 4096;
+
+    int FRAME_END = 206;
+
     /**
      * 获取当前数据帧类型
      *
