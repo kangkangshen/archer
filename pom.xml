@@ -31,7 +31,7 @@
         <google.guava.version>28.2-jre</google.guava.version>
         <springboot.platform.version>2.2.5.RELEASE</springboot.platform.version>
         <fast.json.version>1.2.68</fast.json.version>
-        <slf4j.plaform.version>1.7.26</slf4j.plaform.version>
+        <slf4j.plaform.version>1.7.25</slf4j.plaform.version>
         <aspectj.platform.version>1.9.5</aspectj.platform.version>
         <lombok.platform.version>1.18.10</lombok.platform.version>
         <curator.framework.version>4.3.0</curator.framework.version>

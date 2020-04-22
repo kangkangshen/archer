@@ -3,3 +3,5 @@
 /protocol/target/
 /config/target/
 /common/target/
+*.log
+logs/

@@ -6,6 +6,7 @@ import org.archer.archermq.protocol.constants.FrameTypeEnum;
 import org.archer.archermq.protocol.transport.Frame;
 import org.archer.archermq.protocol.transport.FrameHandler;
 import org.archer.archermq.protocol.transport.StandardMethodFrame;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -21,6 +22,7 @@ import java.util.List;
  * @author dongyue
  * @date 2020年04月15日17:17:27
  */
+@Component
 public class StandardMethodFrameHandler implements FrameHandler {
 
 

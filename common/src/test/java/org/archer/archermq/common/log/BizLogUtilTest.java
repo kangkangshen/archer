@@ -2,12 +2,8 @@ package org.archer.archermq.common.log;
 
 import com.alibaba.fastjson.JSON;
 import org.junit.Test;
-
-import javax.security.auth.login.LoginContext;
-
-import java.security.acl.LastOwnerException;
-
-import static org.junit.Assert.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BizLogUtilTest {
 
@@ -21,5 +17,11 @@ public class BizLogUtilTest {
             System.out.println(JSON.toJSONString(logInfo));
         }
 
+    }
+
+    @Test
+    public void logHelloWorld(){
+        Logger logger = LoggerFactory.getLogger("sys-err");
+        logger.info("Hello World");
     }
 }
