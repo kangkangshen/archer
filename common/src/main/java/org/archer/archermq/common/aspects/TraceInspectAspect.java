@@ -12,6 +12,8 @@ import org.archer.archermq.common.utils.TraceUtil;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -28,6 +30,7 @@ import java.util.Objects;
 @Component
 public class TraceInspectAspect {
 
+    private static Logger logger = LoggerFactory.getLogger(LogConstants.TRACE);
 
 
     @Pointcut("@annotation(org.archer.archermq.common.annotation.Trace)")
@@ -70,7 +73,7 @@ public class TraceInspectAspect {
         Method currMethod = methodSignature.getMethod();
         Trace currTrace = currMethod.getDeclaredAnnotation(Trace.class);
         if(currTrace.end()){
-            logInfo.write();
+            BizLogUtil.record(logInfo,logger);
         }
     }
 
@@ -79,7 +82,7 @@ public class TraceInspectAspect {
         LogInfo logInfo = Objects.requireNonNull(BizLogUtil.get());
         logInfo.setType(LogConstants.EXCEPTION_THROW);
         logInfo.addContent(LogConstants.EXCEPTION_STACK,JSON.toJSONString(e.getStackTrace()));
-        logInfo.write();
+        BizLogUtil.record(logInfo,logger);
     }
 
 

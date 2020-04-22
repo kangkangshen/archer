@@ -12,6 +12,8 @@ import org.archer.archermq.common.log.LogInfo;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
@@ -30,6 +32,8 @@ import java.util.Set;
 @Aspect
 @Component
 public class LogInspectAspect {
+
+    private static Logger logger = LoggerFactory.getLogger(LogConstants.SYS_ERR);
 
     @Pointcut("@annotation(org.archer.archermq.common.annotation.Log)")
     public void logInspectAspect() {
@@ -76,7 +80,7 @@ public class LogInspectAspect {
     public void logOnAfterReturning(JoinPoint point,Object result){
         LogInfo logInfo = BizLogUtil.get();
         logInfo.setResult(JSON.toJSONString(result));
-        logInfo.write();
+        BizLogUtil.record(logInfo,logger);
     }
 
     @AfterThrowing(value = "logInspectAspect()",throwing = "e")
@@ -84,7 +88,7 @@ public class LogInspectAspect {
         LogInfo logInfo = Objects.requireNonNull(BizLogUtil.get());
         logInfo.setType(LogConstants.EXCEPTION_THROW);
         logInfo.addContent(LogConstants.EXCEPTION_STACK,JSON.toJSONString(e.getStackTrace()));
-        logInfo.write();
+        BizLogUtil.record(logInfo,logger);
     }
 
 

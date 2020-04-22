@@ -9,6 +9,12 @@ package org.archer.archermq.common.log;
 public interface LogConstants {
 
     /**
+     * logger
+     */
+    String TRACE = "trace";
+    String SYS_ERR = "sys_err";
+
+    /**
      * layer
      */
     String TRANSPORT_LAYER = "transport layer";

@@ -1,8 +1,12 @@
 package org.archer.archermq.common.log;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Date;
 
 public class LogInfo {
+
 
     private final static String DEFAULT_DELIMITER = ":";
 
@@ -92,9 +96,4 @@ public class LogInfo {
                 '}';
     }
 
-    public void write() {
-
-        //todo dongyue
-        System.out.println(toString());
-    }
 }

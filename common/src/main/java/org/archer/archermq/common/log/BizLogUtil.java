@@ -2,6 +2,8 @@ package org.archer.archermq.common.log;
 
 
 import com.alibaba.fastjson.JSON;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -17,6 +19,8 @@ import java.util.Objects;
  */
 public class BizLogUtil {
     private final static ThreadLocal<LogInfo> logInfoHolder = new ThreadLocal<>();
+
+    private final static Logger log = LoggerFactory.getLogger(LogConstants.SYS_ERR);
 
     public static LogInfo start() {
         LogInfo logInfo = logInfoHolder.get();
@@ -50,8 +54,12 @@ public class BizLogUtil {
     }
 
     public static void end() {
-        logInfoHolder.get().write();
+//        logInfoHolder.get().write();
         logInfoHolder.remove();
+    }
+
+    public static void record(LogInfo logInfo,Logger logger){
+
     }
 
     public static void recordException(Throwable e) {
