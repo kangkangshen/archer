@@ -6,7 +6,10 @@ package org.archer.archermq.protocol.model;
  * @author dongyue
  * @date 2020年04月20日18:22:55
  */
-public abstract class BaseTransactionalCommand {
+public abstract class BaseTransactionalCommand implements Command{
 
+    @Override
+    public void execute() {
 
+    }
 }

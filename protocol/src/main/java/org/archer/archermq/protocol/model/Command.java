@@ -16,6 +16,9 @@ public interface Command {
         throw new UnsupportedOperationException(this.getClass().getName() + " dont support undo");
     }
 
+    String desc();
+
+    int commandId();
 
     void execute();
 }
