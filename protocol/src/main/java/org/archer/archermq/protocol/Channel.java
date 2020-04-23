@@ -1,6 +1,8 @@
 package org.archer.archermq.protocol;
 
 
+import org.archer.archermq.protocol.constants.StateEnum;
+
 /**
  * 多路复用连接中的一条独立的双向数据流通道。为会话提供物理传输介质。
  * 其生命周期设计如下：
@@ -16,6 +18,10 @@ package org.archer.archermq.protocol;
  */
 public interface Channel extends LifeCycle {
 
+    void setFlow(boolean active);
 
+    StateEnum state();
+
+    void close();
 
 }

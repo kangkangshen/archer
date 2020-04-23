@@ -62,6 +62,10 @@ public class BizLogUtil {
 
     }
 
+    public static void record(LogInfo logInfo){
+        record(logInfo,log);
+    }
+
     public static void recordException(Throwable e) {
         LogInfo logInfo = logInfoHolder.get();
         if (Objects.isNull(logInfo)) {

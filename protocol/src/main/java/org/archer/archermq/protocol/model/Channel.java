@@ -1,9 +1,20 @@
 package org.archer.archermq.protocol.model;
 
+import org.apache.commons.lang3.StringUtils;
 import org.archer.archermq.common.FeatureBased;
+import org.archer.archermq.common.log.BizLogUtil;
+import org.archer.archermq.common.log.LogConstants;
+import org.archer.archermq.common.log.LogInfo;
+import org.archer.archermq.protocol.constants.ClassEnum;
+import org.archer.archermq.protocol.constants.ExceptionMessages;
+import org.archer.archermq.protocol.constants.FeatureKeys;
+import org.archer.archermq.protocol.constants.MethodEnum;
+import org.archer.archermq.protocol.transport.ChannelException;
+import org.archer.archermq.protocol.transport.ConnectionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.activation.CommandMap;
-import java.util.List;
+import java.util.Objects;
 
 /**
  * 对应于amqp的channel类
@@ -12,6 +23,8 @@ import java.util.List;
  * @date 2020年04月20日18:51:38
  */
 public final class Channel extends FeatureBased implements Class{
+
+    private static final Logger logger = LoggerFactory.getLogger("");
 
     @Override
     public int classId() {
@@ -23,15 +36,16 @@ public final class Channel extends FeatureBased implements Class{
         return "work with channels";
     }
 
-    @Override
-    public List<String> methods() {
-        return null;
-    }
-
     /**
      * 开启信道
      */
-    public class Open implements Command {
+    public class Open implements Command<OpenOk> {
+
+        private final String reserved1;
+
+        public Open(String reserved1) {
+            this.reserved1 = reserved1;
+        }
 
         @Override
         public String desc() {
@@ -44,12 +58,32 @@ public final class Channel extends FeatureBased implements Class{
         }
 
         @Override
-        public void execute() {
+        public OpenOk execute() {
+            org.archer.archermq.protocol.Channel channel = (org.archer.archermq.protocol.Channel) getFeature(FeatureKeys.Command.AMQP_CHANNEL);
+            if(Objects.nonNull(channel)){
+                throw new ChannelException(ExceptionMessages.ChannelErrors.PRECONDITION_FAILED);
+            }
+            String channelId = openNewChannel();
+            return new OpenOk(channelId);
 
+        }
+
+        private String openNewChannel() {
+            return null;
+        }
+
+        public String getReserved1() {
+            return reserved1;
         }
     }
 
-    public class OpenOk implements Command{
+    public class OpenOk implements Command<Void>{
+
+        private final String reserved1;
+
+        public OpenOk(String reserved1) {
+            this.reserved1 = reserved1;
+        }
 
         @Override
         public String desc() {
@@ -62,12 +96,22 @@ public final class Channel extends FeatureBased implements Class{
         }
 
         @Override
-        public void execute() {
+        public Void execute() {
+            throw new ConnectionException(ExceptionMessages.ConnectionErrors.COMMAND_INVALID);
+        }
 
+        public String getReserved1() {
+            return reserved1;
         }
     }
 
-    public class Flow implements Command{
+    public class Flow extends FeatureBased implements Command<FlowOk>{
+
+        private final boolean active;
+
+        public Flow(boolean active) {
+            this.active = active;
+        }
 
         @Override
         public String desc() {
@@ -80,12 +124,24 @@ public final class Channel extends FeatureBased implements Class{
         }
 
         @Override
-        public void execute() {
+        public FlowOk execute() {
+            org.archer.archermq.protocol.Channel channel = (org.archer.archermq.protocol.Channel) getFeature(FeatureKeys.Command.AMQP_CHANNEL);
+            channel.setFlow(active);
+            return new FlowOk(active);
+        }
 
+        public boolean isActive() {
+            return active;
         }
     }
 
-    public class FlowOk implements Command{
+    public class FlowOk implements Command<Void>{
+
+        private final boolean active;
+
+        public FlowOk(boolean active) {
+            this.active = active;
+        }
 
         @Override
         public String desc() {
@@ -98,15 +154,34 @@ public final class Channel extends FeatureBased implements Class{
         }
 
         @Override
-        public void execute() {
+        public Void execute() {
+            throw new ConnectionException(ExceptionMessages.ConnectionErrors.COMMAND_INVALID);
+        }
 
+        public boolean isActive() {
+            return active;
         }
     }
 
     /**
      * 关闭信道
      */
-    public class Close implements Command {
+    public class Close implements Command<CloseOk> {
+
+        private final String replyCode;
+
+        private final String replyText;
+
+        private final Short classId;
+
+        private final Short methodId;
+
+        public Close(String replyCode, String replyText, Short classId, Short methodId) {
+            this.replyCode = replyCode;
+            this.replyText = replyText;
+            this.classId = classId;
+            this.methodId = methodId;
+        }
 
         @Override
         public String desc() {
@@ -119,12 +194,35 @@ public final class Channel extends FeatureBased implements Class{
         }
 
         @Override
-        public void execute() {
+        public CloseOk execute() {
+            LogInfo logInfo = BizLogUtil.start().setLayer(LogConstants.MODEL_LAYER).setType(LogConstants.CONNECTION_CLOSED);
 
+            logInfo.addContent(LogConstants.PEER_IP, (String) getFeature(FeatureKeys.Command.PEER_IP));
+            logInfo.addContent(LogConstants.PEER_PORT, (String) getFeature(FeatureKeys.Command.PEER_PORT));
+            logInfo.addContent(LogConstants.VIRTUALHOST_NAME, (String) getFeature(FeatureKeys.Command.VIRTUALHOST_NAME));
+
+            if (StringUtils.isNotBlank(replyCode)) {
+                logInfo.addContent(LogConstants.REPLY_CODE, replyCode);
+            }
+
+            if (StringUtils.isNotBlank(replyText)) {
+                logInfo.addContent(LogConstants.REPLY_TEXT, replyText);
+            }
+
+            ClassEnum clazz = ClassEnum.getByVal(classId.intValue());
+            MethodEnum method = MethodEnum.getByVal(methodId.intValue());
+
+            if (Objects.nonNull(clazz) && Objects.nonNull(method) && clazz.allow(method)) {
+                logInfo.addContent(LogConstants.CLASS_NAME, clazz.name());
+                logInfo.addContent(LogConstants.METHOD_NAME, method.name());
+            }
+
+            BizLogUtil.record(logInfo, logger);
+            return new CloseOk();
         }
     }
 
-    public class CloseOk implements Command{
+    public class CloseOk implements Command<Void>{
 
         @Override
         public String desc() {
@@ -137,8 +235,10 @@ public final class Channel extends FeatureBased implements Class{
         }
 
         @Override
-        public void execute() {
-
+        public Void execute() {
+            org.archer.archermq.protocol.Channel channel = (org.archer.archermq.protocol.Channel) getFeature(FeatureKeys.Command.AMQP_CHANNEL);
+            channel.close();
+            return null;
         }
     }
 

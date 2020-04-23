@@ -1,6 +1,9 @@
 package org.archer.archermq.protocol.transport;
 
 
+import org.archer.archermq.protocol.constants.ExceptionMessages;
+import org.archer.archermq.protocol.model.Connection;
+
 /**
  * 连接异常定义
  * 任何结构化的错误(无效参数，坏序列的方法.)都会导致一个连接异常
@@ -10,6 +13,13 @@ package org.archer.archermq.protocol.transport;
  */
 public class ConnectionException extends RuntimeException {
 
+    private final ExceptionMessages exceptionMessages;
 
+    public ConnectionException(ExceptionMessages exceptionMessages){
+        this.exceptionMessages = exceptionMessages;
+    }
 
+    public ExceptionMessages getExceptionMessages() {
+        return exceptionMessages;
+    }
 }

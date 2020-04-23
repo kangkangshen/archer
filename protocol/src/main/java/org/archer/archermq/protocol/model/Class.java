@@ -8,6 +8,4 @@ public interface Class {
 
     String desc();
 
-    List<String/*methodName*/> methods();
-
 }

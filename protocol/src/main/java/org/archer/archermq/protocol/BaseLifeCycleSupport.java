@@ -4,6 +4,7 @@ package org.archer.archermq.protocol;
 import com.google.common.collect.Maps;
 import org.archer.archermq.common.annotation.Log;
 import org.archer.archermq.common.log.LogConstants;
+import org.archer.archermq.protocol.constants.ExceptionMessages;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
@@ -11,8 +12,6 @@ import org.springframework.util.CollectionUtils;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-
-import static org.archer.archermq.protocol.constants.ExceptionMessages.CURRENT_STATE_NOT_ALLOW_CHANGE_TO_TARGET_STATE;
 
 /**
  * 生命周期基类
@@ -78,7 +77,7 @@ public abstract class BaseLifeCycleSupport implements LifeCycle {
     }
 
     public void updateCurrState(String nextPhase, String nextPhaseStatus) {
-        Assert.isTrue(couldChangeState(nextPhase, nextPhaseStatus), CURRENT_STATE_NOT_ALLOW_CHANGE_TO_TARGET_STATE);
+        Assert.isTrue(couldChangeState(nextPhase, nextPhaseStatus), ExceptionMessages.SystemErrors.STATE_ERR.getDesc());
         setCurrPhase(nextPhase);
         setCurrPhaseStatus(nextPhaseStatus);
     }

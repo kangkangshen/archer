@@ -1,6 +1,8 @@
 package org.archer.archermq.protocol.model;
 
 import org.archer.archermq.common.FeatureBased;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -12,6 +14,9 @@ import java.util.List;
  */
 public final class Basic extends FeatureBased implements Class {
 
+    private static final Logger logger = LoggerFactory.getLogger("");
+
+
     @Override
     public int classId() {
         return 60;
@@ -22,15 +27,11 @@ public final class Basic extends FeatureBased implements Class {
         return "work with basic content";
     }
 
-    @Override
-    public List<String> methods() {
-        return null;
-    }
 
     /**
      * 设置未被确认消费的个数
      */
-    public class Qos implements Command {
+    public class Qos implements Command<QosOk> {
 
         @Override
         public String desc() {
@@ -43,7 +44,7 @@ public final class Basic extends FeatureBased implements Class {
         }
 
         @Override
-        public void execute() {
+        public QosOk execute() {
 
         }
     }

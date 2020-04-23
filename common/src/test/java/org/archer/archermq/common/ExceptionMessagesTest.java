@@ -2,8 +2,6 @@ package org.archer.archermq.common;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 public class ExceptionMessagesTest {
 
     @Test

@@ -12,7 +12,7 @@ package org.archer.archermq.protocol;
  * @author dongyue
  * @date 2020年04月14日13:23:50
  */
-public interface Server extends LifeCycle {
+public interface Server extends LifeCycle , Registrar<String,VirtualHost>{
 
     /**
      * 标准系统服务前辍是"amq."

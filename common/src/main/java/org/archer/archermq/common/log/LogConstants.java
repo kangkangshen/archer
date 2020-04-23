@@ -36,6 +36,14 @@ public interface LogConstants {
 
     String METHOD_INVOKE = "method invoke";
 
+    String CONNECTION_CREATED = "connection created";
+
+    String CONNECTION_CLOSED = "connection closed";
+
+    String CHANNEL_CREATED = "channel created";
+
+    String CHANNEL_CLOSED = "channel closed";
+
 
     /**
      * log content key
@@ -61,6 +69,20 @@ public interface LogConstants {
     String USING_FRAME_HANDLER = "using frame handler";
 
     String BACKUP_FRAME_HANDLER = "backup frame handler";
+
+    String RESPONSE = "response";
+
+    String PEER_IP = "ip";
+
+    String PEER_PORT = "port";
+
+    String VIRTUALHOST_NAME = "virtual host name";
+
+    String REPLY_CODE = "reply code";
+
+    String REPLY_TEXT = "reply text";
+
+
 
 
 }

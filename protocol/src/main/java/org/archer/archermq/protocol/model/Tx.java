@@ -19,11 +19,6 @@ public final class Tx extends FeatureBased implements Class{
         return "work with transactions";
     }
 
-    @Override
-    public List<String> methods() {
-        return null;
-    }
-
     /**
      * 开启事务
      */

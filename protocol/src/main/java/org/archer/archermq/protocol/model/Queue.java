@@ -22,10 +22,6 @@ public final class Queue extends FeatureBased implements Class{
         return "work with queues";
     }
 
-    @Override
-    public List<String> methods() {
-        return null;
-    }
 
     /**
      * 声明队列
