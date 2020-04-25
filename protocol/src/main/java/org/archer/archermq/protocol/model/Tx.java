@@ -1,11 +1,20 @@
 package org.archer.archermq.protocol.model;
 
 import org.archer.archermq.common.FeatureBased;
+import org.archer.archermq.protocol.Channel;
+import org.archer.archermq.protocol.constants.ExceptionMessages;
+import org.archer.archermq.protocol.constants.FeatureKeys;
+import org.archer.archermq.protocol.transport.ConnectionException;
 
 import java.util.List;
 
 /**
  * 对应amqp的tx类
+ * The Tx class allows publish and ack operations to be batched into atomic units of work.
+ * The intention is that all publish and ack requests issued within a transaction will complete successfully or none of them will.
+ * Servers SHOULD implement atomic transactions at least where all publish or ack requests affect a single queue.
+ * Transactions that cover multiple queues may be non­atomic, given that queues can be created and destroyed asynchronously, and such events do not form part of any transaction.
+ * Further, the behaviour of transactions with respect to the immediate and mandatory flags on Basic.Publish methods is not defined.
  */
 public final class Tx extends FeatureBased implements Class{
 
@@ -22,7 +31,7 @@ public final class Tx extends FeatureBased implements Class{
     /**
      * 开启事务
      */
-    public class Select extends BaseTransactionalCommand {
+    public class Select extends BaseTransactionalCommand<SelectOk> {
 
         @Override
         public String desc() {
@@ -33,9 +42,16 @@ public final class Tx extends FeatureBased implements Class{
         public int commandId() {
             return 10;
         }
+
+        @Override
+        protected SelectOk executeInternal() {
+            Channel channel = (Channel) getFeature(FeatureKeys.Command.AMQP_CHANNEL);
+            channel.beginTx();
+            return new SelectOk();
+        }
     }
 
-    public class SelectOk implements Command {
+    public class SelectOk extends BaseCommand<Void> {
 
         @Override
         public String desc() {
@@ -48,15 +64,15 @@ public final class Tx extends FeatureBased implements Class{
         }
 
         @Override
-        public void execute() {
-
+        public Void execute() {
+            throw new ConnectionException(ExceptionMessages.ConnectionErrors.COMMAND_INVALID);
         }
     }
 
     /**
      * 事务提交
      */
-    public class Commit extends BaseTransactionalCommand {
+    public class Commit extends BaseTransactionalCommand<CommitOk> {
 
         @Override
         public String desc() {
@@ -67,9 +83,16 @@ public final class Tx extends FeatureBased implements Class{
         public int commandId() {
             return 20;
         }
+
+        @Override
+        protected CommitOk executeInternal() {
+            Channel channel = (Channel) getFeature(FeatureKeys.Command.AMQP_CHANNEL);
+            channel.commit();
+            return new CommitOk();
+        }
     }
 
-    public class CommmitOk implements Command {
+    public class CommitOk extends BaseCommand<Void> {
 
         @Override
         public String desc() {
@@ -82,15 +105,15 @@ public final class Tx extends FeatureBased implements Class{
         }
 
         @Override
-        public void execute() {
-
+        public Void execute() {
+            throw new ConnectionException(ExceptionMessages.ConnectionErrors.NOT_IMPLEMENTED);
         }
     }
 
     /**
      * 事务回滚
      */
-    public class Rollback extends BaseTransactionalCommand {
+    public class Rollback extends BaseTransactionalCommand<RollbackOk> {
 
         @Override
         public String desc() {
@@ -101,9 +124,16 @@ public final class Tx extends FeatureBased implements Class{
         public int commandId() {
             return 30;
         }
+
+        @Override
+        protected RollbackOk executeInternal() {
+            Channel channel = (Channel) getFeature(FeatureKeys.Command.AMQP_CHANNEL);
+            channel.rollback();
+            return new RollbackOk();
+        }
     }
 
-    public class RollbackOk implements Command {
+    public class RollbackOk extends BaseCommand<Void> {
 
         @Override
         public String desc() {
@@ -116,8 +146,8 @@ public final class Tx extends FeatureBased implements Class{
         }
 
         @Override
-        public void execute() {
-
+        public Void execute() {
+            throw new ConnectionException(ExceptionMessages.ConnectionErrors.NOT_IMPLEMENTED);
         }
     }
 }

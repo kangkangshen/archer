@@ -58,4 +58,10 @@ public interface Channel extends LifeCycle {
     void exchange(Message msg);
 
     void redeliver(Message msg);
+
+    void beginTx();
+
+    void commit();
+
+    void rollback();
 }
