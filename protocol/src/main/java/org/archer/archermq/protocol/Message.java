@@ -30,6 +30,8 @@ public interface Message extends LifeCycle {
      */
     String msgDescription();
 
+    Map<String,Object> msgProperties();
+
     /**
      * 消息头，里面保存了很多有用的扩展字段
      *
@@ -43,6 +45,8 @@ public interface Message extends LifeCycle {
      * @return 消息体
      */
     MessageBody body();
+
+
 
 
 }

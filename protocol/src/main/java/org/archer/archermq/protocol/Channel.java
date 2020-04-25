@@ -2,6 +2,11 @@ package org.archer.archermq.protocol;
 
 
 import org.archer.archermq.protocol.constants.StateEnum;
+import org.archer.archermq.protocol.model.Command;
+import org.archer.archermq.protocol.transport.Frame;
+import java.util.Queue;
+import java.util.Set;
+import java.util.Stack;
 
 /**
  * 多路复用连接中的一条独立的双向数据流通道。为会话提供物理传输介质。
@@ -18,10 +23,39 @@ import org.archer.archermq.protocol.constants.StateEnum;
  */
 public interface Channel extends LifeCycle {
 
+    String id();
+
+    String name();
+
     void setFlow(boolean active);
 
     StateEnum state();
 
     void close();
 
+    Set<MessageQueue> consuming();
+
+    MessageQueue lastDeclareMsgQueue();
+
+    void qos(int prefetchSize, short prefetchCount);
+
+    Stack<Command<?>> invokeStack();
+
+    Frame pop();
+
+    void push(Frame frame);
+
+    Frame peak();
+
+    Message selectMsg();
+
+    Queue<Message> unConfirmedMsg();
+
+    void confirmMsg(String deliveryTag,boolean multiple);
+
+    void confirmAllMsg();
+
+    void exchange(Message msg);
+
+    void redeliver(Message msg);
 }

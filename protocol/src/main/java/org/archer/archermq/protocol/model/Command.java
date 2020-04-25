@@ -22,5 +22,7 @@ public interface Command<RESPONSE> {
 
     int commandId();
 
+    int classId();
+
     RESPONSE execute();
 }

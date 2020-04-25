@@ -1,5 +1,7 @@
 package org.archer.archermq.protocol;
 
+import java.util.Map;
+
 /**
  * 一个命名实体，用来保存消息直到发送给消费者。
  * 消息队列保存消息，并将消息分发给一个或多个订阅客户端。
@@ -23,14 +25,21 @@ public interface MessageQueue extends LifeCycle {
      */
     String STANDARD_MESSAGE_QUEUE_NAME_PREFIX = "amq.";
 
-    /**
-     * 获取当前消息队列所绑定的交换器，按照AMQP协议，mq和exchange之间是一对多的关系
-     *
-     * @return 当前所绑定的交换器
-     */
-    Exchange exchange();
-
     String bindingKey();
+
+    void bind(Exchange exchange, String routingKey, Map<String, Object> args);
+
+    void unBind(Exchange exchange, String routingKey, Map<String, Object> args);
+
+    int purge();
+
+    void lock();
+
+    void unlock();
+
+    void dequeue(Message message);
+
+    Message enqueue();
 
     /**
      * 获取当前队列名
@@ -48,6 +57,18 @@ public interface MessageQueue extends LifeCycle {
      * @return 当前消息队列里面的消息总数
      */
     int msgCount();
+
+    /**
+     * 获取当前队列监听的消费者总数，注意，队列监听是分布式的，消费者总数代表全体队列中的消费者总数
+     * 该值是一个瞬时值
+     *
+     * @return 监听当前消息队列的消费者总数
+     */
+    int consumerCount();
+
+    Exchange exchange();
+
+    Registrar<String,Consumer> getConsumerRegistry();
 
     /**
      * 判断当前队列是不是持久队列
@@ -68,6 +89,10 @@ public interface MessageQueue extends LifeCycle {
      * @return 当前队列是否可以自动删除
      */
     default boolean autoDelete() {
+        return false;
+    }
+
+    default boolean exclusive() {
         return false;
     }
 

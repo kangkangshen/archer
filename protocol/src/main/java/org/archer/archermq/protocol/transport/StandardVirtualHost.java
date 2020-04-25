@@ -1,25 +1,17 @@
 package org.archer.archermq.protocol.transport;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import org.apache.commons.lang3.StringUtils;
 import org.archer.archermq.common.annotation.Log;
+import org.archer.archermq.common.constants.Delimiters;
 import org.archer.archermq.common.log.LogConstants;
 import org.archer.archermq.protocol.*;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 /**
  * 标准virtualHost实现
  */
-@Component
 public class StandardVirtualHost extends BaseLifeCycleSupport implements VirtualHost, InitializingBean {
 
     private Namespace namespace;
@@ -27,7 +19,9 @@ public class StandardVirtualHost extends BaseLifeCycleSupport implements Virtual
     @Value("archermq.virtualhost.name")
     private String name;
 
-    private ExchangeRegistry exchangeRegistry;
+    private Registrar<String, Exchange> exchangeRegistry;
+
+    private Registrar<String, MessageQueue> queueRegistry;
 
 
     @Override
@@ -42,69 +36,96 @@ public class StandardVirtualHost extends BaseLifeCycleSupport implements Virtual
 
     @Override
     public List<Exchange> exchanges() {
-        return exchangeRegistry.exchanges();
+        return exchangeRegistry.instances();
     }
 
     @Override
     public void afterPropertiesSet() throws Exception {
         this.exchangeRegistry = new StandardExchangeRegistry(this);
+        this.queueRegistry = new StandardMsgQueueRegistry(this);
+    }
+
+    public Registrar<String, Exchange> getExchangeRegistry() {
+        return exchangeRegistry;
+    }
+
+    @Override
+    public Registrar<String, MessageQueue> getMsgQueueRegistry() {
+        return queueRegistry;
     }
 
 
 
 
-    public static class StandardExchangeRegistry implements ExchangeRegistry{
+
+
+    public static class StandardExchangeRegistry extends DistributedRegistrar<String, Exchange> {
 
         private final VirtualHost virtualHost;
-
-        private final Map<String,Exchange> exchangeContainer = Maps.newConcurrentMap();
 
         public StandardExchangeRegistry(VirtualHost virtualHost) {
             this.virtualHost = virtualHost;
         }
 
-        @Override
-        public VirtualHost virtualHost() {
+        public VirtualHost getVirtualHost() {
             return virtualHost;
         }
 
         @Override
-        @Log(layer = LogConstants.TRANSPORT_LAYER)
-        public void registerExchange(Exchange exchange) {
-            if(Objects.nonNull(exchange)&& StringUtils.isBlank(exchange.name())){
-                exchangeContainer.put(exchange.name(),exchange);
-            }
+        public boolean contains(String s) {
+            return super.contains(virtualHost.name() + Delimiters.UNDERLINE + s);
         }
 
         @Override
         @Log(layer = LogConstants.TRANSPORT_LAYER)
-        public void removeExchange(String name) {
-            exchangeContainer.remove(name);
+        public boolean register(String s, Exchange instance) {
+            return super.register(virtualHost.name() + Delimiters.UNDERLINE + s, instance);
         }
 
         @Override
-        public boolean containsExchange(String name) {
-            return exchangeContainer.containsKey(name);
+        @Log(layer = LogConstants.TRANSPORT_LAYER)
+        public Exchange remove(String s) {
+            return super.remove(virtualHost.name() + Delimiters.UNDERLINE + s);
         }
 
         @Override
-        public Exchange getExchange(String name) {
-            return exchangeContainer.get(name);
+        public Exchange get(String s) {
+            return super.get(virtualHost.name() + Delimiters.UNDERLINE + s);
+        }
+    }
+
+
+    public static class StandardMsgQueueRegistry extends DistributedRegistrar<String, MessageQueue> {
+        private final VirtualHost virtualHost;
+
+        public StandardMsgQueueRegistry(VirtualHost virtualHost) {
+            this.virtualHost = virtualHost;
+        }
+        @Override
+        public boolean contains(String s) {
+            return super.contains(virtualHost.name() + Delimiters.UNDERLINE + s);
         }
 
         @Override
-        public Set<String> exchangeNames() {
-            //concurrentHashMap保证每次keySet都是当前keySet的一个副本
-            return exchangeContainer.keySet();
+        @Log(layer = LogConstants.TRANSPORT_LAYER)
+        public boolean register(String s, MessageQueue instance) {
+            return super.register(virtualHost.name() + Delimiters.UNDERLINE + s, instance);
         }
 
         @Override
-        public List<Exchange> exchanges() {
-            //返回当前exchanges的一份副本
-            return Lists.newArrayList(exchangeContainer.values());
+        @Log(layer = LogConstants.TRANSPORT_LAYER)
+        public MessageQueue remove(String s) {
+            return super.remove(virtualHost.name() + Delimiters.UNDERLINE + s);
         }
 
+        @Override
+        public MessageQueue get(String s) {
+            return super.get(virtualHost.name() + Delimiters.UNDERLINE + s);
+        }
 
+        public VirtualHost getVirtualHost() {
+            return virtualHost;
+        }
     }
 
 }

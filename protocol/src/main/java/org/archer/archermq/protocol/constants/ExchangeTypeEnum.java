@@ -28,7 +28,7 @@ public enum ExchangeTypeEnum implements EnumSpec<Integer> {
         this.desc = desc;
     }
 
-    public ExchangeTypeEnum getByVal(Integer val) {
+    public static ExchangeTypeEnum getByVal(Integer val) {
         ExchangeTypeEnum[] types = values();
         for (ExchangeTypeEnum type : types) {
             if (Objects.equals(type.val, val)) {

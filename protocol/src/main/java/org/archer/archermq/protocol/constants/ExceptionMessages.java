@@ -33,6 +33,7 @@ public class ExceptionMessages {
         ExceptionMessages NOT_FOUND = build("not-found", 404, 0, "The client attempted to work with a server entity that does not exist.");
         ExceptionMessages RESOURCE_LOCKED = build("resource-locked", 405, 0, "The client attempted to work with a server entity to which it has no access because another client is working with it.");
         ExceptionMessages PRECONDITION_FAILED = build("precondition-failed", 406, 0, "The client requested a method that was not allowed because some precondition failed.");
+        ExceptionMessages EXCLUSIVE = build("exclusive",407,0,"The channel want to occupy the queue but queue is not exclusive mode or the message queue is exclusive and already occupied by the other.");
 
     }
 

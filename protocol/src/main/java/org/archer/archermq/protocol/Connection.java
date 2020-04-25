@@ -23,4 +23,6 @@ public interface Connection extends LifeCycle{
 
     Channel openChannel();
 
+    void qos(int prefetchSize,short prefetchCount);
+
 }

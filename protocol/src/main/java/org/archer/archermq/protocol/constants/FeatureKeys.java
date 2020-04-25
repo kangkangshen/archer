@@ -13,13 +13,18 @@ public interface FeatureKeys {
 
         String PRIORITY = "priority";
 
-
         String TRACE_ID = "traceId";
+
+        String EXCHANGE_NAME = "exchange name";
+
+        String ROUTING_KEY = "routing key";
     }
 
     interface Command{
 
         String TCP_CHANNEL = "tcp channel";
+
+        String AMQP_CONNECTION = "amqp connection";
 
         String AMQP_CHANNEL = "amqp channel";
 
@@ -31,8 +36,16 @@ public interface FeatureKeys {
 
         String VIRTUALHOST_NAME = "virtualHost name";
 
+        String VIRTUALHOST = "virtualHost";
+
         String SERVER = "server";
     }
+
+    interface Custom{
+        String EXCHANGE_ID = "exchange id";
+    }
+
+
 
 
 

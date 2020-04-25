@@ -21,15 +21,49 @@ public interface LifeCyclePhases {
         /**
          * 如果不存在就创建，否则继续
          */
-        String DECLARE = "declare";
 
         String CREATE = "create";
+
+        String INUSE = "inuse";
 
         String DELETE = "delete";
 
         String CANCEL = "cancel";
 
     }
+
+    interface MessageQueue {
+        /**
+         * 如果不存在就创建，否则继续
+         */
+
+        String CREATE = "create";
+
+        String INUSE = "inuse";
+
+        String DELETE = "delete";
+
+        String CANCEL = "cancel";
+
+    }
+
+    interface Message{
+
+        String CREATE = "create";
+
+        String ACCEPT = "accept";
+
+        String QUEUE = "queue";
+
+        String UNCONFIRMED = "unConfirmed";
+
+        String CONFIRMED = "confirmed";
+
+        String CONSUMED = "consumed";
+
+    }
+
+
 
 
     /**

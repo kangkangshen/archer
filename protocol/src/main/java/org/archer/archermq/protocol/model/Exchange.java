@@ -1,11 +1,19 @@
 package org.archer.archermq.protocol.model;
 
+import org.apache.commons.lang3.StringUtils;
 import org.archer.archermq.common.FeatureBased;
-import org.archer.archermq.protocol.transport.Frame;
+import org.archer.archermq.protocol.Registrar;
+import org.archer.archermq.protocol.VirtualHost;
+import org.archer.archermq.protocol.constants.ExceptionMessages;
+import org.archer.archermq.protocol.constants.FeatureKeys;
+import org.archer.archermq.protocol.constants.LifeCyclePhases;
+import org.archer.archermq.protocol.transport.BaseExchange;
+import org.archer.archermq.protocol.transport.ChannelException;
+import org.archer.archermq.protocol.transport.StandardExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,17 +43,33 @@ public final class Exchange extends FeatureBased implements Class {
      */
     public class Declare extends BaseTransactionalCommand<DeclareOk> {
 
-        private String exchange;
+        private String reserved1;
 
-        private String type;
+        private String reserved2;
 
-        private boolean passive;
+        private String reserved3;
 
-        private boolean durable;
+        private final String exchange;
 
-        private String noWait;
+        private final String type;
 
-        private Map<String, Object> arguments;
+        private final boolean passive;
+
+        private final boolean durable;
+
+        private final String noWait;
+
+        private final Map<String, Object> arguments;
+
+        public Declare( String exchange, String type, boolean passive,boolean durable,String noWait,Map<String,Object> arguments) {
+            this.exchange = exchange;
+            this.type = type;
+            this.passive = passive;
+            this.durable = durable;
+            this.noWait = noWait;
+            this.arguments = arguments;
+
+        }
 
         @Override
         public String desc() {
@@ -59,7 +83,59 @@ public final class Exchange extends FeatureBased implements Class {
 
         @Override
         protected DeclareOk executeInternal() {
-            return null;
+            VirtualHost virtualHost = (VirtualHost) getFeature(FeatureKeys.Command.VIRTUALHOST);
+            Registrar<String, org.archer.archermq.protocol.Exchange> exchangeRegistrar = virtualHost.getExchangeRegistry();
+            if (passive) {
+                //If set, the server will reply with Declare­Ok if the exchange already exists with the same name, and raise an error if not.
+                Assert.isTrue(exchangeRegistrar.contains(exchange), ExceptionMessages.buildExceptionMsgWithTemplate("current # not contains #",virtualHost.name(),exchange));
+                return new DeclareOk();
+            } else {
+                //构建基础的exchange对象
+                BaseExchange newExchange = new StandardExchange(exchange,Integer.parseInt(type), (String) arguments.get(FeatureKeys.Custom.EXCHANGE_ID),durable);
+                newExchange.updateCurrState(LifeCyclePhases.Exchange.CREATE,LifeCyclePhases.Status.START);
+                //解析特定的路由规则 todo dongyue
+
+                //注册之
+                exchangeRegistrar.register(newExchange.exchangeId(),newExchange);
+                newExchange.updateCurrState(LifeCyclePhases.Exchange.CREATE,LifeCyclePhases.Status.FINISH);
+                return new DeclareOk();
+            }
+        }
+
+        public String getReserved1() {
+            return reserved1;
+        }
+
+        public String getReserved2() {
+            return reserved2;
+        }
+
+        public String getReserved3() {
+            return reserved3;
+        }
+
+        public String getExchange() {
+            return exchange;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public boolean isPassive() {
+            return passive;
+        }
+
+        public boolean isDurable() {
+            return durable;
+        }
+
+        public String getNoWait() {
+            return noWait;
+        }
+
+        public Map<String, Object> getArguments() {
+            return arguments;
         }
     }
 
@@ -77,7 +153,7 @@ public final class Exchange extends FeatureBased implements Class {
 
         @Override
         public Void execute() {
-            return null;
+            throw new ChannelException(ExceptionMessages.ConnectionErrors.COMMAND_INVALID);
         }
     }
 
@@ -85,6 +161,15 @@ public final class Exchange extends FeatureBased implements Class {
      * 删除交换器
      */
     public class Delete extends BaseTransactionalCommand<DeleteOk> {
+
+        String reserved1;
+
+        String exchange;
+
+        boolean ifUnused;
+
+        boolean noWait;
+
 
         @Override
         public String desc() {
@@ -98,7 +183,16 @@ public final class Exchange extends FeatureBased implements Class {
 
         @Override
         protected DeleteOk executeInternal() {
-            return null;
+            VirtualHost virtualHost = (VirtualHost) getFeature(FeatureKeys.Command.VIRTUALHOST);
+            Registrar<String, org.archer.archermq.protocol.Exchange> exchangeRegistrar = virtualHost.getExchangeRegistry();
+            if(!exchangeRegistrar.contains(exchange)){
+                return new DeleteOk();
+            }
+            if(StringUtils.equals(LifeCyclePhases.Exchange.INUSE,exchangeRegistrar.get(exchange).currPhase())){
+                return new DeleteOk();
+            }
+            exchangeRegistrar.remove(exchange);
+            return new DeleteOk();
         }
     }
 
@@ -116,7 +210,7 @@ public final class Exchange extends FeatureBased implements Class {
 
         @Override
         public Void execute() {
-            return null;
+            throw new ChannelException(ExceptionMessages.ChannelErrors.PRECONDITION_FAILED);
         }
     }
 
