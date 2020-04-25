@@ -53,8 +53,10 @@ public class ExceptionMessages {
     }
 
     public interface SystemErrors {
+        ExceptionMessages NULL_POINTER = build("null-pointer",640,2,"occur a null pointer exception,check the server log to resolve it.");
         ExceptionMessages STATE_ERR = build("state-err", 641, 2, "current state not allow change to target state,check your invocation.");
         ExceptionMessages FEATURE_ERR = build("feature-err", 642, 2, "cannot find out the feature or feature type is wrong");
+        ExceptionMessages INSTANTIATION_ERR = build("instantiation-err",643,3,"cannot instantiate target instance,check the server log to resolve it");
     }
 
     public static ExceptionMessages build(String name, int id, int errType, String desc) {

@@ -24,7 +24,7 @@ import java.util.Objects;
  * @author dongyue
  * @date 2020年04月20日18:51:38
  */
-public final class Channel extends FeatureBased implements Class{
+public final class Channel extends FeatureBased implements Class {
 
     private static final Logger logger = LoggerFactory.getLogger("");
 
@@ -43,11 +43,12 @@ public final class Channel extends FeatureBased implements Class{
     /**
      * 开启信道
      */
-    public class Open implements Command<OpenOk> {
+    public class Open extends BaseCommand<OpenOk> {
 
         private final String reserved1;
 
         public Open(String reserved1) {
+            super(classId, 10);
             this.reserved1 = reserved1;
         }
 
@@ -56,15 +57,11 @@ public final class Channel extends FeatureBased implements Class{
             return "open a channel for use";
         }
 
-        @Override
-        public int commandId() {
-            return 10;
-        }
 
         @Override
         public OpenOk execute() {
             org.archer.archermq.protocol.Channel channel = (org.archer.archermq.protocol.Channel) getFeature(FeatureKeys.Command.AMQP_CHANNEL);
-            if(Objects.nonNull(channel)){
+            if (Objects.nonNull(channel)) {
                 throw new ChannelException(ExceptionMessages.ChannelErrors.PRECONDITION_FAILED);
             }
             String channelId = openNewChannel();
@@ -81,22 +78,18 @@ public final class Channel extends FeatureBased implements Class{
         }
     }
 
-    public class OpenOk implements Command<Void>{
+    public class OpenOk extends BaseCommand<Void> {
 
         private final String reserved1;
 
         public OpenOk(String reserved1) {
+            super(classId, 11);
             this.reserved1 = reserved1;
         }
 
         @Override
         public String desc() {
             return "signal that the channel is ready";
-        }
-
-        @Override
-        public int commandId() {
-            return 11;
         }
 
         @Override
@@ -109,22 +102,18 @@ public final class Channel extends FeatureBased implements Class{
         }
     }
 
-    public class Flow extends FeatureBased implements Command<FlowOk>{
+    public class Flow extends BaseCommand<FlowOk> {
 
         private final boolean active;
 
         public Flow(boolean active) {
+            super(classId, 20);
             this.active = active;
         }
 
         @Override
         public String desc() {
             return "enable/disable flow from peer";
-        }
-
-        @Override
-        public int commandId() {
-            return 20;
         }
 
         @Override
@@ -139,22 +128,18 @@ public final class Channel extends FeatureBased implements Class{
         }
     }
 
-    public class FlowOk implements Command<Void>{
+    public class FlowOk extends BaseCommand<Void> {
 
         private final boolean active;
 
         public FlowOk(boolean active) {
+            super(classId, 21);
             this.active = active;
         }
 
         @Override
         public String desc() {
             return "confirm a flow method";
-        }
-
-        @Override
-        public int commandId() {
-            return 21;
         }
 
         @Override
@@ -170,7 +155,7 @@ public final class Channel extends FeatureBased implements Class{
     /**
      * 关闭信道
      */
-    public class Close implements Command<CloseOk> {
+    public class Close extends BaseCommand<CloseOk> {
 
         private final String replyCode;
 
@@ -181,6 +166,7 @@ public final class Channel extends FeatureBased implements Class{
         private final Short methodId;
 
         public Close(String replyCode, String replyText, Short classId, Short methodId) {
+            super(classId, 40);
             this.replyCode = replyCode;
             this.replyText = replyText;
             this.classId = classId;
@@ -190,11 +176,6 @@ public final class Channel extends FeatureBased implements Class{
         @Override
         public String desc() {
             return "request a channel close";
-        }
-
-        @Override
-        public int commandId() {
-            return 40;
         }
 
         @Override
@@ -226,17 +207,17 @@ public final class Channel extends FeatureBased implements Class{
         }
     }
 
-    public class CloseOk implements Command<Void>{
+    public class CloseOk extends BaseCommand<Void> {
+
+        public CloseOk() {
+            super(classId, 41);
+        }
 
         @Override
         public String desc() {
             return "confirm a channel close";
         }
 
-        @Override
-        public int commandId() {
-            return 41;
-        }
 
         @Override
         public Void execute() {
@@ -249,12 +230,12 @@ public final class Channel extends FeatureBased implements Class{
     static {
         ApplicationContext context = ApplicationContextHolder.getApplicationContext();
         MethodResolver methodResolver = context.getBean(MethodResolver.class);
-        methodResolver.register(classId,41);
-        methodResolver.register(classId,40);
-        methodResolver.register(classId,21);
-        methodResolver.register(classId,20);
-        methodResolver.register(classId,11);
-        methodResolver.register(classId,10);
+        methodResolver.register(classId, 41, CloseOk.class);
+        methodResolver.register(classId, 40, Close.class);
+        methodResolver.register(classId, 21, FlowOk.class);
+        methodResolver.register(classId, 20, Flow.class);
+        methodResolver.register(classId, 11, OpenOk.class);
+        methodResolver.register(classId, 10, Open.class);
     }
 
 }

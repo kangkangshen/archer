@@ -10,6 +10,10 @@ import org.archer.archermq.protocol.transport.Frame;
  */
 public abstract class BaseTransactionalCommand<RESPONSE> extends BaseCommand<RESPONSE>{
 
+    public BaseTransactionalCommand(int classId, int methodId) {
+        super(classId, methodId);
+    }
+
     @Override
     public RESPONSE execute() {
         return null;

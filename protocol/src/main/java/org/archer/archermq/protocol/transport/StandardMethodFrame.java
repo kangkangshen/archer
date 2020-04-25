@@ -3,6 +3,9 @@ package org.archer.archermq.protocol.transport;
 
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+import java.util.Map;
 
 /**
  * 标准方法帧实现
@@ -11,6 +14,7 @@ import lombok.Data;
  * @author dongyue
  * @date 2020年04月14日13:04:44
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class StandardMethodFrame extends StandardFrame {
 
@@ -19,5 +23,6 @@ public class StandardMethodFrame extends StandardFrame {
     private short rawMethodId;
 
     private ByteBuf rawArgs;
-    private Object[] args;
+
+    private Map<String, Object> args;
 }

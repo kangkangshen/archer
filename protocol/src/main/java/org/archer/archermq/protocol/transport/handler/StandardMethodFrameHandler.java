@@ -3,9 +3,13 @@ package org.archer.archermq.protocol.transport.handler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageEncoder;
 import org.archer.archermq.protocol.constants.FrameTypeEnum;
+import org.archer.archermq.protocol.model.Command;
+import org.archer.archermq.protocol.model.MethodResolver;
 import org.archer.archermq.protocol.transport.Frame;
+import org.archer.archermq.protocol.transport.FrameConverter;
 import org.archer.archermq.protocol.transport.FrameHandler;
 import org.archer.archermq.protocol.transport.StandardMethodFrame;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -26,6 +30,14 @@ import java.util.Objects;
 @Component
 public class StandardMethodFrameHandler implements FrameHandler {
 
+    @Autowired
+    private MethodResolver methodResolver;
+
+    @Autowired
+    private FrameConverter frameConverter;
+
+
+
 
     @Override
     public boolean canHandle(FrameTypeEnum targetType) {
@@ -35,16 +47,31 @@ public class StandardMethodFrameHandler implements FrameHandler {
     @Override
     public boolean validate(Frame targetFrame) {
         //double check
-        boolean valid = Objects.nonNull(targetFrame);
-        valid &= Objects.equals(FrameTypeEnum.METHOD, targetFrame.type());
+        if(!Objects.nonNull(targetFrame)){
+            return false;
+        }
+        if(!Objects.equals(FrameTypeEnum.METHOD, targetFrame.type())){
+            return false;
+        }
 
-        //检查是否存在对应的方法
-
-        return valid;
+        return true;
     }
 
     @Override
     public Object handleFrame(Frame frame) {
-        return null;
+
+        StandardMethodFrame methodFrame = frameConverter.convert(frame);
+
+        if(!methodResolver.support(methodFrame.getRawClassId(),methodFrame.getRawMethodId())){
+            return false;
+        }
+
+        Command<?> targetCommand = methodResolver.route(methodFrame);
+
+        return targetCommand.execute();
+
+
     }
+
+
 }

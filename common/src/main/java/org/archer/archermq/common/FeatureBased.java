@@ -13,7 +13,7 @@ import java.util.Objects;
  */
 public class FeatureBased implements Extensible{
 
-    private Map<String, Object> feature = Maps.newConcurrentMap();
+    private final Map<String, Object> feature = Maps.newConcurrentMap();
 
     /**
      * 添加feature,如果已存在，则忽略此次添加

@@ -5,16 +5,19 @@ import org.springframework.context.ApplicationContext;
 
 public abstract class BaseCommand<RESPONSE> implements Command<RESPONSE> {
 
-    private static final MethodResolver methodResolver;
-
     private final int classId;
 
     private final int methodId;
 
+    //不允许直接使用无餐构造器
+    private BaseCommand() {
+        this.classId = Integer.MIN_VALUE;
+        this.methodId = Integer.MIN_VALUE;
+    }
+
     public BaseCommand(int classId, int methodId) {
         this.classId = classId;
         this.methodId = methodId;
-        methodResolver.register(classId,methodId);
     }
 
 
@@ -27,6 +30,4 @@ public abstract class BaseCommand<RESPONSE> implements Command<RESPONSE> {
     public int classId() {
         return classId;
     }
-
-
 }

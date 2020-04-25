@@ -8,4 +8,6 @@ public interface Delimiters {
     String COLON = ":";
 
     String COMMA = ",";
+
+    String DOLLAR = "$";
 }

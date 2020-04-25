@@ -1,5 +1,6 @@
 package org.archer.archermq.protocol.model;
 
+import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.archer.archermq.common.FeatureBased;
 import org.archer.archermq.common.constants.Delimiters;
@@ -58,6 +59,7 @@ public final class Basic extends FeatureBased implements Class {
         private boolean global;
 
         public Qos(int prefetchSize, short prefetchCount, boolean global) {
+            super(classId, 10);
             this.prefetchSize = prefetchSize;
             this.prefetchCount = prefetchCount;
             this.global = global;
@@ -68,10 +70,6 @@ public final class Basic extends FeatureBased implements Class {
             return "specify quality of service";
         }
 
-        @Override
-        public int commandId() {
-            return 10;
-        }
 
         @Override
         public QosOk execute() {
@@ -88,15 +86,15 @@ public final class Basic extends FeatureBased implements Class {
 
     public class QosOk extends BaseCommand<Void> {
 
+        public QosOk() {
+            super(classId, 11);
+        }
+
         @Override
         public String desc() {
             return "confirm the requested qos";
         }
 
-        @Override
-        public int commandId() {
-            return 11;
-        }
 
         @Override
         public Void execute() {
@@ -126,6 +124,7 @@ public final class Basic extends FeatureBased implements Class {
         private Map<String, Object> arguments;
 
         public Consume(String reserved1, String queue, String consumerTag, boolean noLocal, boolean noAck, boolean exclusive, String noWait, Map<String, Object> arguments) {
+            super(classId, 20);
             this.reserved1 = reserved1;
             this.queue = queue;
             this.consumerTag = consumerTag;
@@ -139,11 +138,6 @@ public final class Basic extends FeatureBased implements Class {
         @Override
         public String desc() {
             return "start a queue consumer";
-        }
-
-        @Override
-        public int commandId() {
-            return 20;
         }
 
         @Override
@@ -183,6 +177,7 @@ public final class Basic extends FeatureBased implements Class {
         private final String consumerTag;
 
         public ConsumeOk(String consumerTag) {
+            super(classId, 21);
             this.consumerTag = consumerTag;
         }
 
@@ -191,10 +186,6 @@ public final class Basic extends FeatureBased implements Class {
             return "confirm a new consumer";
         }
 
-        @Override
-        public int commandId() {
-            return 21;
-        }
 
         @Override
         public Void execute() {
@@ -220,6 +211,7 @@ public final class Basic extends FeatureBased implements Class {
 
 
         public Cancel(String consumerTag, String noWait) {
+            super(classId, 30);
             this.consumerTag = consumerTag;
             this.noWait = noWait;
         }
@@ -229,10 +221,6 @@ public final class Basic extends FeatureBased implements Class {
             return "end a queue consumer";
         }
 
-        @Override
-        public int commandId() {
-            return 30;
-        }
 
         @Override
         protected CancelOk executeInternal() {
@@ -260,10 +248,6 @@ public final class Basic extends FeatureBased implements Class {
             return "confirm a cancelled consumer";
         }
 
-        @Override
-        public int commandId() {
-            return 31;
-        }
 
         @Override
         public Void execute() {
@@ -293,6 +277,7 @@ public final class Basic extends FeatureBased implements Class {
         private boolean immediate;
 
         public Publish(String reserved1, String exchange, String routingKey, boolean mandatory, boolean immediate) {
+            super(classId, 40);
             this.reserved1 = reserved1;
             this.exchange = exchange;
             this.routingKey = routingKey;
@@ -305,14 +290,10 @@ public final class Basic extends FeatureBased implements Class {
             return "publish a message";
         }
 
-        @Override
-        public int commandId() {
-            return 40;
-        }
 
         @Override
         protected Void executeInternal() {
-
+            return null;
         }
     }
 
@@ -330,6 +311,7 @@ public final class Basic extends FeatureBased implements Class {
         private String routingKey;
 
         public Return(String replyCode, String replyText, String exchange, String routingKey) {
+            super(classId, 50);
             this.replyCode = replyCode;
             this.replyText = replyText;
             this.exchange = exchange;
@@ -341,10 +323,6 @@ public final class Basic extends FeatureBased implements Class {
             return "return a failed message";
         }
 
-        @Override
-        public int commandId() {
-            return 50;
-        }
 
         @Override
         protected Void executeInternal() {
@@ -368,6 +346,7 @@ public final class Basic extends FeatureBased implements Class {
         private String routingKey;
 
         public Deliver(String consumerTag, String deliveryTag, boolean redelivered, String exchange, String routingKey) {
+            super(classId, 60);
             this.consumerTag = consumerTag;
             this.deliveryTag = deliveryTag;
             this.redelivered = redelivered;
@@ -380,10 +359,6 @@ public final class Basic extends FeatureBased implements Class {
             return "notify the client of a consumer message";
         }
 
-        @Override
-        public int commandId() {
-            return 60;
-        }
 
         @Override
         protected Void executeInternal() {
@@ -403,6 +378,7 @@ public final class Basic extends FeatureBased implements Class {
         private boolean noAck;
 
         public Get(String reserved1, String queue, boolean noAck) {
+            super(classId, 70);
             this.reserved1 = reserved1;
             this.queue = queue;
             this.noAck = noAck;
@@ -411,11 +387,6 @@ public final class Basic extends FeatureBased implements Class {
         @Override
         public String desc() {
             return "direct access to a queue";
-        }
-
-        @Override
-        public int commandId() {
-            return 70;
         }
 
         @Override
@@ -453,6 +424,7 @@ public final class Basic extends FeatureBased implements Class {
         private final int msgCnt;
 
         public GetOk(String deliveryTag, boolean redelivered, String exchange, String routingKey, int msgCnt) {
+            super(classId, 71);
             this.deliveryTag = deliveryTag;
             this.redelivered = redelivered;
             this.exchange = exchange;
@@ -466,11 +438,6 @@ public final class Basic extends FeatureBased implements Class {
         }
 
         @Override
-        public int commandId() {
-            return 71;
-        }
-
-        @Override
         public Void execute() {
             throw new ConnectionException(ExceptionMessages.ConnectionErrors.COMMAND_INVALID);
         }
@@ -481,6 +448,7 @@ public final class Basic extends FeatureBased implements Class {
         private String reserved1;
 
         public GetEmpty(String reserved1) {
+            super(classId, 72);
             this.reserved1 = reserved1;
         }
 
@@ -490,10 +458,6 @@ public final class Basic extends FeatureBased implements Class {
             return "indicate no messages available";
         }
 
-        @Override
-        public int commandId() {
-            return 72;
-        }
 
         @Override
         public Void execute() {
@@ -511,6 +475,7 @@ public final class Basic extends FeatureBased implements Class {
         private boolean multiple;
 
         public Ack(String deliveryTag, boolean multiple) {
+            super(classId, 80);
             this.deliveryTag = deliveryTag;
             this.multiple = multiple;
         }
@@ -518,11 +483,6 @@ public final class Basic extends FeatureBased implements Class {
         @Override
         public String desc() {
             return "acknowledge one or more messages";
-        }
-
-        @Override
-        public int commandId() {
-            return 80;
         }
 
         @Override
@@ -546,16 +506,18 @@ public final class Basic extends FeatureBased implements Class {
 
         private boolean requeue;
 
+        public Reject(String deliveryTag, boolean requeue) {
+            super(classId, 90);
+            this.deliveryTag = deliveryTag;
+            this.requeue = requeue;
+        }
+
 
         @Override
         public String desc() {
             return "reject an incoming message";
         }
 
-        @Override
-        public int commandId() {
-            return 90;
-        }
 
         @Override
         protected Void executeInternal() {
@@ -577,17 +539,13 @@ public final class Basic extends FeatureBased implements Class {
         private final boolean requeue;
 
         public Recover(boolean requeue) {
+            super(classId, 110);
             this.requeue = requeue;
         }
 
         @Override
         public String desc() {
             return " redeliver unacknowledged messages";
-        }
-
-        @Override
-        public int commandId() {
-            return 110;
         }
 
         @Override
@@ -616,17 +574,13 @@ public final class Basic extends FeatureBased implements Class {
         private final boolean requeue;
 
         public RecoverAsync(boolean requeue) {
+            super(classId, 100);
             this.requeue = requeue;
         }
 
         @Override
         public String desc() {
             return "redeliver unacknowledged messages";
-        }
-
-        @Override
-        public int commandId() {
-            return 100;
         }
 
         @Override
@@ -648,14 +602,13 @@ public final class Basic extends FeatureBased implements Class {
 
     public class RecoverOk extends BaseCommand<Void> {
 
-        @Override
-        public String desc() {
-            return "confirm recovery";
+        public RecoverOk() {
+            super(classId, 111);
         }
 
         @Override
-        public int commandId() {
-            return 111;
+        public String desc() {
+            return "confirm recovery";
         }
 
         @Override
@@ -667,23 +620,23 @@ public final class Basic extends FeatureBased implements Class {
     static {
         ApplicationContext context = ApplicationContextHolder.getApplicationContext();
         MethodResolver methodResolver = context.getBean(MethodResolver.class);
-        methodResolver.register(classId, 111);
-        methodResolver.register(classId, 100);
-        methodResolver.register(classId, 110);
-        methodResolver.register(classId, 90);
-        methodResolver.register(classId, 80);
-        methodResolver.register(classId, 72);
-        methodResolver.register(classId, 71);
-        methodResolver.register(classId,70);
-        methodResolver.register(classId,60);
-        methodResolver.register(classId,50);
-        methodResolver.register(classId,40);
-        methodResolver.register(classId,31);
-        methodResolver.register(classId,30);
-        methodResolver.register(classId,21);
-        methodResolver.register(classId,20);
-        methodResolver.register(classId,11);
-        methodResolver.register(classId,10);
+        methodResolver.register(classId, 111, RecoverOk.class);
+        methodResolver.register(classId, 100, RecoverAsync.class);
+        methodResolver.register(classId, 110, Recover.class);
+        methodResolver.register(classId, 90, Reject.class);
+        methodResolver.register(classId, 80, Ack.class);
+        methodResolver.register(classId, 72, GetEmpty.class);
+        methodResolver.register(classId, 71, GetOk.class);
+        methodResolver.register(classId, 70, Get.class);
+        methodResolver.register(classId, 60, Deliver.class);
+        methodResolver.register(classId, 50, Return.class);
+        methodResolver.register(classId, 40, Publish.class);
+        methodResolver.register(classId, 31, CancelOk.class);
+        methodResolver.register(classId, 30, Cancel.class);
+        methodResolver.register(classId, 21, ConsumeOk.class);
+        methodResolver.register(classId, 20, Consume.class);
+        methodResolver.register(classId, 11, QosOk.class);
+        methodResolver.register(classId, 10, Qos.class);
 
 
     }
