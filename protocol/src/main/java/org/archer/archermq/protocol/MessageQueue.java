@@ -41,9 +41,9 @@ public interface MessageQueue extends LifeCycle {
 
     void unlock();
 
-    void dequeue(Message message);
+    void enqueue(Message message);
 
-    Message enqueue();
+    Message dequeue();
 
     /**
      * 获取当前队列名

@@ -39,7 +39,9 @@ public interface LifeCyclePhases {
 
         String CREATE = "create";
 
-        String INUSE = "inuse";
+        String BIND = "bind";
+
+        String UNBIND = "unbind";
 
         String DELETE = "delete";
 
@@ -53,7 +55,9 @@ public interface LifeCyclePhases {
 
         String ACCEPT = "accept";
 
-        String QUEUE = "queue";
+        String ENQUEUE = "enqueue";
+
+        String DEQUEUE = "dequeue";
 
         String UNCONFIRMED = "unConfirmed";
 

@@ -12,7 +12,6 @@ import org.archer.archermq.protocol.constants.LifeCyclePhases;
 import org.archer.archermq.protocol.transport.BaseMsgQueue;
 import org.archer.archermq.protocol.transport.ChannelException;
 import org.archer.archermq.protocol.transport.ConnectionException;
-import org.archer.archermq.protocol.transport.StandardMsgQueue;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
 
@@ -441,7 +440,7 @@ public final class Queue extends FeatureBased implements Class {
                 try{
                     msgQueue.lock();
                     if(ifUnused){
-                        if(Objects.equals(LifeCyclePhases.MessageQueue.INUSE,msgQueue.currPhase())){
+                        if(Objects.equals(LifeCyclePhases.MessageQueue.BIND,msgQueue.currPhase())){
                             msgQueueRegistry.remove(queue);
                         }
                     }else if(ifEmpty){
