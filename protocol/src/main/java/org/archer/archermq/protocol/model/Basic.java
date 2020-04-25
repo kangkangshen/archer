@@ -3,9 +3,10 @@ package org.archer.archermq.protocol.model;
 import org.apache.commons.lang3.StringUtils;
 import org.archer.archermq.common.FeatureBased;
 import org.archer.archermq.common.constants.Delimiters;
-import org.archer.archermq.protocol.*;
+import org.archer.archermq.common.utils.ApplicationContextHolder;
 import org.archer.archermq.protocol.Channel;
 import org.archer.archermq.protocol.Connection;
+import org.archer.archermq.protocol.*;
 import org.archer.archermq.protocol.constants.DeliverMode;
 import org.archer.archermq.protocol.constants.ExceptionMessages;
 import org.archer.archermq.protocol.constants.FeatureKeys;
@@ -14,8 +15,8 @@ import org.archer.archermq.protocol.transport.ConnectionException;
 import org.archer.archermq.protocol.transport.StandardConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -29,11 +30,11 @@ import java.util.Set;
 public final class Basic extends FeatureBased implements Class {
 
     private static final Logger logger = LoggerFactory.getLogger("");
-
+    private static final int classId = 60;
 
     @Override
     public int classId() {
-        return 60;
+        return classId;
     }
 
     @Override
@@ -419,24 +420,25 @@ public final class Basic extends FeatureBased implements Class {
 
         @Override
         protected GetAck executeInternal() {
-           VirtualHost virtualHost = (VirtualHost) getFeature(FeatureKeys.Command.VIRTUALHOST);
-           Registrar<String,MessageQueue> msgQueueRegistry = virtualHost.getMsgQueueRegistry();
-           if(!msgQueueRegistry.contains(queue)){
-               MessageQueue msgQueue = msgQueueRegistry.get(queue);
-               msgQueue.setDeliverMode(DeliverMode.PULL);
-               if(msgQueue.localMsgCnt()==0){
-                   return new GetEmpty(reserved1);
-               }else{
-                   return new GetOk()
-               }
-           }
-           return new GetOk();
+            VirtualHost virtualHost = (VirtualHost) getFeature(FeatureKeys.Command.VIRTUALHOST);
+            Registrar<String, MessageQueue> msgQueueRegistry = virtualHost.getMsgQueueRegistry();
+            if (!msgQueueRegistry.contains(queue)) {
+                MessageQueue msgQueue = msgQueueRegistry.get(queue);
+                msgQueue.setDeliverMode(DeliverMode.PULL);
+                if (msgQueue.localMsgCnt() == 0) {
+                    return new GetEmpty(reserved1);
+                } else {
+                    return new GetOk()
+                }
+            }
+            return new GetOk();
 
         }
     }
 
     //标记接口
-    public interface GetAck extends Command<Void> {}
+    public interface GetAck extends Command<Void> {
+    }
 
     public class GetOk extends BaseCommand<Void> implements GetAck {
 
@@ -474,7 +476,7 @@ public final class Basic extends FeatureBased implements Class {
         }
     }
 
-    public class GetEmpty extends BaseCommand<Void> implements GetAck{
+    public class GetEmpty extends BaseCommand<Void> implements GetAck {
 
         private String reserved1;
 
@@ -526,10 +528,10 @@ public final class Basic extends FeatureBased implements Class {
         @Override
         public Void execute() {
             Channel channel = (Channel) getFeature(FeatureKeys.Command.AMQP_CHANNEL);
-            if(StringUtils.isBlank(deliveryTag)){
+            if (StringUtils.isBlank(deliveryTag)) {
                 channel.confirmAllMsg();
-            }else{
-                channel.confirmMsg(deliveryTag,multiple);
+            } else {
+                channel.confirmMsg(deliveryTag, multiple);
             }
             return null;
         }
@@ -558,9 +560,9 @@ public final class Basic extends FeatureBased implements Class {
         @Override
         protected Void executeInternal() {
             Channel channel = (Channel) getFeature(FeatureKeys.Command.AMQP_CHANNEL);
-            if(requeue){
+            if (requeue) {
                 throw new ChannelException(ExceptionMessages.ConnectionErrors.NOT_IMPLEMENTED);
-            }else{
+            } else {
                 //TODO dongyue
                 return null;
             }
@@ -592,12 +594,12 @@ public final class Basic extends FeatureBased implements Class {
         protected RecoverOk executeInternal() {
             Channel channel = (Channel) getFeature(FeatureKeys.Command.AMQP_CHANNEL);
             Queue<Message> unConfirmedMsg = channel.unConfirmedMsg();
-            if(requeue){
-                for(Message msg:unConfirmedMsg){
+            if (requeue) {
+                for (Message msg : unConfirmedMsg) {
                     channel.exchange(msg);
                 }
-            }else{
-                for(Message msg:unConfirmedMsg){
+            } else {
+                for (Message msg : unConfirmedMsg) {
                     channel.redeliver(msg);
                 }
             }
@@ -631,12 +633,12 @@ public final class Basic extends FeatureBased implements Class {
         protected RecoverOk executeInternal() {
             Channel channel = (Channel) getFeature(FeatureKeys.Command.AMQP_CHANNEL);
             Queue<Message> unConfirmedMsg = channel.unConfirmedMsg();
-            if(requeue){
-                for(Message msg:unConfirmedMsg){
+            if (requeue) {
+                for (Message msg : unConfirmedMsg) {
                     channel.exchange(msg);
                 }
-            }else{
-                for(Message msg:unConfirmedMsg){
+            } else {
+                for (Message msg : unConfirmedMsg) {
                     channel.redeliver(msg);
                 }
             }
@@ -660,6 +662,30 @@ public final class Basic extends FeatureBased implements Class {
         public Void execute() {
             throw new ConnectionException(ExceptionMessages.ConnectionErrors.COMMAND_INVALID);
         }
+    }
+
+    static {
+        ApplicationContext context = ApplicationContextHolder.getApplicationContext();
+        MethodResolver methodResolver = context.getBean(MethodResolver.class);
+        methodResolver.register(classId, 111);
+        methodResolver.register(classId, 100);
+        methodResolver.register(classId, 110);
+        methodResolver.register(classId, 90);
+        methodResolver.register(classId, 80);
+        methodResolver.register(classId, 72);
+        methodResolver.register(classId, 71);
+        methodResolver.register(classId,70);
+        methodResolver.register(classId,60);
+        methodResolver.register(classId,50);
+        methodResolver.register(classId,40);
+        methodResolver.register(classId,31);
+        methodResolver.register(classId,30);
+        methodResolver.register(classId,21);
+        methodResolver.register(classId,20);
+        methodResolver.register(classId,11);
+        methodResolver.register(classId,10);
+
+
     }
 
 }

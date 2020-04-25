@@ -2,6 +2,7 @@ package org.archer.archermq.protocol.model;
 
 import org.apache.commons.lang3.StringUtils;
 import org.archer.archermq.common.FeatureBased;
+import org.archer.archermq.common.utils.ApplicationContextHolder;
 import org.archer.archermq.protocol.Registrar;
 import org.archer.archermq.protocol.VirtualHost;
 import org.archer.archermq.protocol.constants.ExceptionMessages;
@@ -12,6 +13,7 @@ import org.archer.archermq.protocol.transport.ChannelException;
 import org.archer.archermq.protocol.transport.StandardExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
 
 import java.util.Map;
@@ -25,11 +27,12 @@ import java.util.Map;
 public final class Exchange extends FeatureBased implements Class {
 
     private static final Logger logger = LoggerFactory.getLogger("");
+    private static final int classId = 40;
 
 
     @Override
     public int classId() {
-        return 40;
+        return classId;
     }
 
     @Override
@@ -61,7 +64,7 @@ public final class Exchange extends FeatureBased implements Class {
 
         private final Map<String, Object> arguments;
 
-        public Declare( String exchange, String type, boolean passive,boolean durable,String noWait,Map<String,Object> arguments) {
+        public Declare(String exchange, String type, boolean passive, boolean durable, String noWait, Map<String, Object> arguments) {
             this.exchange = exchange;
             this.type = type;
             this.passive = passive;
@@ -87,17 +90,17 @@ public final class Exchange extends FeatureBased implements Class {
             Registrar<String, org.archer.archermq.protocol.Exchange> exchangeRegistrar = virtualHost.getExchangeRegistry();
             if (passive) {
                 //If set, the server will reply with Declare­Ok if the exchange already exists with the same name, and raise an error if not.
-                Assert.isTrue(exchangeRegistrar.contains(exchange), ExceptionMessages.buildExceptionMsgWithTemplate("current # not contains #",virtualHost.name(),exchange));
+                Assert.isTrue(exchangeRegistrar.contains(exchange), ExceptionMessages.buildExceptionMsgWithTemplate("current # not contains #", virtualHost.name(), exchange));
                 return new DeclareOk();
             } else {
                 //构建基础的exchange对象
-                BaseExchange newExchange = new StandardExchange(exchange,Integer.parseInt(type), (String) arguments.get(FeatureKeys.Custom.EXCHANGE_ID),durable);
-                newExchange.updateCurrState(LifeCyclePhases.Exchange.CREATE,LifeCyclePhases.Status.START);
+                BaseExchange newExchange = new StandardExchange(exchange, Integer.parseInt(type), (String) arguments.get(FeatureKeys.Custom.EXCHANGE_ID), durable);
+                newExchange.updateCurrState(LifeCyclePhases.Exchange.CREATE, LifeCyclePhases.Status.START);
                 //解析特定的路由规则 todo dongyue
 
                 //注册之
-                exchangeRegistrar.register(newExchange.exchangeId(),newExchange);
-                newExchange.updateCurrState(LifeCyclePhases.Exchange.CREATE,LifeCyclePhases.Status.FINISH);
+                exchangeRegistrar.register(newExchange.exchangeId(), newExchange);
+                newExchange.updateCurrState(LifeCyclePhases.Exchange.CREATE, LifeCyclePhases.Status.FINISH);
                 return new DeclareOk();
             }
         }
@@ -185,10 +188,10 @@ public final class Exchange extends FeatureBased implements Class {
         protected DeleteOk executeInternal() {
             VirtualHost virtualHost = (VirtualHost) getFeature(FeatureKeys.Command.VIRTUALHOST);
             Registrar<String, org.archer.archermq.protocol.Exchange> exchangeRegistrar = virtualHost.getExchangeRegistry();
-            if(!exchangeRegistrar.contains(exchange)){
+            if (!exchangeRegistrar.contains(exchange)) {
                 return new DeleteOk();
             }
-            if(StringUtils.equals(LifeCyclePhases.Exchange.INUSE,exchangeRegistrar.get(exchange).currPhase())){
+            if (StringUtils.equals(LifeCyclePhases.Exchange.INUSE, exchangeRegistrar.get(exchange).currPhase())) {
                 return new DeleteOk();
             }
             exchangeRegistrar.remove(exchange);
@@ -212,6 +215,15 @@ public final class Exchange extends FeatureBased implements Class {
         public Void execute() {
             throw new ChannelException(ExceptionMessages.ChannelErrors.PRECONDITION_FAILED);
         }
+    }
+
+    static {
+        ApplicationContext context = ApplicationContextHolder.getApplicationContext();
+        MethodResolver methodResolver = context.getBean(MethodResolver.class);
+        methodResolver.register(classId,21);
+        methodResolver.register(classId,20);
+        methodResolver.register(classId,11);
+        methodResolver.register(classId,10);
     }
 
 

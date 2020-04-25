@@ -9,6 +9,7 @@ import org.archer.archermq.protocol.transport.StandardMethodFrame;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -33,7 +34,13 @@ public class StandardMethodFrameHandler implements FrameHandler {
 
     @Override
     public boolean validate(Frame targetFrame) {
-        return false;
+        //double check
+        boolean valid = Objects.nonNull(targetFrame);
+        valid &= Objects.equals(FrameTypeEnum.METHOD, targetFrame.type());
+
+        //检查是否存在对应的方法
+
+        return valid;
     }
 
     @Override

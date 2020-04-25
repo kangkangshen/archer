@@ -1,10 +1,12 @@
 package org.archer.archermq.protocol.model;
 
 import org.archer.archermq.common.FeatureBased;
+import org.archer.archermq.common.utils.ApplicationContextHolder;
 import org.archer.archermq.protocol.Channel;
 import org.archer.archermq.protocol.constants.ExceptionMessages;
 import org.archer.archermq.protocol.constants.FeatureKeys;
 import org.archer.archermq.protocol.transport.ConnectionException;
+import org.springframework.context.ApplicationContext;
 
 import java.util.List;
 
@@ -16,11 +18,13 @@ import java.util.List;
  * Transactions that cover multiple queues may be non­atomic, given that queues can be created and destroyed asynchronously, and such events do not form part of any transaction.
  * Further, the behaviour of transactions with respect to the immediate and mandatory flags on Basic.Publish methods is not defined.
  */
-public final class Tx extends FeatureBased implements Class{
+public final class Tx extends FeatureBased implements Class {
+
+    private static final int classId = 90;
 
     @Override
     public int classId() {
-        return 90;
+        return classId;
     }
 
     @Override
@@ -149,5 +153,16 @@ public final class Tx extends FeatureBased implements Class{
         public Void execute() {
             throw new ConnectionException(ExceptionMessages.ConnectionErrors.NOT_IMPLEMENTED);
         }
+    }
+
+    static {
+        ApplicationContext context = ApplicationContextHolder.getApplicationContext();
+        MethodResolver methodResolver = context.getBean(MethodResolver.class);
+        methodResolver.register(classId, 31);
+        methodResolver.register(classId, 30);
+        methodResolver.register(classId, 21);
+        methodResolver.register(classId, 20);
+        methodResolver.register(classId, 11);
+        methodResolver.register(classId, 10);
     }
 }

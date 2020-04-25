@@ -5,6 +5,7 @@ import org.archer.archermq.common.FeatureBased;
 import org.archer.archermq.common.log.BizLogUtil;
 import org.archer.archermq.common.log.LogConstants;
 import org.archer.archermq.common.log.LogInfo;
+import org.archer.archermq.common.utils.ApplicationContextHolder;
 import org.archer.archermq.protocol.constants.ClassEnum;
 import org.archer.archermq.protocol.constants.ExceptionMessages;
 import org.archer.archermq.protocol.constants.FeatureKeys;
@@ -13,6 +14,7 @@ import org.archer.archermq.protocol.transport.ChannelException;
 import org.archer.archermq.protocol.transport.ConnectionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 
 import java.util.Objects;
 
@@ -26,9 +28,11 @@ public final class Channel extends FeatureBased implements Class{
 
     private static final Logger logger = LoggerFactory.getLogger("");
 
+    private static final int classId = 20;
+
     @Override
     public int classId() {
-        return 20;
+        return classId;
     }
 
     @Override
@@ -240,6 +244,17 @@ public final class Channel extends FeatureBased implements Class{
             channel.close();
             return null;
         }
+    }
+
+    static {
+        ApplicationContext context = ApplicationContextHolder.getApplicationContext();
+        MethodResolver methodResolver = context.getBean(MethodResolver.class);
+        methodResolver.register(classId,41);
+        methodResolver.register(classId,40);
+        methodResolver.register(classId,21);
+        methodResolver.register(classId,20);
+        methodResolver.register(classId,11);
+        methodResolver.register(classId,10);
     }
 
 }

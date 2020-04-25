@@ -2,6 +2,7 @@ package org.archer.archermq.protocol.model;
 
 import org.apache.commons.lang3.StringUtils;
 import org.archer.archermq.common.FeatureBased;
+import org.archer.archermq.common.utils.ApplicationContextHolder;
 import org.archer.archermq.protocol.Channel;
 import org.archer.archermq.protocol.Exchange;
 import org.archer.archermq.protocol.*;
@@ -12,6 +13,7 @@ import org.archer.archermq.protocol.transport.BaseMsgQueue;
 import org.archer.archermq.protocol.transport.ChannelException;
 import org.archer.archermq.protocol.transport.ConnectionException;
 import org.archer.archermq.protocol.transport.StandardMsgQueue;
+import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
 
 import java.util.Map;
@@ -25,9 +27,11 @@ import java.util.Objects;
  */
 public final class Queue extends FeatureBased implements Class {
 
+    private static final int classId = 50;
+
     @Override
     public int classId() {
-        return 50;
+        return classId;
     }
 
     @Override
@@ -273,7 +277,7 @@ public final class Queue extends FeatureBased implements Class {
 
         @Override
         public int commandId() {
-            return 51;
+            return 50;
         }
 
         @Override
@@ -478,5 +482,20 @@ public final class Queue extends FeatureBased implements Class {
         public Void execute() {
             throw new ConnectionException(ExceptionMessages.ConnectionErrors.COMMAND_INVALID);
         }
+    }
+
+    static {
+        ApplicationContext context = ApplicationContextHolder.getApplicationContext();
+        MethodResolver methodResolver = context.getBean(MethodResolver.class);
+        methodResolver.register(classId,51);
+        methodResolver.register(classId,50);
+        methodResolver.register(classId,41);
+        methodResolver.register(classId,40);
+        methodResolver.register(classId,31);
+        methodResolver.register(classId,30);
+        methodResolver.register(classId,21);
+        methodResolver.register(classId,20);
+        methodResolver.register(classId,11);
+        methodResolver.register(classId,10);
     }
 }
