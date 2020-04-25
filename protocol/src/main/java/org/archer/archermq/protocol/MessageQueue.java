@@ -1,5 +1,7 @@
 package org.archer.archermq.protocol;
 
+import org.archer.archermq.protocol.constants.DeliverMode;
+
 import java.util.Map;
 
 /**
@@ -19,6 +21,8 @@ import java.util.Map;
  * @date 2020年04月13日21:24:19
  */
 public interface MessageQueue extends LifeCycle {
+
+    void setDeliverMode(DeliverMode deliverMode);
 
     /**
      * 标准消息队列前辍是"amq."
@@ -57,6 +61,8 @@ public interface MessageQueue extends LifeCycle {
      * @return 当前消息队列里面的消息总数
      */
     int msgCount();
+
+    int localMsgCnt();
 
     /**
      * 获取当前队列监听的消费者总数，注意，队列监听是分布式的，消费者总数代表全体队列中的消费者总数

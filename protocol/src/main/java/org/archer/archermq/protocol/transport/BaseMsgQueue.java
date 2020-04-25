@@ -1,10 +1,15 @@
 package org.archer.archermq.protocol.transport;
 
-import org.archer.archermq.protocol.BaseLifeCycleSupport;
-import org.archer.archermq.protocol.Exchange;
-import org.archer.archermq.protocol.MessageQueue;
+import org.archer.archermq.protocol.*;
+import org.archer.archermq.protocol.constants.DeliverMode;
+
+import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class BaseMsgQueue extends BaseLifeCycleSupport implements MessageQueue {
+
+    private final Queue<Message> memQueue = new ConcurrentLinkedDeque<>();
 
     private final String name;
 
@@ -16,6 +21,8 @@ public class BaseMsgQueue extends BaseLifeCycleSupport implements MessageQueue {
 
     private String bindingKey;
 
+    private Exchange exchange;
+
     public BaseMsgQueue(String name, boolean durable, boolean exclusive, boolean autoDelete) {
         this.name = name;
         this.durable = durable;
@@ -24,8 +31,48 @@ public class BaseMsgQueue extends BaseLifeCycleSupport implements MessageQueue {
     }
 
     @Override
+    public void setDeliverMode(DeliverMode deliverMode) {
+
+    }
+
+    @Override
     public String bindingKey() {
         return bindingKey;
+    }
+
+    @Override
+    public void bind(Exchange exchange, String routingKey, Map<String, Object> args) {
+
+    }
+
+    @Override
+    public void unBind(Exchange exchange, String routingKey, Map<String, Object> args) {
+
+    }
+
+    @Override
+    public int purge() {
+        return 0;
+    }
+
+    @Override
+    public void lock() {
+
+    }
+
+    @Override
+    public void unlock() {
+
+    }
+
+    @Override
+    public void dequeue(Message message) {
+
+    }
+
+    @Override
+    public Message enqueue() {
+        return null;
     }
 
     @Override
@@ -39,13 +86,38 @@ public class BaseMsgQueue extends BaseLifeCycleSupport implements MessageQueue {
     }
 
     @Override
+    public int localMsgCnt() {
+        return 0;
+    }
+
+    @Override
     public int consumerCount() {
         return 0;
     }
 
     @Override
+    public Exchange exchange() {
+        return null;
+    }
+
+    @Override
+    public Registrar<String, Consumer> getConsumerRegistry() {
+        return null;
+    }
+
+    @Override
     public boolean durable() {
-        return false;
+        return durable;
+    }
+
+    @Override
+    public boolean autoDelete() {
+        return autoDelete;
+    }
+
+    @Override
+    public boolean exclusive() {
+        return exclusive;
     }
 
 

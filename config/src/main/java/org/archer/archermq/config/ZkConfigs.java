@@ -1,6 +1,5 @@
 package org.archer.archermq.config;
 
-import lombok.Data;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;

@@ -6,6 +6,7 @@ import org.archer.archermq.common.constants.Delimiters;
 import org.archer.archermq.protocol.*;
 import org.archer.archermq.protocol.Channel;
 import org.archer.archermq.protocol.Connection;
+import org.archer.archermq.protocol.constants.DeliverMode;
 import org.archer.archermq.protocol.constants.ExceptionMessages;
 import org.archer.archermq.protocol.constants.FeatureKeys;
 import org.archer.archermq.protocol.transport.ChannelException;
@@ -236,7 +237,6 @@ public final class Basic extends FeatureBased implements Class {
         protected CancelOk executeInternal() {
             VirtualHost virtualHost = (VirtualHost) getFeature(FeatureKeys.Command.VIRTUALHOST);
             Channel channel = (Channel) getFeature(FeatureKeys.Command.AMQP_CHANNEL);
-            Registrar<String, MessageQueue> msgQueueRegistry = virtualHost.getMsgQueueRegistry();
             Set<MessageQueue> consuming = channel.consuming();
             for (MessageQueue consumingQueue : consuming) {
                 Registrar<String, Consumer> consumerRegistry = consumingQueue.getConsumerRegistry();
@@ -419,12 +419,19 @@ public final class Basic extends FeatureBased implements Class {
 
         @Override
         protected GetAck executeInternal() {
-            Channel channel = (Channel) getFeature(FeatureKeys.Command.AMQP_CHANNEL);
-            Message msg = channel.selectMsg();
-            Map<String, Object> msgProperties = msg.msgProperties();
-            return new GetOk(
-                    msgProperties.get(FeatureKeys.Message.EXCHANGE_NAME),
-                    msgProperties.get(FeatureKeys.Message.ROUTING_KEY));
+           VirtualHost virtualHost = (VirtualHost) getFeature(FeatureKeys.Command.VIRTUALHOST);
+           Registrar<String,MessageQueue> msgQueueRegistry = virtualHost.getMsgQueueRegistry();
+           if(!msgQueueRegistry.contains(queue)){
+               MessageQueue msgQueue = msgQueueRegistry.get(queue);
+               msgQueue.setDeliverMode(DeliverMode.PULL);
+               if(msgQueue.localMsgCnt()==0){
+                   return new GetEmpty(reserved1);
+               }else{
+                   return new GetOk()
+               }
+           }
+           return new GetOk();
+
         }
     }
 
@@ -433,15 +440,15 @@ public final class Basic extends FeatureBased implements Class {
 
     public class GetOk extends BaseCommand<Void> implements GetAck {
 
-        private String deliveryTag;
+        private final String deliveryTag;
 
-        private boolean redelivered;
+        private final boolean redelivered;
 
-        private String exchange;
+        private final String exchange;
 
-        private String routingKey;
+        private final String routingKey;
 
-        private int msgCnt;
+        private final int msgCnt;
 
         public GetOk(String deliveryTag, boolean redelivered, String exchange, String routingKey, int msgCnt) {
             this.deliveryTag = deliveryTag;
@@ -467,7 +474,7 @@ public final class Basic extends FeatureBased implements Class {
         }
     }
 
-    public class GetEmpty extends BaseCommand<Void> {
+    public class GetEmpty extends BaseCommand<Void> implements GetAck{
 
         private String reserved1;
 

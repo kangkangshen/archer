@@ -1,9 +1,11 @@
 package org.archer.archermq.protocol;
 
 
+import com.google.common.collect.Sets;
 import org.archer.archermq.protocol.constants.StateEnum;
 import org.archer.archermq.protocol.model.Command;
 import org.archer.archermq.protocol.transport.Frame;
+
 import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
@@ -23,35 +25,105 @@ import java.util.Stack;
  */
 public interface Channel extends LifeCycle {
 
-    String id();
+    /**
+     * 返回当前channelId,默认情况下，id == name
+     * 一般情况下，应当返回无业务语义的ID字段用于检索channel
+     *
+     * @return 当前channel的Id
+     */
+    default String id() {
+        return name();
+    }
 
+    /**
+     * 返回当前channelName
+     *
+     * @return 当前channel的名称
+     */
     String name();
 
+    /**
+     * 开启/关闭流模式
+     *
+     * @param active 是否开启/关闭流模式
+     */
     void setFlow(boolean active);
 
+    /**
+     * 返回当前channel的状态
+     *
+     * @return 当前channel的状态
+     * @see StateEnum
+     */
     StateEnum state();
 
+    /**
+     * 关闭当前channel
+     */
     void close();
 
-    Set<MessageQueue> consuming();
+    /**
+     * 返回客户端正在消费，尚未回复consumeOk的消息集合
+     *
+     * @return 客户端正在消费，尚未回复consumeOk的消息集合，默认返回emptySet
+     */
+    default Set<MessageQueue> consuming() {
+        return Sets.newHashSet();
+    }
 
+
+    /**
+     * 获取当前channel最后声明的一个消息队列
+     *
+     * @return 当前channel最后声明的一个消息队列
+     */
     MessageQueue lastDeclareMsgQueue();
 
+    /**
+     * 设置qos
+     *
+     * @param prefetchSize  预取帧大小
+     * @param prefetchCount 预取帧个数
+     */
     void qos(int prefetchSize, short prefetchCount);
 
-    Stack<Command<?>> invokeStack();
+    /**
+     * 返回当前channel的调用栈
+     *
+     * @return 当前channel的调用栈，默认是emptyStack
+     */
+    default Stack<Command<?>> invokeStack() {
+        return new Stack<>();
+    }
 
+    /*
+     * 弹出当前channel队列的最先一个帧
+     */
     Frame pop();
 
+    /**
+     * 压入当前帧
+     *
+     * @param frame 当前帧
+     */
     void push(Frame frame);
 
+    /**
+     * 返回当前channel发送队列的队头帧
+     *
+     * @return 当前channel发送队列的队头帧
+     */
     Frame peak();
 
+    /**
+     *
+     * @return
+     */
     Message selectMsg();
 
     Queue<Message> unConfirmedMsg();
 
-    void confirmMsg(String deliveryTag,boolean multiple);
+    void confirmMsg(String deliveryTag, boolean multiple);
 
     void confirmAllMsg();
 

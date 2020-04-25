@@ -23,6 +23,10 @@ public class StandardVirtualHost extends BaseLifeCycleSupport implements Virtual
 
     private Registrar<String, MessageQueue> queueRegistry;
 
+    private MessageQueue deadLetteredQueue;
+
+
+
 
     @Override
     public Namespace nameSpace() {
@@ -40,9 +44,15 @@ public class StandardVirtualHost extends BaseLifeCycleSupport implements Virtual
     }
 
     @Override
+    public MessageQueue deadLetteredQueue() {
+        return deadLetteredQueue;
+    }
+
+    @Override
     public void afterPropertiesSet() throws Exception {
         this.exchangeRegistry = new StandardExchangeRegistry(this);
         this.queueRegistry = new StandardMsgQueueRegistry(this);
+
     }
 
     public Registrar<String, Exchange> getExchangeRegistry() {
