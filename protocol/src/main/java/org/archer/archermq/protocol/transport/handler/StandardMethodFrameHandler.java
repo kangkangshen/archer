@@ -1,15 +1,19 @@
 package org.archer.archermq.protocol.transport.handler;
 
+import com.alibaba.fastjson.JSON;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.PooledByteBufAllocator;
+import io.netty.buffer.Unpooled;
+import io.netty.buffer.UnpooledDirectByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageEncoder;
+import org.archer.archermq.protocol.constants.ExceptionMessages;
 import org.archer.archermq.protocol.constants.FrameTypeEnum;
 import org.archer.archermq.protocol.model.Command;
 import org.archer.archermq.protocol.model.MethodResolver;
-import org.archer.archermq.protocol.transport.Frame;
-import org.archer.archermq.protocol.transport.FrameConverter;
-import org.archer.archermq.protocol.transport.FrameHandler;
-import org.archer.archermq.protocol.transport.StandardMethodFrame;
+import org.archer.archermq.protocol.transport.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.buffer.PooledDataBuffer;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -58,20 +62,26 @@ public class StandardMethodFrameHandler implements FrameHandler {
     }
 
     @Override
-    public Object handleFrame(Frame frame) {
+    public Frame handleFrame(Frame frame) {
 
         StandardMethodFrame methodFrame = frameConverter.convert(frame);
 
         if(!methodResolver.support(methodFrame.getRawClassId(),methodFrame.getRawMethodId())){
-            return false;
+            throw new ChannelException(ExceptionMessages.ConnectionErrors.NOT_IMPLEMENTED);
         }
 
         Command<?> targetCommand = methodResolver.route(methodFrame);
 
-        return targetCommand.execute();
-
-
+        Command<?> command = (Command<?>) targetCommand.execute();
+        if(Objects.nonNull(command)){
+            String cmdJson = JSON.toJSONString(command);
+            ByteBuf byteBuf = Unpooled.buffer(cmdJson.getBytes().length);
+            byteBuf.writeBytes(cmdJson.getBytes());
+            return FrameBuilder.allocateFrame(FrameTypeEnum.METHOD.getVal(),frame.channelId(),byteBuf.readableBytes(),byteBuf,Frame.FRAME_END);
+        }
+        return null;
     }
+
 
 
 }

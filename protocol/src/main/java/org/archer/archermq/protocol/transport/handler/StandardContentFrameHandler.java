@@ -30,7 +30,7 @@ public class StandardContentFrameHandler implements FrameHandler {
     }
 
     @Override
-    public Object handleFrame(Frame frame) {
+    public Frame handleFrame(Frame frame) {
         return null;
     }
 }

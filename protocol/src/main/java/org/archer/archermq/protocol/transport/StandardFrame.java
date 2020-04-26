@@ -23,6 +23,8 @@ public class StandardFrame implements Frame {
     private short rawChannelId;
     private Channel channel;
 
+    private io.netty.channel.Channel tcpChannel;
+
     private int size;
 
     private ByteBuf payload;
@@ -32,8 +34,8 @@ public class StandardFrame implements Frame {
 
     @Override
     public FrameTypeEnum type() {
-        if(Objects.isNull(frameType)){
-            frameType = FrameTypeEnum.getByVal((int) rawType);
+        if (Objects.isNull(frameType)) {
+            frameType = FrameTypeEnum.getByVal(rawType);
         }
         return frameType;
     }
@@ -63,9 +65,14 @@ public class StandardFrame implements Frame {
         return rawFrameEnd;
     }
 
+    @Override
+    public io.netty.channel.Channel tcpChannel() {
+        return tcpChannel;
+    }
+
     public void setRawType(byte rawType) {
         this.rawType = rawType;
-        this.frameType = FrameTypeEnum.getByVal((int) rawType);
+        this.frameType = FrameTypeEnum.getByVal(rawType);
     }
 
     public void setRawChannelId(short rawChannelId) {

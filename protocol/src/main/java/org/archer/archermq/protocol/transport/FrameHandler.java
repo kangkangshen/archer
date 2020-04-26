@@ -36,6 +36,6 @@ public interface FrameHandler {
      * @return 处理结果，返回响应，如果有的话；返回结果可能为空，取决于具体的帧处理逻辑
      * @throws FrameHandleException 如果真处理过程中出现异常
      */
-    Object handleFrame(Frame frame);
+    Frame handleFrame(Frame frame);
 
 }

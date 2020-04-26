@@ -14,7 +14,7 @@ public interface FrameDispatcher extends ChannelInboundHandler {
      * @param rawFrame 解码后的原始帧
      * @implNote 一个rawFrame是经历解码后的，值不为空的，符合frame的基本构造的！对于不能处理的帧，将会记录日志后丢弃掉
      */
-    void dispatchFrame(Frame rawFrame);
+    Frame dispatchFrame(Frame rawFrame);
 
 
 

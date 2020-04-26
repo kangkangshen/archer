@@ -17,7 +17,7 @@ public interface Frame extends Serializable {
 
     int FRAME_MIN_SIZE = 4096;
 
-    int FRAME_END = 206;
+    byte FRAME_END = (byte) 206;
 
     /**
      * 获取当前数据帧类型
