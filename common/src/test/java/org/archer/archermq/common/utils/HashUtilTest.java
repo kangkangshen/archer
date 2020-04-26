@@ -5,20 +5,35 @@ import org.junit.Test;
 public class HashUtilTest {
 
     @Test
-    public void md5() {
-
-//        String wukang = "wukang shuai bao le ";
-//        System.out.println(HashUtil.md5(wukang));
-
-        System.out.println(HashUtil.md5(""));
-        System.out.println(HashUtil.md5(""));
+    public void hash() {
+        System.out.println(HashUtil.hash());
+        System.out.println(HashUtil.hash());
 
     }
 
     @Test
-    public void sha1() {
-        String wukang = "wukang shuai bao le ";
-        System.out.println(HashUtil.sha1(wukang));
-
+    public void testHash() {
+        String wukang = "wukang shuai bao le";
+        System.out.println(HashUtil.hash(wukang,HashUtil.MD5));
     }
+
+    @Test
+    public void testHash1() {
+        String wukang = "wukang shuai bao le";
+        System.out.println(HashUtil.hash(wukang,HashUtil.SHA1));
+    }
+
+    @Test
+    public void testHash2() {
+
+        String wukang = "wukang shuai bao le";
+        System.out.println(HashUtil.hash(wukang.getBytes(),HashUtil.MD5));
+    }
+
+    @Test
+    public void testHash3() {
+        String wukang = "wukang shuai bao le";
+        System.out.println(HashUtil.hash(wukang.getBytes(),HashUtil.SHA1));
+    }
+
 }

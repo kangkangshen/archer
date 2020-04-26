@@ -1,10 +1,12 @@
 package org.archer.archermq.protocol.transport;
 
 import org.apache.commons.lang3.StringUtils;
+import org.archer.archermq.common.utils.HashUtil;
 import org.archer.archermq.protocol.BaseLifeCycleSupport;
 import org.archer.archermq.protocol.Channel;
 import org.archer.archermq.protocol.Message;
 import org.archer.archermq.protocol.MessageQueue;
+import org.archer.archermq.protocol.constants.LifeCyclePhases;
 import org.archer.archermq.protocol.constants.StateEnum;
 import org.archer.archermq.protocol.model.Command;
 import org.springframework.util.Assert;
@@ -23,11 +25,9 @@ public class StandardAmqpChannel extends BaseLifeCycleSupport implements Channel
     private boolean flow;
 
     public StandardAmqpChannel(String id) {
-        if(StringUtils.isBlank(id)){
-
-        }
-        this.id = id;
+        this.id = StringUtils.isBlank(id)? HashUtil.hash():id;
         this.name = id;
+        updateCurrState(LifeCyclePhases.Channel.CREATE, LifeCyclePhases.Status.START);
     }
 
     public StandardAmqpChannel(String id, String name) {

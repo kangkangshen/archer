@@ -58,7 +58,7 @@ public class HashUtil {
         }
     }
 
-    public static String randomString() {
+    private static String randomString() {
         Random random = new Random();
         StackTraceElement[] invokeStackTrace = Thread.currentThread().getStackTrace();
         return random.nextLong() + JSON.toJSONString(invokeStackTrace);
