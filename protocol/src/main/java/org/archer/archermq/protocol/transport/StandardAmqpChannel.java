@@ -1,11 +1,13 @@
 package org.archer.archermq.protocol.transport;
 
+import org.apache.commons.lang3.StringUtils;
 import org.archer.archermq.protocol.BaseLifeCycleSupport;
 import org.archer.archermq.protocol.Channel;
 import org.archer.archermq.protocol.Message;
 import org.archer.archermq.protocol.MessageQueue;
 import org.archer.archermq.protocol.constants.StateEnum;
 import org.archer.archermq.protocol.model.Command;
+import org.springframework.util.Assert;
 
 import java.util.Queue;
 import java.util.Set;
@@ -14,7 +16,24 @@ import java.util.Stack;
 public class StandardAmqpChannel extends BaseLifeCycleSupport implements Channel {
 
 
+    private String id;
 
+    private String name;
+
+    private boolean flow;
+
+    public StandardAmqpChannel(String id) {
+        if(StringUtils.isBlank(id)){
+
+        }
+        this.id = id;
+        this.name = id;
+    }
+
+    public StandardAmqpChannel(String id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
     @Override
     public String id() {
@@ -28,7 +47,7 @@ public class StandardAmqpChannel extends BaseLifeCycleSupport implements Channel
 
     @Override
     public void setFlow(boolean active) {
-
+        this.flow = active;
     }
 
     @Override

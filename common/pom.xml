@@ -39,6 +39,12 @@
             <version>${slf4j.plaform.version}</version>
             <scope>provided</scope>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.14</version>
+        </dependency>
 
 
         <!-- https://mvnrepository.com/artifact/com.twitter/util-hashing -->

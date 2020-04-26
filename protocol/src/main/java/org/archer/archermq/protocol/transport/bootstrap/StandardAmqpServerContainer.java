@@ -218,4 +218,9 @@ public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements
     public List<VirtualHost> instances() {
         return null;
     }
+
+    @Override
+    public int size() {
+        return 0;
+    }
 }

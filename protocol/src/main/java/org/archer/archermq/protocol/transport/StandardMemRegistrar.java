@@ -43,4 +43,9 @@ public class StandardMemRegistrar<ID, TYPE> implements Registrar<ID, TYPE> {
     public List<TYPE> instances() {
         return null;
     }
+
+    @Override
+    public int size() {
+        return 0;
+    }
 }

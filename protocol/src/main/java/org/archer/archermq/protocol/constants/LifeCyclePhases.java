@@ -67,6 +67,18 @@ public interface LifeCyclePhases {
 
     }
 
+    interface Connection{
+        String CREATE = "create";
+
+        String CLOSE = "close";
+    }
+
+    interface Channel{
+        String CREATE = "create";
+
+        String CLOSE = "close";
+    }
+
 
 
 

@@ -17,4 +17,6 @@ public interface Registrar<ID,TYPE> {
 
     List<TYPE> instances();
 
+    int size();
+
 }
