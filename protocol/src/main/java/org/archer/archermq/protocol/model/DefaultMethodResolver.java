@@ -2,8 +2,15 @@ package org.archer.archermq.protocol.model;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import io.netty.util.internal.StringUtil;
+import org.archer.archermq.common.FeatureBased;
 import org.archer.archermq.common.constants.Delimiters;
+import org.archer.archermq.protocol.Channel;
+import org.archer.archermq.protocol.Connection;
+import org.archer.archermq.protocol.Server;
+import org.archer.archermq.protocol.VirtualHost;
 import org.archer.archermq.protocol.constants.ExceptionMessages;
+import org.archer.archermq.protocol.constants.FeatureKeys;
 import org.archer.archermq.protocol.transport.ChannelException;
 import org.archer.archermq.protocol.transport.StandardMethodFrame;
 import org.springframework.beans.BeansException;
@@ -17,8 +24,12 @@ import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 @Component
@@ -57,7 +68,7 @@ public class DefaultMethodResolver implements MethodResolver, ApplicationContext
         try {
             java.lang.Class<?> classClazz = java.lang.Class.forName(classClazzName);
             Object clazzInstance = classClazz.newInstance();
-            injectContext(clazzInstance);
+            injectContext(clazzInstance, methodFrame);
 
 
             Constructor<?> targetCmdConstructor = null;
@@ -98,9 +109,28 @@ public class DefaultMethodResolver implements MethodResolver, ApplicationContext
      *
      * @param clazzInstance 当前command所属的类的实例，用以充当该command的上下文信息库
      */
-    private void injectContext(Object clazzInstance) {
+    private void injectContext(Object clazzInstance, StandardMethodFrame rawMethodFrame) {
+        if (clazzInstance instanceof FeatureBased) {
+            FeatureBased clazz = (FeatureBased) clazzInstance;
+            //1.注入当前server
+            clazz.addFeature(FeatureKeys.Command.SERVER, springContext.getBean(Server.class));
 
+            //2.注入当前的conn,channel,virtualHost,连接新建立的时候可能还没有conn,channel
+            Optional<Channel> channel = Optional.ofNullable(rawMethodFrame.channel());
+            Optional<Connection> connection = channel.map(Channel::conn);
+            Optional<VirtualHost> virtualHost = connection.map(Connection::virtualHost);
+            clazz.addFeature(FeatureKeys.Command.AMQP_CONNECTION, connection.orElse(null));
+            clazz.addFeature(FeatureKeys.Command.AMQP_CHANNEL, channel.orElse(null));
+            clazz.addFeature(FeatureKeys.Command.VIRTUALHOST, virtualHost.orElse(null));
+            clazz.addFeature(FeatureKeys.Command.VIRTUALHOST_NAME, virtualHost.map(VirtualHost::name).orElse(StringUtil.EMPTY_STRING));
 
+            //3.注入当前的tcpChannel,ip,port等信息
+            io.netty.channel.Channel tcpChannel = rawMethodFrame.tcpChannel();
+            clazz.addFeature(FeatureKeys.Command.TCP_CHANNEL, tcpChannel);
+            InetSocketAddress inetAddress = (InetSocketAddress) tcpChannel.remoteAddress();
+            clazz.addFeature(FeatureKeys.Command.PEER_IP, inetAddress.getHostName());
+            clazz.addFeature(FeatureKeys.Command.PEER_PORT, inetAddress.getPort());
+        }
     }
 
     @Override

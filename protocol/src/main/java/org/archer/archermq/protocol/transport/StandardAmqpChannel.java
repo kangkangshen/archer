@@ -78,6 +78,11 @@ public class StandardAmqpChannel extends BaseLifeCycleSupport implements Channel
     }
 
     @Override
+    public Connection conn() {
+        return amqpConn;
+    }
+
+    @Override
     public void setFlow(boolean active) {
         this.flow = active;
     }

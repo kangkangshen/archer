@@ -41,4 +41,6 @@ public interface Connection extends LifeCycle, Registrar<String, Channel> {
 
     VirtualHost virtualHost();
 
+    io.netty.channel.Channel tcpChannel();
+
 }

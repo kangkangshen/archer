@@ -43,6 +43,8 @@ public interface Channel extends LifeCycle {
      */
     String name();
 
+    Connection conn();
+
     /**
      * 开启/关闭流模式
      *

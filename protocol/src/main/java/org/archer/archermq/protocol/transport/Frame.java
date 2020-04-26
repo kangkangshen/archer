@@ -56,4 +56,6 @@ public interface Frame extends Serializable {
     ByteBuf content();
 
     byte frameEnd();
+
+    io.netty.channel.Channel tcpChannel();
 }

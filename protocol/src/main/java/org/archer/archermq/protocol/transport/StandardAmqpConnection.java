@@ -26,6 +26,8 @@ public class StandardAmqpConnection extends BaseLifeCycleSupport implements Conn
 
     private final String id;
 
+    private io.netty.channel.Channel tcpChannel;
+
     public StandardAmqpConnection(VirtualHost virtualHost) {
         this(HashUtil.hash(),virtualHost);
     }
@@ -87,6 +89,14 @@ public class StandardAmqpConnection extends BaseLifeCycleSupport implements Conn
         return virtualHost;
     }
 
+    @Override
+    public io.netty.channel.Channel tcpChannel() {
+        return tcpChannel;
+    }
+
+    public void setTcpChannel(io.netty.channel.Channel tcpChannel) {
+        this.tcpChannel = tcpChannel;
+    }
 
     @Override
     public boolean contains(String s) {
