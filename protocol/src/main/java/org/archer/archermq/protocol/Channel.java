@@ -49,13 +49,6 @@ public interface Channel extends LifeCycle {
      */
     void setFlow(boolean active);
 
-    /**
-     * 返回当前channel的状态
-     *
-     * @return 当前channel的状态
-     * @see StateEnum
-     */
-    StateEnum state();
 
     /**
      * 关闭当前channel

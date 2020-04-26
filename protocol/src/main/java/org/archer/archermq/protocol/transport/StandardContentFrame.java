@@ -3,6 +3,7 @@ package org.archer.archermq.protocol.transport;
 
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ import java.util.Map;
  * @author dongyue
  * @date 2020年04月14日12:59:07
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class StandardContentFrame extends StandardFrame{
 
@@ -30,6 +32,7 @@ public class StandardContentFrame extends StandardFrame{
      * 标准内容头帧实现
      *
      */
+    @EqualsAndHashCode(callSuper = true)
     @Data
     public static class StandardContentHeaderFrame extends StandardFrame{
 
@@ -49,6 +52,7 @@ public class StandardContentFrame extends StandardFrame{
     /**
      * 标准内容体帧实现
      */
+    @EqualsAndHashCode(callSuper = true)
     @Data
     public static class StandardContentBodyFrame extends StandardFrame{
 

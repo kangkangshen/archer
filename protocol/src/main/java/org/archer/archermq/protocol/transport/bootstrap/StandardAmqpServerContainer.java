@@ -15,6 +15,7 @@ import org.archer.archermq.common.log.LogConstants;
 import org.archer.archermq.common.log.LogInfo;
 import org.archer.archermq.protocol.BaseLifeCycleSupport;
 import org.archer.archermq.protocol.Server;
+import org.archer.archermq.protocol.VirtualHost;
 import org.archer.archermq.protocol.constants.LifeCyclePhases;
 import org.archer.archermq.protocol.constants.ServerRoleTypeEnum;
 import org.archer.archermq.protocol.transport.FrameDispatcher;
@@ -26,6 +27,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import javax.annotation.PreDestroy;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 基于netty实现的amqpServerContainer
@@ -184,5 +187,35 @@ public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements
                 ", serverHandleThreads=" + serverHandleThreads +
                 ", serverRoleType=" + serverRoleType +
                 '}';
+    }
+
+    @Override
+    public boolean contains(String s) {
+        return false;
+    }
+
+    @Override
+    public boolean register(String s, VirtualHost instance) {
+        return false;
+    }
+
+    @Override
+    public VirtualHost remove(String s) {
+        return null;
+    }
+
+    @Override
+    public VirtualHost get(String s) {
+        return null;
+    }
+
+    @Override
+    public Set<String> ids() {
+        return null;
+    }
+
+    @Override
+    public List<VirtualHost> instances() {
+        return null;
     }
 }
