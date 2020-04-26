@@ -8,11 +8,13 @@ import org.archer.archermq.common.log.LogConstants;
 import org.archer.archermq.common.log.LogInfo;
 import org.archer.archermq.common.utils.ApplicationContextHolder;
 import org.archer.archermq.protocol.Server;
+import org.archer.archermq.protocol.VirtualHost;
 import org.archer.archermq.protocol.constants.ClassEnum;
 import org.archer.archermq.protocol.constants.ExceptionMessages;
 import org.archer.archermq.protocol.constants.FeatureKeys;
 import org.archer.archermq.protocol.constants.MethodEnum;
 import org.archer.archermq.protocol.transport.ConnectionException;
+import org.archer.archermq.protocol.transport.StandardAmqpConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -267,10 +269,14 @@ public final class Connection extends FeatureBased implements Class {
             if (!server.contains(virtualHost)) {
                 throw new ConnectionException(ExceptionMessages.ConnectionErrors.INVALID_PATH);
             }
+            VirtualHost virtualHostInstance = server.get(virtualHost);
             //白名单身份检查
             if (!authorizationCheck(reserved1)) {
                 throw new ConnectionException(ExceptionMessages.ConnectionErrors.NOT_ALLOWED);
             }
+            //todo dongyue
+            org.archer.archermq.protocol.Connection amqpConn = new StandardAmqpConnection(virtualHostInstance);
+            virtualHostInstance.getConnRegistry().register(amqpConn.id(),amqpConn);
             return new OpenOk(reserved1);
         }
 

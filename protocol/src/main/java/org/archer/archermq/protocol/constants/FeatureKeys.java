@@ -15,9 +15,19 @@ public interface FeatureKeys {
 
         String TRACE_ID = "traceId";
 
-        String EXCHANGE_NAME = "exchange name";
+        String EXCHANGE_NAME = "exchange";
 
-        String ROUTING_KEY = "routing key";
+        String ROUTING_KEY = "routingKey";
+
+        String MANDATORY = "mandatory";
+
+        String IMMEDIATE = "immediate";
+
+        String REPUBLISH = "republish";
+
+        String MESSAGE_QUEUE = "msgQueue";
+
+
     }
 
     interface Command{

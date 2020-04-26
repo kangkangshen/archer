@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -447,7 +448,7 @@ public final class Basic extends FeatureBased implements Class {
 
     public class GetEmpty extends BaseCommand<Void> implements GetAck {
 
-        private String reserved1;
+        private final String reserved1;
 
         public GetEmpty(String reserved1) {
             super(classId, 72);
@@ -472,9 +473,9 @@ public final class Basic extends FeatureBased implements Class {
      */
     public class Ack extends BaseCommand<Void> {
 
-        private String deliveryTag;
+        private final String deliveryTag;
 
-        private boolean multiple;
+        private final boolean multiple;
 
         public Ack(String deliveryTag, boolean multiple) {
             super(classId, 80);
@@ -553,13 +554,14 @@ public final class Basic extends FeatureBased implements Class {
         @Override
         protected RecoverOk executeInternal() {
             Channel channel = (Channel) getFeature(FeatureKeys.Command.AMQP_CHANNEL);
-            Queue<Message> unConfirmedMsg = channel.unConfirmedMsg();
+            List<Message> unConfirmedMsg = channel.unConfirmedMsg();
             if (requeue) {
                 for (Message msg : unConfirmedMsg) {
                     channel.exchange(msg);
                 }
             } else {
                 for (Message msg : unConfirmedMsg) {
+                    msg.msgProperties().put(FeatureKeys.Message.REPUBLISH,Boolean.TRUE);
                     channel.redeliver(msg);
                 }
             }
@@ -588,7 +590,7 @@ public final class Basic extends FeatureBased implements Class {
         @Override
         protected RecoverOk executeInternal() {
             Channel channel = (Channel) getFeature(FeatureKeys.Command.AMQP_CHANNEL);
-            Queue<Message> unConfirmedMsg = channel.unConfirmedMsg();
+            List<Message> unConfirmedMsg = channel.unConfirmedMsg();
             if (requeue) {
                 for (Message msg : unConfirmedMsg) {
                     channel.exchange(msg);

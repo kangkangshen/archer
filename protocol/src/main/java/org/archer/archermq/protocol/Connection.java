@@ -21,10 +21,24 @@ import java.util.List;
  * 11. 另一个节点对连接结束握手(Close-Ok).
  * 12 server 和  client关闭它们的套接字连接.
  */
-public interface Connection extends LifeCycle{
+public interface Connection extends LifeCycle, Registrar<String, Channel> {
+
+    String id();
 
     Channel openChannel();
 
-    void qos(int prefetchSize,short prefetchCount);
+    /**
+     * 设置当前的qos指标，-1代表忽略此次设置
+     *
+     * @param prefetchSize
+     * @param prefetchCount
+     */
+    void qos(int prefetchSize, short prefetchCount);
+
+    int getPreFetchSize();
+
+    short getPreFetchCount();
+
+    VirtualHost virtualHost();
 
 }

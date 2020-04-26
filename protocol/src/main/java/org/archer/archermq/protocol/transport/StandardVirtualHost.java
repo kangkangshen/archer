@@ -8,6 +8,9 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * 标准virtualHost实现
@@ -24,6 +27,10 @@ public class StandardVirtualHost extends BaseLifeCycleSupport implements Virtual
     private Registrar<String, MessageQueue> queueRegistry;
 
     private MessageQueue deadLetteredQueue;
+
+    private Registrar<String,Connection> connectionRegistry;
+
+    private ExecutorService executorService;
 
 
 
@@ -52,6 +59,7 @@ public class StandardVirtualHost extends BaseLifeCycleSupport implements Virtual
     public void afterPropertiesSet() throws Exception {
         this.exchangeRegistry = new StandardExchangeRegistry(this);
         this.queueRegistry = new StandardMsgQueueRegistry(this);
+        this.connectionRegistry = new StandardMemRegistrar<>();
 
     }
 
@@ -64,9 +72,15 @@ public class StandardVirtualHost extends BaseLifeCycleSupport implements Virtual
         return queueRegistry;
     }
 
+    @Override
+    public Registrar<String, Connection> getConnRegistry() {
+        return connectionRegistry;
+    }
 
-
-
+    @Override
+    public ExecutorService taskPool() {
+        return executorService;
+    }
 
 
     public static class StandardExchangeRegistry extends DistributedRegistrar<String, Exchange> {

@@ -6,6 +6,7 @@ import org.archer.archermq.protocol.constants.StateEnum;
 import org.archer.archermq.protocol.model.Command;
 import org.archer.archermq.protocol.transport.Frame;
 
+import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
@@ -92,14 +93,14 @@ public interface Channel extends LifeCycle {
     /*
      * 弹出当前channel队列的最先一个帧
      */
-    Frame pop();
+    Frame poll();
 
     /**
      * 压入当前帧
      *
      * @param frame 当前帧
      */
-    void push(Frame frame);
+    void offer(Frame frame);
 
     /**
      * 返回当前channel发送队列的队头帧
@@ -108,13 +109,7 @@ public interface Channel extends LifeCycle {
      */
     Frame peak();
 
-    /**
-     *
-     * @return
-     */
-    Message selectMsg();
-
-    Queue<Message> unConfirmedMsg();
+    List<Message> unConfirmedMsg();
 
     void confirmMsg(String deliveryTag, boolean multiple);
 

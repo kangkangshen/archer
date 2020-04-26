@@ -2,6 +2,7 @@ package org.archer.archermq.protocol.transport;
 
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 标准心跳帧实现
@@ -17,6 +18,7 @@ import lombok.Data;
  * @author dongyue
  * @date 2020年04月14日13:00:26
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class StandardHeartbeatFrame extends StandardFrame{
 

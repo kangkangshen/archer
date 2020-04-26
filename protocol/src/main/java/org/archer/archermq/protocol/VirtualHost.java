@@ -3,6 +3,7 @@ package org.archer.archermq.protocol;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 
 /**
  * 虚拟主机由它自己的名字空间和一组交换器、消息队列和所有关联的对象组成。每个连接(Connection)必须和某个虚拟主机关联。
@@ -58,6 +59,10 @@ public interface VirtualHost extends LifeCycle {
     Registrar<String, Exchange> getExchangeRegistry();
 
     Registrar<String, MessageQueue> getMsgQueueRegistry();
+
+    Registrar<String,Connection> getConnRegistry();
+
+    ExecutorService taskPool();
 
     /**
      *

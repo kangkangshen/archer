@@ -49,6 +49,7 @@ public interface Exchange extends LifeCycle {
 
     void discardMsgQueueBinding(MessageQueue msgQueue,String routingKey);
 
+    void exchangeMsg(Message msg,String routingKey);
 
 
 

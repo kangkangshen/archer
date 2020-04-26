@@ -5,21 +5,18 @@ import org.archer.archermq.common.log.BizLogUtil;
 import org.archer.archermq.common.log.LogConstants;
 import org.archer.archermq.common.log.LogInfo;
 import org.archer.archermq.common.utils.HashUtil;
-import org.archer.archermq.protocol.BaseLifeCycleSupport;
-import org.archer.archermq.protocol.Channel;
-import org.archer.archermq.protocol.Connection;
-import org.archer.archermq.protocol.Registrar;
+import org.archer.archermq.protocol.*;
 import org.archer.archermq.protocol.constants.LifeCyclePhases;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.print.DocFlavor;
 import java.util.List;
 import java.util.Set;
 
-public class StandardAmqpConnection extends BaseLifeCycleSupport implements Connection, Registrar<String, Channel> {
+public class StandardAmqpConnection extends BaseLifeCycleSupport implements Connection {
 
     private static final Logger logger = LoggerFactory.getLogger("");
+
+    private final VirtualHost virtualHost;
 
     private final Registrar<String, Channel> channelRegistrar;
 
@@ -27,11 +24,23 @@ public class StandardAmqpConnection extends BaseLifeCycleSupport implements Conn
 
     private short prefetchCount;
 
+    private final String id;
 
-    public StandardAmqpConnection() {
+    public StandardAmqpConnection(VirtualHost virtualHost) {
+        this(HashUtil.hash(),virtualHost);
+    }
+
+    public StandardAmqpConnection(String id, VirtualHost virtualHost) {
         this.channelRegistrar = new StandardMemRegistrar<>();
+        this.id = id;
+        this.virtualHost = virtualHost;
         updateCurrState(LifeCyclePhases.Connection.CREATE, LifeCyclePhases.Status.START);
         triggerEvent();
+    }
+
+    @Override
+    public String id() {
+        return id;
     }
 
     @Override
@@ -39,8 +48,9 @@ public class StandardAmqpConnection extends BaseLifeCycleSupport implements Conn
         //todo 这里需要打日志
         LogInfo logInfo = BizLogUtil.start().setLayer(LogConstants.TRANSPORT_LAYER).setType(LogConstants.INSTANCE_CREATED);
 
-        Channel channel = new StandardAmqpChannel(HashUtil.hash());
+        StandardAmqpChannel channel = new StandardAmqpChannel(HashUtil.hash());
         channelRegistrar.register(channel.id(), channel);
+        channel.setAmqpConn(this);
 
         logInfo.addContent(LogConstants.INSTANCE, channel.id());
         BizLogUtil.record(logInfo);
@@ -63,6 +73,22 @@ public class StandardAmqpConnection extends BaseLifeCycleSupport implements Conn
     }
 
     @Override
+    public int getPreFetchSize() {
+        return prefetchSize;
+    }
+
+    @Override
+    public short getPreFetchCount() {
+        return prefetchCount;
+    }
+
+    @Override
+    public VirtualHost virtualHost() {
+        return virtualHost;
+    }
+
+
+    @Override
     public boolean contains(String s) {
         return channelRegistrar.contains(s);
     }
@@ -70,7 +96,7 @@ public class StandardAmqpConnection extends BaseLifeCycleSupport implements Conn
     @Override
     @Log(layer = LogConstants.TRANSPORT_LAYER)
     public boolean register(String s, Channel instance) {
-        return channelRegistrar.register(s,instance);
+        return channelRegistrar.register(s, instance);
     }
 
     @Override
