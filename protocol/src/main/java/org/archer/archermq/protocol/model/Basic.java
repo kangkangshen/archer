@@ -1,6 +1,5 @@
 package org.archer.archermq.protocol.model;
 
-import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.archer.archermq.common.FeatureBased;
 import org.archer.archermq.common.constants.Delimiters;
@@ -240,6 +239,7 @@ public final class Basic extends FeatureBased implements Class {
         private final String consumerTag;
 
         public CancelOk(String consumerTag) {
+            super(classId, 31);
             this.consumerTag = consumerTag;
         }
 
@@ -399,10 +399,12 @@ public final class Basic extends FeatureBased implements Class {
                 if (msgQueue.localMsgCnt() == 0) {
                     return new GetEmpty(reserved1);
                 } else {
-                    return new GetOk()
+                    //TODO dongyue
+                    return new GetOk(null, false, null, null, 0);
                 }
             }
-            return new GetOk();
+            //TODO dongyue
+            return new GetOk(null, false, null, null, 0);
 
         }
     }

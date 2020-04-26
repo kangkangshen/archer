@@ -1,6 +1,8 @@
 package org.archer.archermq.protocol;
 
 
+import java.util.List;
+
 /**
  * 一个网络连接，比如TCP/IP套接字连接
  * 连接设计为长期的,且可运载多个channel
@@ -24,5 +26,7 @@ public interface Connection extends LifeCycle{
     Channel openChannel();
 
     void qos(int prefetchSize,short prefetchCount);
+
+    List<Channel> channels();
 
 }
