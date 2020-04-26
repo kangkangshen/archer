@@ -43,16 +43,15 @@ public final class Connection extends FeatureBased implements Class {
     /**
      * 建立连接相关
      */
-    public class Start implements Command<StartOk> {
+    public class Start extends BaseCommand<StartOk> {
+
+        public Start() {
+            super(classId, 10);
+        }
 
         @Override
         public String desc() {
             return "start connection negotiation";
-        }
-
-        @Override
-        public int commandId() {
-            return 10;
         }
 
         @Override
@@ -61,20 +60,22 @@ public final class Connection extends FeatureBased implements Class {
         }
     }
 
-    public class StartOk extends FeatureBased implements Command<Void> {
+    public class StartOk extends BaseCommand<Void> {
 
-        private String mechanism;
-        private String response;
-        private String locale;
+        private final String mechanism;
+        private final String response;
+        private final String locale;
+
+        public StartOk(String mechanism, String response, String locale) {
+            super(classId, 11);
+            this.mechanism = mechanism;
+            this.response = response;
+            this.locale = locale;
+        }
 
         @Override
         public String desc() {
             return "select security mechanism and locale";
-        }
-
-        @Override
-        public int commandId() {
-            return 11;
         }
 
         @Override
@@ -109,16 +110,15 @@ public final class Connection extends FeatureBased implements Class {
         }
     }
 
-    public class Secure implements Command<SecureOk> {
+    public class Secure extends BaseCommand<SecureOk> {
+
+        public Secure() {
+            super(classId, 20);
+        }
 
         @Override
         public String desc() {
             return "security mechanism challenge";
-        }
-
-        @Override
-        public int commandId() {
-            return 20;
         }
 
         @Override
@@ -128,22 +128,19 @@ public final class Connection extends FeatureBased implements Class {
 
     }
 
-    public class SecureOk implements Command<Void> {
+    public class SecureOk extends BaseCommand<Void> {
 
         private final String response;
 
+
         public SecureOk(String response) {
+            super(classId, 21);
             this.response = response;
         }
 
         @Override
         public String desc() {
             return "security mechanism response";
-        }
-
-        @Override
-        public int commandId() {
-            return 21;
         }
 
         @Override
@@ -162,7 +159,7 @@ public final class Connection extends FeatureBased implements Class {
     /**
      * 建立连接相关
      */
-    public class Tune implements Command<TuneOk> {
+    public class Tune extends BaseCommand<TuneOk> {
 
         private final short maxChannel;
 
@@ -171,6 +168,7 @@ public final class Connection extends FeatureBased implements Class {
         private final short heartbeat;
 
         public Tune(short maxChannel, int maxFrame, short heartbeat) {
+            super(classId, 30);
             this.maxChannel = maxChannel;
             this.maxFrame = maxFrame;
             this.heartbeat = heartbeat;
@@ -181,10 +179,6 @@ public final class Connection extends FeatureBased implements Class {
             return "propose connection tuning parameters";
         }
 
-        @Override
-        public int commandId() {
-            return 30;
-        }
 
         @Override
         public TuneOk execute() {
@@ -204,7 +198,7 @@ public final class Connection extends FeatureBased implements Class {
         }
     }
 
-    public class TuneOk implements Command<Void> {
+    public class TuneOk extends BaseCommand<Void> {
 
         private final short maxChannel;
 
@@ -213,6 +207,7 @@ public final class Connection extends FeatureBased implements Class {
         private final short heartbeat;
 
         public TuneOk(short maxChannel, int maxFrame, short heartbeat) {
+            super(classId, 31);
             this.maxChannel = maxChannel;
             this.maxFrame = maxFrame;
             this.heartbeat = heartbeat;
@@ -221,11 +216,6 @@ public final class Connection extends FeatureBased implements Class {
         @Override
         public String desc() {
             return "negotiate connection tuning parameters";
-        }
-
-        @Override
-        public int commandId() {
-            return 31;
         }
 
         @Override
@@ -249,7 +239,7 @@ public final class Connection extends FeatureBased implements Class {
     /**
      * 建立连接相关
      */
-    public class Open extends FeatureBased implements Command<OpenOk> {
+    public class Open extends BaseCommand<OpenOk> {
 
         private final String virtualHost;
 
@@ -258,6 +248,7 @@ public final class Connection extends FeatureBased implements Class {
         private final String reserved2;
 
         public Open(String virtualHost, String reserved1, String reserved2) {
+            super(classId, 40);
             this.virtualHost = virtualHost;
             this.reserved1 = reserved1;
             this.reserved2 = reserved2;
@@ -268,10 +259,6 @@ public final class Connection extends FeatureBased implements Class {
             return "open connection to virtual host";
         }
 
-        @Override
-        public int commandId() {
-            return 40;
-        }
 
         @Override
         public OpenOk execute() {
@@ -310,23 +297,19 @@ public final class Connection extends FeatureBased implements Class {
         }
     }
 
-    public class OpenOk implements Command<Void> {
+    public class OpenOk extends BaseCommand<Void> {
 
 
         private final String reserved1;
 
         public OpenOk(String reserved1) {
+            super(classId, 41);
             this.reserved1 = reserved1;
         }
 
         @Override
         public String desc() {
             return null;
-        }
-
-        @Override
-        public int commandId() {
-            return 41;
         }
 
         @Override
@@ -342,7 +325,7 @@ public final class Connection extends FeatureBased implements Class {
     /**
      * 关闭连接
      */
-    public class Close extends FeatureBased implements Command<CloseOk> {
+    public class Close extends BaseCommand<CloseOk> {
 
         private final String replyCode;
 
@@ -353,6 +336,7 @@ public final class Connection extends FeatureBased implements Class {
         private final Short methodId;
 
         public Close(String replyCode, String replyText, Short classId, Short methodId) {
+            super(classId, 50);
             this.replyCode = replyCode;
             this.replyText = replyText;
             this.classId = classId;
@@ -362,11 +346,6 @@ public final class Connection extends FeatureBased implements Class {
         @Override
         public String desc() {
             return "request a connection close";
-        }
-
-        @Override
-        public int commandId() {
-            return 50;
         }
 
         @Override
@@ -420,16 +399,15 @@ public final class Connection extends FeatureBased implements Class {
      * This method confirms a Connection.Close method and tells the recipient
      * that it is safe to release resources for the connection and close the socket.
      */
-    public class CloseOk implements Command<Void> {
+    public class CloseOk extends BaseCommand<Void> {
+
+        public CloseOk() {
+            super(classId, 51);
+        }
 
         @Override
         public String desc() {
             return "confirm a connection close";
-        }
-
-        @Override
-        public int commandId() {
-            return 51;
         }
 
         @Override
@@ -449,16 +427,16 @@ public final class Connection extends FeatureBased implements Class {
     static {
         ApplicationContext context = ApplicationContextHolder.getApplicationContext();
         MethodResolver methodResolver = context.getBean(MethodResolver.class);
-        methodResolver.register(classId,51);
-        methodResolver.register(classId,50);
-        methodResolver.register(classId,41);
-        methodResolver.register(classId,40);
-        methodResolver.register(classId,31);
-        methodResolver.register(classId,30);
-        methodResolver.register(classId,21);
-        methodResolver.register(classId,20);
-        methodResolver.register(classId,11);
-        methodResolver.register(classId,10);
+        methodResolver.register(classId, 51, CloseOk.class);
+        methodResolver.register(classId, 50, Close.class);
+        methodResolver.register(classId, 41, OpenOk.class);
+        methodResolver.register(classId, 40, Open.class);
+        methodResolver.register(classId, 31, TuneOk.class);
+        methodResolver.register(classId, 30, Tune.class);
+        methodResolver.register(classId, 21, SecureOk.class);
+        methodResolver.register(classId, 20, Secure.class);
+        methodResolver.register(classId, 11, StartOk.class);
+        methodResolver.register(classId, 10, Start.class);
     }
 
 

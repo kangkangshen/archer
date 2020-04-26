@@ -6,6 +6,8 @@ import org.archer.archermq.protocol.Channel;
 import org.archer.archermq.protocol.constants.ExceptionMessages;
 import org.archer.archermq.protocol.constants.FeatureKeys;
 import org.archer.archermq.protocol.transport.ConnectionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import java.util.List;
@@ -21,6 +23,7 @@ import java.util.List;
 public final class Tx extends FeatureBased implements Class {
 
     private static final int classId = 90;
+    private static final Logger logger = LoggerFactory.getLogger("");
 
     @Override
     public int classId() {
@@ -37,14 +40,13 @@ public final class Tx extends FeatureBased implements Class {
      */
     public class Select extends BaseTransactionalCommand<SelectOk> {
 
-        @Override
-        public String desc() {
-            return "select standard transaction mode";
+        public Select() {
+            super(classId, 10);
         }
 
         @Override
-        public int commandId() {
-            return 10;
+        public String desc() {
+            return "select standard transaction mode";
         }
 
         @Override
@@ -57,14 +59,13 @@ public final class Tx extends FeatureBased implements Class {
 
     public class SelectOk extends BaseCommand<Void> {
 
-        @Override
-        public String desc() {
-            return "confirm transaction mode";
+        public SelectOk() {
+            super(classId, 11);
         }
 
         @Override
-        public int commandId() {
-            return 11;
+        public String desc() {
+            return "confirm transaction mode";
         }
 
         @Override
@@ -78,14 +79,13 @@ public final class Tx extends FeatureBased implements Class {
      */
     public class Commit extends BaseTransactionalCommand<CommitOk> {
 
-        @Override
-        public String desc() {
-            return "commit the current transaction";
+        public Commit() {
+            super(classId, 20);
         }
 
         @Override
-        public int commandId() {
-            return 20;
+        public String desc() {
+            return "commit the current transaction";
         }
 
         @Override
@@ -98,14 +98,13 @@ public final class Tx extends FeatureBased implements Class {
 
     public class CommitOk extends BaseCommand<Void> {
 
-        @Override
-        public String desc() {
-            return "confirm a successful commit";
+        public CommitOk() {
+            super(classId, 21);
         }
 
         @Override
-        public int commandId() {
-            return 21;
+        public String desc() {
+            return "confirm a successful commit";
         }
 
         @Override
@@ -119,14 +118,13 @@ public final class Tx extends FeatureBased implements Class {
      */
     public class Rollback extends BaseTransactionalCommand<RollbackOk> {
 
-        @Override
-        public String desc() {
-            return "abandon the current transaction";
+        public Rollback() {
+            super(classId, 30);
         }
 
         @Override
-        public int commandId() {
-            return 30;
+        public String desc() {
+            return "abandon the current transaction";
         }
 
         @Override
@@ -139,14 +137,13 @@ public final class Tx extends FeatureBased implements Class {
 
     public class RollbackOk extends BaseCommand<Void> {
 
-        @Override
-        public String desc() {
-            return "confirm successful rollback";
+        public RollbackOk() {
+            super(classId, 31);
         }
 
         @Override
-        public int commandId() {
-            return 31;
+        public String desc() {
+            return "confirm successful rollback";
         }
 
         @Override
@@ -158,11 +155,11 @@ public final class Tx extends FeatureBased implements Class {
     static {
         ApplicationContext context = ApplicationContextHolder.getApplicationContext();
         MethodResolver methodResolver = context.getBean(MethodResolver.class);
-        methodResolver.register(classId, 31);
-        methodResolver.register(classId, 30);
-        methodResolver.register(classId, 21);
-        methodResolver.register(classId, 20);
-        methodResolver.register(classId, 11);
-        methodResolver.register(classId, 10);
+        methodResolver.register(classId, 31, RollbackOk.class);
+        methodResolver.register(classId, 30, Rollback.class);
+        methodResolver.register(classId, 21, CommitOk.class);
+        methodResolver.register(classId, 20, Commit.class);
+        methodResolver.register(classId, 11, SelectOk.class);
+        methodResolver.register(classId, 10, Select.class);
     }
 }

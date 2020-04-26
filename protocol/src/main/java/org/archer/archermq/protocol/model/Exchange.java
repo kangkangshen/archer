@@ -65,6 +65,7 @@ public final class Exchange extends FeatureBased implements Class {
         private final Map<String, Object> arguments;
 
         public Declare(String exchange, String type, boolean passive, boolean durable, String noWait, Map<String, Object> arguments) {
+            super(classId, 10);
             this.exchange = exchange;
             this.type = type;
             this.passive = passive;
@@ -77,11 +78,6 @@ public final class Exchange extends FeatureBased implements Class {
         @Override
         public String desc() {
             return "verify exchange exists, create if needed";
-        }
-
-        @Override
-        public int commandId() {
-            return 10;
         }
 
         @Override
@@ -142,16 +138,15 @@ public final class Exchange extends FeatureBased implements Class {
         }
     }
 
-    public class DeclareOk implements Command<Void> {
+    public class DeclareOk extends BaseCommand<Void> {
+
+        public DeclareOk() {
+            super(classId, 11);
+        }
 
         @Override
         public String desc() {
             return "confirm exchange declaration";
-        }
-
-        @Override
-        public int commandId() {
-            return 11;
         }
 
         @Override
@@ -173,15 +168,18 @@ public final class Exchange extends FeatureBased implements Class {
 
         boolean noWait;
 
+        public Delete(String reserved1, String exchange, boolean ifUnused, boolean noWait) {
+            super(classId, 20);
+            this.reserved1 = reserved1;
+            this.exchange = exchange;
+            this.ifUnused = ifUnused;
+            this.noWait = noWait;
+        }
+
 
         @Override
         public String desc() {
             return "delete an exchange";
-        }
-
-        @Override
-        public int commandId() {
-            return 20;
         }
 
         @Override
@@ -199,16 +197,15 @@ public final class Exchange extends FeatureBased implements Class {
         }
     }
 
-    public class DeleteOk implements Command<Void> {
+    public class DeleteOk extends BaseCommand<Void> {
+
+        public DeleteOk() {
+            super(classId, 21);
+        }
 
         @Override
         public String desc() {
             return "confirm deletion of an exchange";
-        }
-
-        @Override
-        public int commandId() {
-            return 21;
         }
 
         @Override
@@ -220,10 +217,10 @@ public final class Exchange extends FeatureBased implements Class {
     static {
         ApplicationContext context = ApplicationContextHolder.getApplicationContext();
         MethodResolver methodResolver = context.getBean(MethodResolver.class);
-        methodResolver.register(classId,21);
-        methodResolver.register(classId,20);
-        methodResolver.register(classId,11);
-        methodResolver.register(classId,10);
+        methodResolver.register(classId, 21, DeleteOk.class);
+        methodResolver.register(classId, 20, Delete.class);
+        methodResolver.register(classId, 11, DeclareOk.class);
+        methodResolver.register(classId, 10, Declare.class);
     }
 
 
