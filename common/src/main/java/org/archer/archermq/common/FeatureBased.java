@@ -11,7 +11,7 @@ import java.util.Objects;
  * @author dongyue
  * @date 2020年04月13日20:51:47
  */
-public class FeatureBased implements Extensible{
+public class FeatureBased implements Extensible {
 
     private final Map<String, Object> feature = Maps.newConcurrentMap();
 
@@ -71,6 +71,10 @@ public class FeatureBased implements Extensible{
      */
     public boolean containsKey(String key) {
         return feature.containsKey(key);
+    }
+
+    public Map<String, Object> getAllFeature() {
+        return Maps.newHashMap(this.feature);
     }
 
 }

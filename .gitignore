@@ -5,3 +5,4 @@
 /common/target/
 *.log
 logs/
+.DS_Store

@@ -35,6 +35,8 @@
         <aspectj.platform.version>1.9.5</aspectj.platform.version>
         <lombok.platform.version>1.18.10</lombok.platform.version>
         <curator.framework.version>4.3.0</curator.framework.version>
+        <log4j2.platform.version>2.13.2</log4j2.platform.version>
+        <mongo.driver.version>2.12.3</mongo.driver.version>
     </properties>
 
     <dependencies>

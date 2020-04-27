@@ -5,6 +5,7 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import java.net.Socket;
 
@@ -14,9 +15,10 @@ import java.net.Socket;
  * @author dongyue
  * @date 2020年04月15日09:59:24
  */
-@SpringBootApplication()
+@SpringBootApplication
+@EnableJpaRepositories(basePackages = "org.archer.archermq.protocol.persistence")
 public class ArchermqApp {
     public static void main(String[] args) {
-        SpringApplication.run(ArchermqApp.class,args);
+        SpringApplication.run(ArchermqApp.class, args);
     }
 }

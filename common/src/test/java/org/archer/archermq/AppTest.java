@@ -1,7 +1,6 @@
 package org.archer.archermq;
 
 import static org.junit.Assert.assertTrue;
-
 import org.archer.archermq.common.annotation.Trace;
 import org.junit.Test;
 
@@ -19,7 +18,6 @@ public class AppTest {
 
     @Test
     public void testTraceInspectAspect(){
-
 
         HelloWorld helloWorld = new HelloWorld();
         helloWorld.helloWorld();
