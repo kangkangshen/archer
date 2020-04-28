@@ -90,4 +90,12 @@ public class StandardFrame implements Frame {
     public void setRawFrameEnd(byte rawFrameEnd) {
         this.rawFrameEnd = rawFrameEnd;
     }
+
+    public void setTcpChannel(io.netty.channel.Channel tcpChannel){
+        this.tcpChannel = tcpChannel;
+    }
+
+    public void setChannel(Channel channel) {
+        this.channel = channel;
+    }
 }

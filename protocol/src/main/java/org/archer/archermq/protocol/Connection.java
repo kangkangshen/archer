@@ -1,7 +1,7 @@
 package org.archer.archermq.protocol;
 
 
-import java.util.List;
+import org.archer.archermq.common.register.Registrar;
 
 /**
  * 一个网络连接，比如TCP/IP套接字连接
@@ -21,7 +21,7 @@ import java.util.List;
  * 11. 另一个节点对连接结束握手(Close-Ok).
  * 12 server 和  client关闭它们的套接字连接.
  */
-public interface Connection extends LifeCycle, Registrar<String, Channel> {
+public interface Connection extends LifeCycle, Registrar<Short, Channel> {
 
     String id();
 

@@ -3,7 +3,7 @@ package org.archer.archermq.protocol.model;
 import org.apache.commons.lang3.StringUtils;
 import org.archer.archermq.common.FeatureBased;
 import org.archer.archermq.common.utils.ApplicationContextHolder;
-import org.archer.archermq.protocol.Registrar;
+import org.archer.archermq.common.register.Registrar;
 import org.archer.archermq.protocol.VirtualHost;
 import org.archer.archermq.protocol.constants.ExceptionMessages;
 import org.archer.archermq.protocol.constants.FeatureKeys;

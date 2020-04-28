@@ -39,7 +39,6 @@ public class LogInspectAspect {
     public void logInspectAspect() {
     }
 
-    @SuppressWarnings("unchecked")
     @Before("logInspectAspect()")
     public void logOnBefore(JoinPoint point) {
         MethodSignature methodSignature = (MethodSignature) point.getSignature();

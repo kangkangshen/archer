@@ -1,5 +1,7 @@
 package org.archer.archermq.protocol;
 
+import org.archer.archermq.common.register.Registrar;
+
 /**
  * 作为整个中间件的入口，提供了接受客户端连接，实现AMQP消息队列和路由功能的过程,管理virtualHost,
  *
@@ -12,7 +14,7 @@ package org.archer.archermq.protocol;
  * @author dongyue
  * @date 2020年04月14日13:23:50
  */
-public interface Server extends LifeCycle , Registrar<String,VirtualHost>{
+public interface Server extends LifeCycle , Registrar<String,VirtualHost> {
 
     /**
      * 标准系统服务前辍是"amq."

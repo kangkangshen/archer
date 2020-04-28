@@ -54,11 +54,7 @@ public class StandardMethodFrameHandler implements FrameHandler {
         if(!Objects.nonNull(targetFrame)){
             return false;
         }
-        if(!Objects.equals(FrameTypeEnum.METHOD, targetFrame.type())){
-            return false;
-        }
-
-        return true;
+        return Objects.equals(FrameTypeEnum.METHOD, targetFrame.type());
     }
 
     @Override
@@ -77,7 +73,7 @@ public class StandardMethodFrameHandler implements FrameHandler {
             String cmdJson = JSON.toJSONString(command);
             ByteBuf byteBuf = Unpooled.buffer(cmdJson.getBytes().length);
             byteBuf.writeBytes(cmdJson.getBytes());
-            return FrameBuilder.allocateFrame(FrameTypeEnum.METHOD.getVal(),frame.channelId(),byteBuf.readableBytes(),byteBuf,Frame.FRAME_END);
+            return FrameBuilder.allocateFrame(FrameTypeEnum.METHOD.getVal(),frame.channelId(),byteBuf.readableBytes(),byteBuf);
         }
         return null;
     }

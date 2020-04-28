@@ -1,4 +1,4 @@
-package org.archer.archermq.config.adpter.zk;
+package org.archer.archermq.config.adapter.zk;
 
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
@@ -18,6 +18,7 @@ import java.util.prefs.Preferences;
  * @author dongyue
  * @date 2020年04月18日17:19:43
  */
+@Deprecated
 public class DistributedPreferences extends AbstractPreferences {
 
     private final CuratorFramework curatorClient;

@@ -1,11 +1,8 @@
-package org.archer.archermq.config.adpter.zk;
+package org.archer.archermq.config.adapter.zk;
 
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 import java.util.prefs.Preferences;
-
-import static org.junit.Assert.*;
 
 public class DistributedPreferencesTest {
 

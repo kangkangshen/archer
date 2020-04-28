@@ -2,6 +2,7 @@ package org.archer.archermq.protocol.model;
 
 import org.apache.commons.lang3.StringUtils;
 import org.archer.archermq.common.FeatureBased;
+import org.archer.archermq.common.register.Registrar;
 import org.archer.archermq.common.utils.ApplicationContextHolder;
 import org.archer.archermq.protocol.Channel;
 import org.archer.archermq.protocol.Exchange;

@@ -4,6 +4,8 @@ import org.archer.archermq.common.annotation.Log;
 import org.archer.archermq.common.log.BizLogUtil;
 import org.archer.archermq.common.log.LogConstants;
 import org.archer.archermq.common.log.LogInfo;
+import org.archer.archermq.common.register.Registrar;
+import org.archer.archermq.common.register.StandardMemRegistrar;
 import org.archer.archermq.common.utils.HashUtil;
 import org.archer.archermq.protocol.*;
 import org.archer.archermq.protocol.constants.LifeCyclePhases;

@@ -3,6 +3,7 @@ package org.archer.archermq.protocol.model;
 import org.apache.commons.lang3.StringUtils;
 import org.archer.archermq.common.FeatureBased;
 import org.archer.archermq.common.constants.Delimiters;
+import org.archer.archermq.common.register.Registrar;
 import org.archer.archermq.common.utils.ApplicationContextHolder;
 import org.archer.archermq.protocol.Channel;
 import org.archer.archermq.protocol.Connection;
@@ -13,13 +14,13 @@ import org.archer.archermq.protocol.constants.FeatureKeys;
 import org.archer.archermq.protocol.transport.ChannelException;
 import org.archer.archermq.protocol.transport.ConnectionException;
 import org.archer.archermq.protocol.transport.StandardConsumer;
+import org.archer.archermq.protocol.transport.bootstrap.PublishTag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
 
 /**
@@ -52,11 +53,11 @@ public final class Basic extends FeatureBased implements Class {
      */
     public class Qos extends BaseCommand<QosOk> {
 
-        private int prefetchSize;
+        private final int prefetchSize;
 
-        private short prefetchCount;
+        private final short prefetchCount;
 
-        private boolean global;
+        private final boolean global;
 
         public Qos(int prefetchSize, short prefetchCount, boolean global) {
             super(classId, 10);
@@ -107,21 +108,21 @@ public final class Basic extends FeatureBased implements Class {
      */
     public class Consume extends BaseTransactionalCommand<ConsumeOk> {
 
-        private String reserved1;
+        private final String reserved1;
 
-        private String queue;
+        private final String queue;
 
-        private String consumerTag;
+        private final String consumerTag;
 
-        private boolean noLocal;
+        private final boolean noLocal;
 
-        private boolean noAck;
+        private final boolean noAck;
 
-        private boolean exclusive;
+        private final boolean exclusive;
 
-        private String noWait;
+        private final String noWait;
 
-        private Map<String, Object> arguments;
+        private final Map<String, Object> arguments;
 
         public Consume(String reserved1, String queue, String consumerTag, boolean noLocal, boolean noAck, boolean exclusive, String noWait, Map<String, Object> arguments) {
             super(classId, 20);
@@ -267,15 +268,15 @@ public final class Basic extends FeatureBased implements Class {
      */
     public class Publish extends BaseTransactionalCommand<Void> {
 
-        private String reserved1;
+        private final String reserved1;
 
-        private String exchange;
+        private final String exchange;
 
-        private String routingKey;
+        private final String routingKey;
 
-        private boolean mandatory;
+        private final boolean mandatory;
 
-        private boolean immediate;
+        private final boolean immediate;
 
         public Publish(String reserved1, String exchange, String routingKey, boolean mandatory, boolean immediate) {
             super(classId, 40);
@@ -294,6 +295,8 @@ public final class Basic extends FeatureBased implements Class {
 
         @Override
         protected Void executeInternal() {
+            Channel channel = (Channel) getFeature(FeatureKeys.Command.AMQP_CHANNEL);
+            channel.setPublishTag(new PublishTag(exchange,routingKey,mandatory,immediate));
             return null;
         }
     }
@@ -303,13 +306,13 @@ public final class Basic extends FeatureBased implements Class {
      */
     public class Return extends BaseTransactionalCommand<Void> {
 
-        private String replyCode;
+        private final String replyCode;
 
-        private String replyText;
+        private final String replyText;
 
-        private String exchange;
+        private final String exchange;
 
-        private String routingKey;
+        private final String routingKey;
 
         public Return(String replyCode, String replyText, String exchange, String routingKey) {
             super(classId, 50);
@@ -336,15 +339,15 @@ public final class Basic extends FeatureBased implements Class {
      */
     public class Deliver extends BaseTransactionalCommand<Void> {
 
-        private String consumerTag;
+        private final String consumerTag;
 
-        private String deliveryTag;
+        private final String deliveryTag;
 
-        private boolean redelivered;
+        private final boolean redelivered;
 
-        private String exchange;
+        private final String exchange;
 
-        private String routingKey;
+        private final String routingKey;
 
         public Deliver(String consumerTag, String deliveryTag, boolean redelivered, String exchange, String routingKey) {
             super(classId, 60);
@@ -372,11 +375,11 @@ public final class Basic extends FeatureBased implements Class {
      */
     public class Get extends BaseTransactionalCommand<GetAck> {
 
-        private String reserved1;
+        private final String reserved1;
 
-        private String queue;
+        private final String queue;
 
-        private boolean noAck;
+        private final boolean noAck;
 
         public Get(String reserved1, String queue, boolean noAck) {
             super(classId, 70);
@@ -505,9 +508,9 @@ public final class Basic extends FeatureBased implements Class {
      */
     public class Reject extends BaseTransactionalCommand<Void> {
 
-        private String deliveryTag;
+        private final String deliveryTag;
 
-        private boolean requeue;
+        private final boolean requeue;
 
         public Reject(String deliveryTag, boolean requeue) {
             super(classId, 90);

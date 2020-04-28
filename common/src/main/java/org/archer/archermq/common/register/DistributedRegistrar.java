@@ -1,18 +1,15 @@
-package org.archer.archermq.protocol.transport;
+package org.archer.archermq.common.register;
 
-import org.archer.archermq.protocol.Registrar;
+import org.archer.archermq.common.register.Registrar;
 
 import java.util.List;
 import java.util.Set;
 
-/**
- * 基于内存的标准注册机实现
- *
- * @param <ID>
- * @param <TYPE>
- */
-public class StandardMemRegistrar<ID, TYPE> implements Registrar<ID, TYPE> {
+public class DistributedRegistrar<ID,TYPE> implements Registrar<ID,TYPE> {
 
+
+    public DistributedRegistrar() {
+    }
 
     @Override
     public boolean contains(ID id) {

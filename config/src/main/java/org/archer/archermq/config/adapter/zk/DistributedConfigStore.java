@@ -1,7 +1,6 @@
-package org.archer.archermq.config.adpter.zk;
+package org.archer.archermq.config.adapter.zk;
 
 import org.apache.curator.framework.CuratorFramework;
-import org.jcp.xml.dsig.internal.dom.DOMX509IssuerSerial;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -15,7 +14,8 @@ import java.util.prefs.PreferencesFactory;
  * @author dongyue
  * @date 2020年04月18日17:20:26
  */
-@Component
+@Deprecated
+//@Component
 public class DistributedConfigStore implements PreferencesFactory {
 
 

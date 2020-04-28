@@ -1,12 +1,15 @@
 package org.archer.archermq.config;
 
+import lombok.SneakyThrows;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.framework.recipes.cache.PathChildrenCache;
+import org.apache.curator.framework.recipes.cache.PathChildrenCacheEvent;
 import org.apache.curator.retry.RetryForever;
 import org.apache.curator.retry.RetryNTimes;
 import org.apache.curator.retry.RetryOneTime;
-import org.archer.archermq.config.adpter.zk.DistributedConfigStore;
+import org.archer.archermq.config.adapter.zk.DistributedConfigStore;
 import org.archer.archermq.config.constants.RetryPolicyEnum;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -27,8 +30,8 @@ public class ZkConfigs {
     @Value("${zk.server.path}")
     private String zkServerPath;
 
-    @Value("${zk.server.namespace:}")
-    private String nameSpace ;
+    @Value("${spring.application.name:archermq}")
+    private String appName ;
 
     @Value("${zk.retry.policy:RetryForever}")
     private String retryPolicy;
@@ -48,18 +51,18 @@ public class ZkConfigs {
                 .connectString(zkServerPath)
                 .sessionTimeoutMs(sessionTimeout)
                 .retryPolicy(retryPolicy())
-                .namespace(nameSpace)
+                .namespace(appName)
                 .build();
         curatorFramework.start();
         return curatorFramework;
     }
 
-    @Bean
+//    @Bean
     public Preferences systemRoot(DistributedConfigStore configStore){
         return configStore.systemRoot();
     }
 
-    @Bean
+//    @Bean
     public Preferences userRoot(DistributedConfigStore configStore){
         return configStore.userRoot();
     }

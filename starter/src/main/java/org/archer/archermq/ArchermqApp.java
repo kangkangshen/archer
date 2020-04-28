@@ -1,13 +1,15 @@
 package org.archer.archermq;
 
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
 
-import java.net.Socket;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 
 /**
  * 基于springboot的启动器
@@ -15,8 +17,9 @@ import java.net.Socket;
  * @author dongyue
  * @date 2020年04月15日09:59:24
  */
-@SpringBootApplication
-@EnableJpaRepositories(basePackages = "org.archer.archermq.protocol.persistence")
+@ImportResource("dataSource.xml")
+@SpringBootApplication()
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class ArchermqApp {
     public static void main(String[] args) {
         SpringApplication.run(ArchermqApp.class, args);

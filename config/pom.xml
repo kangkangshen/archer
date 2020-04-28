@@ -51,6 +51,11 @@
             <version>3.6.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.curator</groupId>
+            <artifactId>curator-recipes</artifactId>
+            <version>${curator.framework.version}</version>
+        </dependency>
 
 
     </dependencies>

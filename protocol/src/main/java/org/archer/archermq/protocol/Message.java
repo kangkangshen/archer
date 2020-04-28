@@ -1,12 +1,14 @@
 package org.archer.archermq.protocol;
 
 
+import org.archer.archermq.common.Extensible;
+
 import java.util.Map;
 
 /**
  * 消息定义接口
  */
-public interface Message extends LifeCycle {
+public interface Message extends LifeCycle, Extensible {
 
 
     /**
@@ -30,7 +32,9 @@ public interface Message extends LifeCycle {
      */
     String msgDescription();
 
-    Map<String,Object> msgProperties();
+    default Map<String, Object> msgProperties() {
+        return head().msgProperties();
+    }
 
     /**
      * 消息头，里面保存了很多有用的扩展字段
@@ -45,8 +49,6 @@ public interface Message extends LifeCycle {
      * @return 消息体
      */
     MessageBody body();
-
-
 
 
 }

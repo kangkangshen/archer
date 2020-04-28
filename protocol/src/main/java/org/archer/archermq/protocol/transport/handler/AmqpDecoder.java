@@ -7,10 +7,14 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import org.archer.archermq.common.annotation.Log;
 import org.archer.archermq.common.log.LogConstants;
+import org.archer.archermq.protocol.Channel;
+import org.archer.archermq.protocol.constants.ExceptionMessages;
+import org.archer.archermq.protocol.transport.ConnectionException;
 import org.archer.archermq.protocol.transport.Frame;
 import org.archer.archermq.protocol.transport.FrameBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import java.util.Objects;
 
@@ -45,7 +49,10 @@ public class AmqpDecoder extends LengthFieldBasedFrameDecoder {
         ByteBuf payload = in.copy(7,size);
         in.skipBytes(size);
         byte frameEnd = in.readByte();
-        return FrameBuilder.allocateFrame(rawType,channelId,size,payload,frameEnd);
+        if(Objects.equals(frameEnd,Frame.FRAME_END)){
+            throw new ConnectionException(ExceptionMessages.ConnectionErrors.FRAME_ERR);
+        }
+        return FrameBuilder.allocateFrame(rawType,channelId,size,payload,ctx.channel());
     }
 
     @Log(layer = LogConstants.TRANSPORT_LAYER)

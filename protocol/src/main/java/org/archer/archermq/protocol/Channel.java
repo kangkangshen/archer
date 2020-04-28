@@ -5,6 +5,7 @@ import com.google.common.collect.Sets;
 import org.archer.archermq.protocol.constants.StateEnum;
 import org.archer.archermq.protocol.model.Command;
 import org.archer.archermq.protocol.transport.Frame;
+import org.archer.archermq.protocol.transport.bootstrap.PublishTag;
 
 import java.util.List;
 import java.util.Queue;
@@ -126,4 +127,6 @@ public interface Channel extends LifeCycle {
     void commit();
 
     void rollback();
+
+    void setPublishTag(PublishTag publishTag);
 }

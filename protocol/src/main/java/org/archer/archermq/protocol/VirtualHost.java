@@ -1,8 +1,10 @@
 package org.archer.archermq.protocol;
 
 
+import io.netty.channel.Channel;
+import org.archer.archermq.common.register.Registrar;
+
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -60,7 +62,7 @@ public interface VirtualHost extends LifeCycle {
 
     Registrar<String, MessageQueue> getMsgQueueRegistry();
 
-    Registrar<String,Connection> getConnRegistry();
+    Registrar<Channel,Connection> getConnRegistry();
 
     ExecutorService taskPool();
 

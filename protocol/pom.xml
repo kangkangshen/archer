@@ -48,7 +48,6 @@
         </dependency>
 
 
-
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongo-java-driver</artifactId>
@@ -60,20 +59,15 @@
             <artifactId>spring-data-mongodb</artifactId>
             <version>${springboot.platform.version}</version>
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/javax.persistence/javax.persistence-api -->
         <dependency>
-            <groupId>javax.persistence</groupId>
-            <artifactId>javax.persistence-api</artifactId>
-            <version>2.2</version>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.plaform.version}</version>
         </dependency>
-
-
-        <!-- https://mvnrepository.com/artifact/org.springframework.data/spring-data-jpa -->
         <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-jpa</artifactId>
-            <version>${springboot.platform.version}</version>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>${hibernate.plaform.version}</version>
         </dependency>
 
     </dependencies>

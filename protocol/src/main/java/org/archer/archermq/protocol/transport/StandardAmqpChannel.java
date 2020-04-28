@@ -12,6 +12,7 @@ import org.archer.archermq.protocol.constants.ExceptionMessages;
 import org.archer.archermq.protocol.constants.FeatureKeys;
 import org.archer.archermq.protocol.constants.LifeCyclePhases;
 import org.archer.archermq.protocol.model.Command;
+import org.archer.archermq.protocol.transport.bootstrap.PublishTag;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
@@ -37,6 +38,8 @@ public class StandardAmqpChannel extends BaseLifeCycleSupport implements Channel
     private int prefetchSize;
 
     private short prefetchCount;
+
+    private PublishTag publishTag;
 
     private Set<MessageQueue> consumingMessageQueue = Sets.newConcurrentHashSet();
 
@@ -173,11 +176,11 @@ public class StandardAmqpChannel extends BaseLifeCycleSupport implements Channel
     public void exchange(Message msg) {
         VirtualHost virtualHost = getAmqpConn().virtualHost();
         Map<String, Object> msgProperties = msg.msgProperties();
-        String exchangeName = (String) msgProperties.get(FeatureKeys.Message.EXCHANGE_NAME);
-        String routingKey = (String) msgProperties.get(FeatureKeys.Message.ROUTING_KEY);
+        String exchangeName = Optional.ofNullable((String) msgProperties.get(FeatureKeys.Message.EXCHANGE_NAME)).orElse(publishTag.getExchange());
+        String routingKey = Optional.ofNullable((String) msgProperties.get(FeatureKeys.Message.ROUTING_KEY)).orElse(publishTag.getRoutingKey());
         //ignore
-        boolean mandatory = (boolean) msgProperties.get(FeatureKeys.Message.MANDATORY);
-        boolean immediate = (boolean) msgProperties.get(FeatureKeys.Message.IMMEDIATE);
+        boolean mandatory = Optional.ofNullable((Boolean) msgProperties.get(FeatureKeys.Message.MANDATORY)).orElse(publishTag.isMandatory());
+        boolean immediate = Optional.ofNullable((Boolean) msgProperties.get(FeatureKeys.Message.IMMEDIATE)).orElse(publishTag.isMandatory());
         Exchange exchange = virtualHost.getExchangeRegistry().get(exchangeName);
         Assert.notNull(exchange, ExceptionMessages.buildExceptionMsgWithTemplate("cannot find the # exchange", exchangeName));
         if (immediate) {
@@ -219,6 +222,11 @@ public class StandardAmqpChannel extends BaseLifeCycleSupport implements Channel
     @Override
     public void rollback() {
         throw new ChannelException(ExceptionMessages.ConnectionErrors.NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public void setPublishTag(PublishTag publishTag) {
+        this.publishTag = publishTag;
     }
 
     public Connection getAmqpConn() {

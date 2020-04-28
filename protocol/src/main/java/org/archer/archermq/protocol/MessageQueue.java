@@ -1,5 +1,6 @@
 package org.archer.archermq.protocol;
 
+import org.archer.archermq.common.register.Registrar;
 import org.archer.archermq.protocol.constants.DeliverMode;
 
 import java.util.Map;

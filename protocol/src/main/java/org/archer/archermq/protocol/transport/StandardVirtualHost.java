@@ -1,16 +1,18 @@
 package org.archer.archermq.protocol.transport;
 
+import io.netty.channel.Channel;
 import org.archer.archermq.common.annotation.Log;
 import org.archer.archermq.common.constants.Delimiters;
 import org.archer.archermq.common.log.LogConstants;
+import org.archer.archermq.common.register.DistributedRegistrar;
+import org.archer.archermq.common.register.Registrar;
+import org.archer.archermq.common.register.StandardMemRegistrar;
 import org.archer.archermq.protocol.*;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * 标准virtualHost实现
@@ -28,7 +30,7 @@ public class StandardVirtualHost extends BaseLifeCycleSupport implements Virtual
 
     private MessageQueue deadLetteredQueue;
 
-    private Registrar<String,Connection> connectionRegistry;
+    private Registrar<Channel,Connection> connectionRegistry;
 
     private ExecutorService executorService;
 
@@ -73,7 +75,7 @@ public class StandardVirtualHost extends BaseLifeCycleSupport implements Virtual
     }
 
     @Override
-    public Registrar<String, Connection> getConnRegistry() {
+    public Registrar<Channel, Connection> getConnRegistry() {
         return connectionRegistry;
     }
 

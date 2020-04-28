@@ -56,6 +56,9 @@ public class StandardFrameDispatcher extends ChannelInboundHandlerAdapter implem
     @Override
     @Log(layer = LogConstants.TRANSPORT_LAYER)
     public Frame dispatchFrame(Frame rawFrame) {
+
+
+
         //目前仅支持直接分派，未来会加进去更多的分派规则
         FrameTypeEnum frameTypeEnum = rawFrame.type();
         if (CollectionUtils.isEmpty(frameHandlerMap)) {

@@ -1,4 +1,4 @@
-package org.archer.archermq.config.adpter.zk;
+package org.archer.archermq.config.adapter.zk;
 
 
 import org.apache.commons.lang3.StringUtils;

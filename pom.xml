@@ -37,6 +37,9 @@
         <curator.framework.version>4.3.0</curator.framework.version>
         <log4j2.platform.version>2.13.2</log4j2.platform.version>
         <mongo.driver.version>2.12.3</mongo.driver.version>
+        <mysql.connector.version>8.0.16</mysql.connector.version>
+        <jpa.global.version>2.2</jpa.global.version>
+        <hibernate.plaform.version>5.1.7.Final</hibernate.plaform.version>
     </properties>
 
     <dependencies>
@@ -120,7 +123,28 @@
             <version>1</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/javax.persistence/javax.persistence-api -->
+        <dependency>
+            <groupId>javax.persistence</groupId>
+            <artifactId>javax.persistence-api</artifactId>
+            <version>${jpa.global.version}</version>
+        </dependency>
 
+
+        <!-- https://mvnrepository.com/artifact/org.springframework.data/spring-data-jpa -->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+            <version>${springboot.platform.version}</version>
+        </dependency>
+
+
+        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.connector.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
