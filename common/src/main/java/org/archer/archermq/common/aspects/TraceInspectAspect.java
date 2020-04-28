@@ -73,7 +73,7 @@ public class TraceInspectAspect {
         Method currMethod = methodSignature.getMethod();
         Trace currTrace = currMethod.getDeclaredAnnotation(Trace.class);
         if(currTrace.end()){
-            BizLogUtil.record(logInfo,logger);
+            BizLogUtil.end();
         }
     }
 
@@ -82,7 +82,7 @@ public class TraceInspectAspect {
         LogInfo logInfo = Objects.requireNonNull(BizLogUtil.get());
         logInfo.setType(LogConstants.EXCEPTION_THROW);
         logInfo.addContent(LogConstants.EXCEPTION_STACK,JSON.toJSONString(e.getStackTrace()));
-        BizLogUtil.record(logInfo,logger);
+        BizLogUtil.end();
     }
 
 

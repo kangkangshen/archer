@@ -79,7 +79,7 @@ public class LogInspectAspect {
     public void logOnAfterReturning(JoinPoint point,Object result){
         LogInfo logInfo = BizLogUtil.get();
         logInfo.setResult(JSON.toJSONString(result));
-        BizLogUtil.record(logInfo,logger);
+        BizLogUtil.end();
     }
 
     @AfterThrowing(value = "logInspectAspect()",throwing = "e")
@@ -87,7 +87,7 @@ public class LogInspectAspect {
         LogInfo logInfo = Objects.requireNonNull(BizLogUtil.get());
         logInfo.setType(LogConstants.EXCEPTION_THROW);
         logInfo.addContent(LogConstants.EXCEPTION_STACK,JSON.toJSONString(e.getStackTrace()));
-        BizLogUtil.record(logInfo,logger);
+        BizLogUtil.end();
     }
 
 

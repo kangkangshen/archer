@@ -60,7 +60,7 @@ public class StandardAmqpConnection extends BaseLifeCycleSupport implements Conn
         channel.setAmqpConn(this);
 
         logInfo.addContent(LogConstants.INSTANCE, channel.id().toString());
-        BizLogUtil.record(logInfo);
+        BizLogUtil.end();
         return channel;
     }
 
@@ -76,7 +76,7 @@ public class StandardAmqpConnection extends BaseLifeCycleSupport implements Conn
         this.prefetchCount = prefetchCount;
 
         logInfo.addContent(LogConstants.CONFIG_ITEM_AFTER, "qos{prefetchSize" + this.prefetchSize + ",prefetchCount:" + this.prefetchCount + "}");
-        BizLogUtil.record(logInfo);
+        BizLogUtil.end();
     }
 
     @Override

@@ -1,8 +1,16 @@
 package org.archer.archermq.protocol.transport.handler;
 
+import org.archer.archermq.common.log.BizLogUtil;
+import org.archer.archermq.common.log.LogConstants;
+import org.archer.archermq.common.log.LogInfo;
 import org.archer.archermq.protocol.constants.FrameTypeEnum;
 import org.archer.archermq.protocol.transport.Frame;
+import org.archer.archermq.protocol.transport.FrameConverter;
 import org.archer.archermq.protocol.transport.FrameHandler;
+import org.archer.archermq.protocol.transport.StandardHeartbeatFrame;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -16,6 +24,10 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class StandardHeartbeatFrameHandler implements FrameHandler {
+
+    @Autowired
+    private FrameConverter frameConverter;
+
     @Override
     public boolean canHandle(FrameTypeEnum targetType) {
         return FrameTypeEnum.HEARTBEAT.equals(targetType);
@@ -23,11 +35,26 @@ public class StandardHeartbeatFrameHandler implements FrameHandler {
 
     @Override
     public boolean validate(Frame targetFrame) {
-        return false;
+        return true;
     }
 
     @Override
     public Frame handleFrame(Frame frame) {
-        return null;
+        LogInfo logInfo = BizLogUtil.start()
+                .setLayer(LogConstants.TRANSPORT_LAYER)
+                .setType(LogConstants.HEARTBEAT);
+        try {
+            //todo dongyue
+            StandardHeartbeatFrame ping = frameConverter.convert(frame);
+            logInfo.addContent(LogConstants.TIME_STAMP, String.valueOf(ping.getCreatedTime()));
+            StandardHeartbeatFrame pong = new StandardHeartbeatFrame(frame);
+            pong.setCreatedTime(System.currentTimeMillis());
+            return pong;
+
+        } finally {
+            BizLogUtil.end();
+        }
+
+
     }
 }

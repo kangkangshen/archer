@@ -202,7 +202,7 @@ public final class Channel extends FeatureBased implements Class {
                 logInfo.addContent(LogConstants.METHOD_NAME, method.name());
             }
 
-            BizLogUtil.record(logInfo, logger);
+            BizLogUtil.end();
             return new CloseOk();
         }
     }

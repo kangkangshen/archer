@@ -124,7 +124,7 @@ public class StandardAmqpChannel extends BaseLifeCycleSupport implements Channel
         this.prefetchCount = prefetchCount;
 
         logInfo.addContent(LogConstants.CONFIG_ITEM_AFTER, "qos{prefetchSize" + this.prefetchSize + ",prefetchCount:" + this.prefetchCount + "}");
-        BizLogUtil.record(logInfo);
+        BizLogUtil.end();
     }
 
     @Override

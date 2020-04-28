@@ -44,6 +44,8 @@ public interface LogConstants {
 
     String CHANNEL_CLOSED = "channel closed";
 
+    String HEARTBEAT = "heartbeat";
+
 
     /**
      * log content key
@@ -82,7 +84,7 @@ public interface LogConstants {
 
     String REPLY_TEXT = "reply text";
 
-
+    String TIME_STAMP = "timestamp";
 
 
 }

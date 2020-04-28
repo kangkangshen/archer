@@ -54,16 +54,16 @@ public class BizLogUtil {
     }
 
     public static void end() {
-//        logInfoHolder.get().write();
+        record(logInfoHolder.get());
         logInfoHolder.remove();
     }
 
-    public static void record(LogInfo logInfo,Logger logger){
+    public static void record(LogInfo logInfo, Logger logger) {
 
     }
 
-    public static void record(LogInfo logInfo){
-        record(logInfo,log);
+    public static void record(LogInfo logInfo) {
+        record(logInfo, log);
     }
 
     public static void recordException(Throwable e) {
@@ -75,13 +75,13 @@ public class BizLogUtil {
         }
         logInfo.setType(LogConstants.EXCEPTION_THROW);
         StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw,true);
+        PrintWriter pw = new PrintWriter(sw, true);
         e.printStackTrace(pw);
         String stackTraceString = sw.getBuffer().toString();
         logInfo.addContent(LogConstants.EXCEPTION_STACK, stackTraceString);
     }
 
-    public static void recordInstanceCreated(Object o){
+    public static void recordInstanceCreated(Object o) {
         LogInfo logInfo = logInfoHolder.get();
         if (Objects.isNull(logInfo)) {
             logInfo = new LogInfo();
@@ -90,12 +90,12 @@ public class BizLogUtil {
         }
 
         logInfo.setType(LogConstants.INSTANCE_CREATED);
-        logInfo.addContent(LogConstants.INSTANCE,o.toString());
+        logInfo.addContent(LogConstants.INSTANCE, o.toString());
         end();
 
     }
 
-    public static void recordInstanceDestroyed(Object o){
+    public static void recordInstanceDestroyed(Object o) {
         LogInfo logInfo = logInfoHolder.get();
         if (Objects.isNull(logInfo)) {
             logInfo = new LogInfo();
@@ -104,7 +104,7 @@ public class BizLogUtil {
         }
 
         logInfo.setType(LogConstants.INSTANCE_DESTROYED);
-        logInfo.addContent(LogConstants.INSTANCE,o.toString());
+        logInfo.addContent(LogConstants.INSTANCE, o.toString());
     }
 
     public static LogInfo get() {
