@@ -1,77 +1,81 @@
 package org.archer.archermq.protocol.transport.impl.virtualhost;
 
 import io.netty.channel.Channel;
+import org.archer.archermq.common.register.DistributedRegistrar;
 import org.archer.archermq.common.register.Registrar;
+import org.archer.archermq.common.register.StandardMemRegistrar;
 import org.archer.archermq.protocol.*;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
-public class StandardVirtualHost implements VirtualHost {
+public class StandardVirtualHost extends BaseLifeCycleSupport implements VirtualHost {
+
+
+    private Namespace namespace;
+
+    private String name;
+
+    private Registrar<String, Exchange> exchangeRegistry = new DistributedRegistrar<>();
+
+    private Registrar<String, MessageQueue> msgQueueRegistry = new DistributedRegistrar<>();
+
+    private Registrar<Channel, Connection> connRegistry = new StandardMemRegistrar<>();
+
+    private MessageQueue deadLetteredQueue;
+
+    private ExecutorService taskPool;
 
 
     @Override
     public Namespace nameSpace() {
-        return null;
+        return namespace;
     }
 
     @Override
     public String name() {
-        return null;
+        return name;
     }
 
     @Override
     public List<Exchange> exchanges() {
-        return null;
+        return exchangeRegistry.instances();
     }
 
     @Override
     public MessageQueue deadLetteredQueue() {
-        return null;
+        return deadLetteredQueue;
     }
 
     @Override
     public Registrar<String, Exchange> getExchangeRegistry() {
-        return null;
+        return exchangeRegistry;
     }
 
     @Override
     public Registrar<String, MessageQueue> getMsgQueueRegistry() {
-        return null;
+        return msgQueueRegistry;
     }
 
     @Override
     public Registrar<Channel, Connection> getConnRegistry() {
-        return null;
+        return connRegistry;
     }
 
     @Override
     public ExecutorService taskPool() {
-        return null;
+        return taskPool;
     }
 
-    @Override
-    public String currPhase() {
-        return null;
+    public void setNamespace(Namespace namespace) {
+        this.namespace = namespace;
     }
 
-    @Override
-    public String currPhaseStatus() {
-        return null;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    @Override
-    public void triggerEvent() {
-
-    }
-
-    @Override
-    public void acceptListener(LifeCycleListener listener) {
-
-    }
-
-    @Override
-    public void updateCurrState(String nextPhase, String nextPhaseStatus) {
-
+    public void setTaskPool(ExecutorService taskPool) {
+        this.taskPool = taskPool;
     }
 }
