@@ -31,6 +31,19 @@ public class StandardFrame implements Frame {
 
     private byte rawFrameEnd;
 
+    public StandardFrame() {
+    }
+
+    public StandardFrame(Frame extendedFrame) {
+        this.rawType = extendedFrame.type().getVal();
+        this.frameType = extendedFrame.type();
+        this.rawChannelId = extendedFrame.channelId();
+        this.channel = extendedFrame.channel();
+        this.tcpChannel = extendedFrame.tcpChannel();
+        this.size = extendedFrame.size();
+        this.payload = extendedFrame.content();
+        this.rawFrameEnd = extendedFrame.frameEnd();
+    }
 
     @Override
     public FrameTypeEnum type() {

@@ -24,4 +24,7 @@ public class StandardHeartbeatFrame extends StandardFrame{
 
     private long createdTime;
 
+    public StandardHeartbeatFrame(Frame extendedFrame) {
+        super(extendedFrame);
+    }
 }

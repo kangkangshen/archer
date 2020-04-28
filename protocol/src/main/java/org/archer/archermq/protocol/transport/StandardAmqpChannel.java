@@ -25,7 +25,7 @@ public class StandardAmqpChannel extends BaseLifeCycleSupport implements Channel
 
     private Connection amqpConn;
 
-    private final String id;
+    private final Short id;
 
     private final String name;
 
@@ -51,14 +51,14 @@ public class StandardAmqpChannel extends BaseLifeCycleSupport implements Channel
 
     private MessageQueue theLastDeclareMessageQueue;
 
-    public StandardAmqpChannel(String id) {
-        this(id, id, null);
+    public StandardAmqpChannel(Short id) {
+        this(id, id.toString(), null);
     }
 
-    public StandardAmqpChannel(String id, String name, Connection amqpConn) {
+    public StandardAmqpChannel(Short id, String name, Connection amqpConn) {
         updateCurrState(LifeCyclePhases.Channel.CREATE, LifeCyclePhases.Status.START);
         triggerEvent();
-        this.id = StringUtils.isBlank(id) ? HashUtil.hash() : id;
+        this.id = id;
         this.name = name;
         this.amqpConn = amqpConn;
         if (Objects.nonNull(amqpConn)) {
@@ -71,7 +71,7 @@ public class StandardAmqpChannel extends BaseLifeCycleSupport implements Channel
     }
 
     @Override
-    public String id() {
+    public Short id() {
         return id;
     }
 

@@ -28,6 +28,8 @@ public class StandardContentFrame extends StandardFrame{
     List<StandardContentBodyFrame> bodyFrames;
 
 
+
+
     /**
      * 标准内容头帧实现
      *
@@ -42,11 +44,13 @@ public class StandardContentFrame extends StandardFrame{
 
         private long bodySize;
 
-        private short rawPropertyFlags;
+        private short propertyFlags;
 
-        private Map<String,Object> feature;
+        private Map<String,Object> properties;
 
-
+        public StandardContentHeaderFrame(Frame extendedFrame) {
+            super(extendedFrame);
+        }
     }
 
     /**
@@ -60,7 +64,8 @@ public class StandardContentFrame extends StandardFrame{
 
         private byte frameEnd;
 
-
-
+        public StandardContentBodyFrame(Frame extendedFrame) {
+            super(extendedFrame);
+        }
     }
 }

@@ -1,9 +1,12 @@
 package org.archer.archermq.protocol;
 
 
+import org.apache.commons.lang3.StringUtils;
 import org.archer.archermq.common.Extensible;
+import org.archer.archermq.protocol.constants.FeatureKeys;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 消息定义接口
@@ -16,21 +19,27 @@ public interface Message extends LifeCycle, Extensible {
      *
      * @return 当前消息的key
      */
-    String msgKey();
+    default String msgKey(){
+        return Optional.ofNullable((String) msgProperties().get(FeatureKeys.Message.MESSAGE_KEY)).orElse(msgId());
+    };
 
     /**
      * 消息的ID，用于唯一确定一条消息，例如hash值，uuid等
      *
      * @return 当前消息
      */
-    String msgId();
+    default String msgId(){
+        return Optional.of((String) msgProperties().get(FeatureKeys.Message.MESSAGE_ID)).get();
+    };
 
     /**
      * 消息描述，当消息无法投递时，该项十分有用
      *
      * @return 消息描述
      */
-    String msgDescription();
+    default String msgDescription(){
+        return Optional.ofNullable((String) msgProperties().get(FeatureKeys.Message.MESSAGE_DESC)).orElse(StringUtils.EMPTY);
+    };
 
     default Map<String, Object> msgProperties() {
         return head().msgProperties();

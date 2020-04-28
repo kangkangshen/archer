@@ -22,7 +22,11 @@ public class StandardMethodFrame extends StandardFrame {
 
     private short rawMethodId;
 
-    private ByteBuf rawArgs;
+    private byte[] rawArgs;
 
     private Map<String, Object> args;
+
+    public StandardMethodFrame(Frame extendedFrame) {
+        super(extendedFrame);
+    }
 }

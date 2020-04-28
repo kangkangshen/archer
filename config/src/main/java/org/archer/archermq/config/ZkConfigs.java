@@ -33,7 +33,7 @@ public class ZkConfigs {
     @Value("${spring.application.name:archermq}")
     private String appName ;
 
-    @Value("${zk.retry.policy:RetryForever}")
+    @Value("${zk.retry.policy:RetryNTimes}")
     private String retryPolicy;
 
     @Value("${zk.max.retry:10}")

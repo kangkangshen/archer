@@ -33,9 +33,7 @@ public interface Channel extends LifeCycle {
      *
      * @return 当前channel的Id
      */
-    default String id() {
-        return name();
-    }
+    Short id();
 
     /**
      * 返回当前channelName

@@ -13,14 +13,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class StandardAmqpConnection extends BaseLifeCycleSupport implements Connection {
+
+    private final AtomicInteger channelCnt = new AtomicInteger();
 
     private static final Logger logger = LoggerFactory.getLogger("");
 
     private final VirtualHost virtualHost;
 
-    private final Registrar<String, Channel> channelRegistrar;
+    private final Registrar<Short, Channel> channelRegistrar;
 
     private int prefetchSize;
 
@@ -52,11 +55,11 @@ public class StandardAmqpConnection extends BaseLifeCycleSupport implements Conn
         //todo 这里需要打日志
         LogInfo logInfo = BizLogUtil.start().setLayer(LogConstants.TRANSPORT_LAYER).setType(LogConstants.INSTANCE_CREATED);
 
-        StandardAmqpChannel channel = new StandardAmqpChannel(HashUtil.hash());
+        StandardAmqpChannel channel = new StandardAmqpChannel((short) channelCnt.getAndIncrement());
         channelRegistrar.register(channel.id(), channel);
         channel.setAmqpConn(this);
 
-        logInfo.addContent(LogConstants.INSTANCE, channel.id());
+        logInfo.addContent(LogConstants.INSTANCE, channel.id().toString());
         BizLogUtil.record(logInfo);
         return channel;
     }
@@ -101,29 +104,29 @@ public class StandardAmqpConnection extends BaseLifeCycleSupport implements Conn
     }
 
     @Override
-    public boolean contains(String s) {
+    public boolean contains(Short s) {
         return channelRegistrar.contains(s);
     }
 
     @Override
     @Log(layer = LogConstants.TRANSPORT_LAYER)
-    public boolean register(String s, Channel instance) {
+    public boolean register(Short s, Channel instance) {
         return channelRegistrar.register(s, instance);
     }
 
     @Override
     @Log(layer = LogConstants.TRANSPORT_LAYER)
-    public Channel remove(String s) {
+    public Channel remove(Short s) {
         return channelRegistrar.remove(s);
     }
 
     @Override
-    public Channel get(String s) {
+    public Channel get(Short s) {
         return channelRegistrar.get(s);
     }
 
     @Override
-    public Set<String> ids() {
+    public Set<Short> ids() {
         return channelRegistrar.ids();
     }
 
