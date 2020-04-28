@@ -66,12 +66,5 @@ public interface VirtualHost extends LifeCycle {
 
     ExecutorService taskPool();
 
-    /**
-     *
-     */
-    interface ExchangeRouter {
-
-    }
-
 
 }

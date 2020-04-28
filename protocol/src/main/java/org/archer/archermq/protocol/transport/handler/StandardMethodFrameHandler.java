@@ -32,7 +32,7 @@ import java.util.Objects;
  * @date 2020年04月15日17:17:27
  */
 @Component
-public class StandardMethodFrameHandler implements FrameHandler {
+public class StandardMethodFrameHandler extends BaseFrameHandler {
 
     @Autowired
     private MethodResolver methodResolver;
@@ -58,7 +58,7 @@ public class StandardMethodFrameHandler implements FrameHandler {
     }
 
     @Override
-    public Frame handleFrame(Frame frame) {
+    public Frame handleFrameInternal(Frame frame) {
 
         StandardMethodFrame methodFrame = frameConverter.convert(frame);
 

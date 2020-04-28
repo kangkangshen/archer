@@ -46,6 +46,9 @@ public interface LogConstants {
 
     String HEARTBEAT = "heartbeat";
 
+    String INSTANCE_REGISTER = "instance register";
+
+    String INSTANCE_DEREGISTER = "instance deregister";
 
     /**
      * log content key
