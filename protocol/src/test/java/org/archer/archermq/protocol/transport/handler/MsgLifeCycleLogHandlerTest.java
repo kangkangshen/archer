@@ -11,7 +11,7 @@ public class MsgLifeCycleLogHandlerTest {
 
     @Test
     public void responseEvent() {
-        Message message = new StandardMessage("wukang","wukang");
+        Message message = new StandardMessage(new StandardMessage.StandardMessageHead(),new StandardMessage.StandardMessageBody());
         message.acceptListener(new MsgLifeCycleLogHandler());
         message.updateCurrState(LifeCyclePhases.Message.CREATE,LifeCyclePhases.Status.FINISH);
         message.triggerEvent();

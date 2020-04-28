@@ -17,19 +17,19 @@ public class StandardFrame implements Frame {
 
 //    private final long ser
 
-    private byte rawType;
-    private FrameTypeEnum frameType;
+    protected byte rawType;
+    protected FrameTypeEnum frameType;
 
-    private short rawChannelId;
-    private Channel channel;
+    protected short rawChannelId;
+    protected Channel channel;
 
-    private io.netty.channel.Channel tcpChannel;
+    protected io.netty.channel.Channel tcpChannel;
 
-    private int size;
+    protected int size;
 
-    private ByteBuf payload;
+    protected ByteBuf payload;
 
-    private byte rawFrameEnd;
+    protected byte rawFrameEnd;
 
     public StandardFrame() {
     }

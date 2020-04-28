@@ -4,6 +4,7 @@ package org.archer.archermq.protocol.transport;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.archer.archermq.protocol.constants.FrameTypeEnum;
 
 import java.util.List;
 import java.util.Map;
@@ -48,6 +49,12 @@ public class StandardContentFrame extends StandardFrame{
 
         private Map<String,Object> properties;
 
+        public StandardContentHeaderFrame() {
+            this.frameType = FrameTypeEnum.CONTENT_HEADER;
+            this.rawType = FrameTypeEnum.CONTENT_HEADER.getVal();
+
+        }
+
         public StandardContentHeaderFrame(Frame extendedFrame) {
             super(extendedFrame);
         }
@@ -63,6 +70,12 @@ public class StandardContentFrame extends StandardFrame{
         private ByteBuf binPayload;
 
         private byte frameEnd;
+
+        public StandardContentBodyFrame() {
+            this.frameType = FrameTypeEnum.CONTENT_BODY;
+            this.rawType = FrameTypeEnum.CONTENT_BODY.getVal();
+
+        }
 
         public StandardContentBodyFrame(Frame extendedFrame) {
             super(extendedFrame);

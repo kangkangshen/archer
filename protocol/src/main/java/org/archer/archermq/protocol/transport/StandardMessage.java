@@ -2,6 +2,7 @@ package org.archer.archermq.protocol.transport;
 
 import com.google.common.collect.Maps;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import org.archer.archermq.common.Extensible;
 import org.archer.archermq.protocol.*;
 
@@ -32,6 +33,10 @@ public class StandardMessage extends BaseLifeCycleSupport implements Message, Ex
 
         private final Map<String,Object> msgProperties;
 
+        public StandardMessageHead() {
+            this.msgProperties = Maps.newHashMap();
+        }
+
         public  StandardMessageHead(Map<String,Object> msgProperties){
             this.msgProperties = msgProperties;
         }
@@ -45,6 +50,11 @@ public class StandardMessage extends BaseLifeCycleSupport implements Message, Ex
     public static class StandardMessageBody implements MessageBody{
 
         private final ByteBuf content;
+
+
+        public StandardMessageBody() {
+            this.content = Unpooled.buffer(16,1024);
+        }
 
         public StandardMessageBody(ByteBuf content) {
             this.content = content;

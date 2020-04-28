@@ -4,6 +4,7 @@ package org.archer.archermq.protocol.transport;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.archer.archermq.protocol.constants.FrameTypeEnum;
 
 import java.util.Map;
 
@@ -25,6 +26,11 @@ public class StandardMethodFrame extends StandardFrame {
     private byte[] rawArgs;
 
     private Map<String, Object> args;
+
+    public StandardMethodFrame() {
+        this.frameType = FrameTypeEnum.METHOD;
+        this.rawType = FrameTypeEnum.METHOD.getVal();
+    }
 
     public StandardMethodFrame(Frame extendedFrame) {
         super(extendedFrame);

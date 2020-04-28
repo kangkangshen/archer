@@ -3,6 +3,7 @@ package org.archer.archermq.protocol.transport;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.archer.archermq.protocol.constants.FrameTypeEnum;
 
 /**
  * 标准心跳帧实现
@@ -15,14 +16,21 @@ import lombok.EqualsAndHashCode;
  * 3.client收到Connection.Tune方法后，必须要开始发送心跳, 并在收到Connection.Open后，必须要开始监控.server在收到Connection.Tune-Ok后，需要开始发送和监控心跳
  * 4.节点应该尽最大努力按固定频率来发送心跳. 心跳可在任何时候发送． 任何发送字节都可作为心跳的有效替代,因此当超过固定频率还没有发送非AMQP心跳时，必须发送心跳.如果节点在两个心跳间隔或更长时间内，未探测到传入的心跳,它可在不遵循Connection.Close/Close-Ok握手的情况下，关闭连接，并记录错误信息.
  * 5.心跳应该具有持续性，除非socket连接已经被关闭, 包括在Connection.Close/Close-Ok 握手期间或之后的时间.
+ *
  * @author dongyue
  * @date 2020年04月14日13:00:26
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class StandardHeartbeatFrame extends StandardFrame{
+public class StandardHeartbeatFrame extends StandardFrame {
 
     private long createdTime;
+
+    public StandardHeartbeatFrame() {
+        this.frameType = FrameTypeEnum.HEARTBEAT;
+        this.rawType = FrameTypeEnum.HEARTBEAT.getVal();
+
+    }
 
     public StandardHeartbeatFrame(Frame extendedFrame) {
         super(extendedFrame);

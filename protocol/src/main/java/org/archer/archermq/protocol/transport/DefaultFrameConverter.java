@@ -45,7 +45,7 @@ public class DefaultFrameConverter implements FrameConverter{
 
         Map<String,Object> args = JSON.parseObject(new String(rawArgBytes, StandardCharsets.UTF_8));
 
-        StandardMethodFrame methodFrame = new StandardMethodFrame();
+        StandardMethodFrame methodFrame = new StandardMethodFrame(rawFrame);
         methodFrame.setRawClassId(classId);
         methodFrame.setRawMethodId(methodId);
         methodFrame.setRawArgs(rawArgBytes);
