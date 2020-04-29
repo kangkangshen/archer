@@ -7,6 +7,7 @@ import org.archer.archermq.protocol.transport.handler.StandardFrameDispatcher;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -24,9 +25,11 @@ public class AppTest {
 //        AmqpTemplate template = new RabbitTemplate(connectionFactory);
 //        template.convertAndSend("myqueue", "foo");
 //        String foo = (String) template.receiveAndConvert("myqueue");
+//        System.out.println(Boolean.TRUE.toString());
+        Integer a = 17;
 
-        Method method = FrameDispatcher.class.getMethod("dispatchFrame", Frame.class);
-        System.out.println(Objects.isNull(method.getAnnotation(Log.class)));
+        System.out.println(Arrays.toString(a.toString().getBytes()));
 
+        System.out.println(Arrays.toString("17".getBytes()));
     }
 }

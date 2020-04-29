@@ -1,4 +1,4 @@
-package org.archer.archermq.common.register;
+package org.archer.archermq.protocol.register;
 
 import java.util.List;
 import java.util.Set;

@@ -1,10 +1,7 @@
 package org.archer.archermq.protocol;
 
 
-import org.archer.archermq.common.register.Registrar;
 import org.archer.archermq.protocol.constants.ExchangeTypeEnum;
-
-import java.util.List;
 
 /**
  * 服务器中的实体，用来接收生产者发送的消息并将这些消息路由给服务器中的队列。

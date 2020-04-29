@@ -1,5 +1,6 @@
 package org.archer.archermq.config;
 
+import com.google.common.collect.Sets;
 import lombok.SneakyThrows;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
@@ -9,13 +10,19 @@ import org.apache.curator.framework.recipes.cache.PathChildrenCacheEvent;
 import org.apache.curator.retry.RetryForever;
 import org.apache.curator.retry.RetryNTimes;
 import org.apache.curator.retry.RetryOneTime;
+import org.archer.archermq.common.constants.Delimiters;
 import org.archer.archermq.config.adapter.zk.DistributedConfigStore;
 import org.archer.archermq.config.constants.RetryPolicyEnum;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ConversionServiceFactoryBean;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.core.convert.support.DefaultConversionService;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.prefs.Preferences;
 
 /**
@@ -30,7 +37,7 @@ public class ZkConfigs {
     @Value("${zk.server.path}")
     private String zkServerPath;
 
-    @Value("${spring.application.name:archermq}")
+    @Value("${spring.application.name}")
     private String appName ;
 
     @Value("${zk.retry.policy:RetryNTimes}")
@@ -55,6 +62,14 @@ public class ZkConfigs {
                 .build();
         curatorFramework.start();
         return curatorFramework;
+    }
+
+    @SneakyThrows
+    @Bean
+    public PathChildrenCache pathChildrenCache(CuratorFramework curatorClient){
+        PathChildrenCache childrenCache = new PathChildrenCache(curatorClient, Delimiters.SLASH+curatorClient.getNamespace(),true);
+        childrenCache.start();
+        return childrenCache;
     }
 
 //    @Bean
@@ -85,5 +100,12 @@ public class ZkConfigs {
         }
         //todo dongyue 未来将使用string模板
         throw new UnsupportedOperationException(retryPolicy+" policy cannot supported");
+    }
+
+
+
+    @Bean
+    public ConversionService conversionService(){
+        return new DefaultConversionService();
     }
 }

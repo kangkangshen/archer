@@ -1,7 +1,9 @@
 package org.archer.archermq.protocol.transport.impl.exchange;
 
+import org.archer.archermq.protocol.Exchange;
 import org.archer.archermq.protocol.Message;
 import org.archer.archermq.protocol.MessageQueue;
+import org.archer.archermq.protocol.constants.ExchangeTypeEnum;
 import org.archer.archermq.protocol.transport.BaseExchange;
 
 
@@ -15,22 +17,12 @@ import org.archer.archermq.protocol.transport.BaseExchange;
  * @date 2020年04月28日22:34:18
  */
 public class SystemExchange extends BaseExchange {
-    public SystemExchange(String name, Integer rawType, String exchangeId, boolean durable) {
-        super(name, rawType, exchangeId, durable);
+    public SystemExchange(String name, String exchangeId, boolean durable) {
+        super(name, ExchangeTypeEnum.SYSTEM.getVal(), exchangeId, durable);
     }
 
     @Override
-    public void acceptMsgQueueBinding(MessageQueue msgQueue, String routingKey) {
-
-    }
-
-    @Override
-    public void discardMsgQueueBinding(MessageQueue msgQueue, String routingKey) {
-
-    }
-
-    @Override
-    public void exchangeMsg(Message msg, String routingKey) {
+    protected void exchangeMsgInternal(Message message, String routingKey) {
 
     }
 }

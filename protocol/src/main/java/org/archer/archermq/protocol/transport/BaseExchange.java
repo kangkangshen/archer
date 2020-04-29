@@ -3,8 +3,8 @@ package org.archer.archermq.protocol.transport;
 import com.google.common.collect.Lists;
 import org.archer.archermq.common.log.BizLogUtil;
 import org.archer.archermq.common.log.LogConstants;
-import org.archer.archermq.common.register.DistributedRegistrar;
-import org.archer.archermq.common.register.Registrar;
+import org.archer.archermq.protocol.register.DistributedRegistrar;
+import org.archer.archermq.protocol.register.Registrar;
 import org.archer.archermq.protocol.BaseLifeCycleSupport;
 import org.archer.archermq.protocol.Exchange;
 import org.archer.archermq.protocol.Message;
@@ -17,7 +17,6 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 public abstract class BaseExchange extends BaseLifeCycleSupport implements Exchange {
 

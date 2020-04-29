@@ -3,11 +3,17 @@ package org.archer.archermq.common.constants;
 public interface Delimiters {
 
 
-    String UNDERLINE = "_";
+    char UNDERLINE = '_';
 
-    String COLON = ":";
+    char COLON = ':';
 
-    String COMMA = ",";
+    char COMMA = ',';
 
-    String DOLLAR = "$";
+    char DOLLAR = '$';
+
+    char SLASH = '/';
+
+    char PERIOD = '.';
+
+
 }

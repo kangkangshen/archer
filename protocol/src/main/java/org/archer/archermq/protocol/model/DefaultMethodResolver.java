@@ -3,6 +3,7 @@ package org.archer.archermq.protocol.model;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import io.netty.util.internal.StringUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.archer.archermq.common.FeatureBased;
 import org.archer.archermq.common.constants.Delimiters;
 import org.archer.archermq.protocol.Channel;
@@ -20,7 +21,6 @@ import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -45,7 +45,7 @@ public class DefaultMethodResolver implements MethodResolver, ApplicationContext
     }
 
     private String generateKey(int classId, int methodId) {
-        return classId + Delimiters.COLON + methodId;
+        return StringUtils.EMPTY +classId + Delimiters.COLON + methodId;
     }
 
     @Override

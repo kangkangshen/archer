@@ -1,9 +1,10 @@
 package org.archer.archermq.protocol.transport.impl.virtualhost;
 
 import io.netty.channel.Channel;
-import org.archer.archermq.common.register.DistributedRegistrar;
-import org.archer.archermq.common.register.Registrar;
-import org.archer.archermq.common.register.StandardMemRegistrar;
+import org.archer.archermq.common.Namespace;
+import org.archer.archermq.protocol.register.DistributedRegistrar;
+import org.archer.archermq.protocol.register.Registrar;
+import org.archer.archermq.protocol.register.StandardMemRegistrar;
 import org.archer.archermq.protocol.*;
 
 import java.util.List;

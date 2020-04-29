@@ -3,14 +3,18 @@ package org.archer.archermq.protocol.model;
 import org.apache.commons.lang3.StringUtils;
 import org.archer.archermq.common.FeatureBased;
 import org.archer.archermq.common.utils.ApplicationContextHolder;
-import org.archer.archermq.common.register.Registrar;
+import org.archer.archermq.protocol.register.Registrar;
 import org.archer.archermq.protocol.VirtualHost;
 import org.archer.archermq.protocol.constants.ExceptionMessages;
+import org.archer.archermq.protocol.constants.ExchangeTypeEnum;
 import org.archer.archermq.protocol.constants.FeatureKeys;
 import org.archer.archermq.protocol.constants.LifeCyclePhases;
 import org.archer.archermq.protocol.transport.BaseExchange;
 import org.archer.archermq.protocol.transport.ChannelException;
-import org.archer.archermq.protocol.transport.StandardExchange;
+import org.archer.archermq.protocol.transport.impl.exchange.DirectExchange;
+import org.archer.archermq.protocol.transport.impl.exchange.FanoutExchange;
+import org.archer.archermq.protocol.transport.impl.exchange.HeadersExchange;
+import org.archer.archermq.protocol.transport.impl.exchange.TopicExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -90,7 +94,24 @@ public final class Exchange extends FeatureBased implements Class {
                 return new DeclareOk();
             } else {
                 //构建基础的exchange对象
-                BaseExchange newExchange = new StandardExchange(exchange, Integer.parseInt(type), (String) arguments.get(FeatureKeys.Custom.EXCHANGE_ID), durable);
+                BaseExchange newExchange;
+                ExchangeTypeEnum exchangeType = ExchangeTypeEnum.valueOf(type.toUpperCase());
+                switch (exchangeType){
+                    case DIRECT:
+                        newExchange = new DirectExchange(exchange,(String) arguments.get(FeatureKeys.Custom.EXCHANGE_ID),durable);
+                        break;
+                    case TOPIC:
+                        newExchange = new TopicExchange(exchange,(String) arguments.get(FeatureKeys.Custom.EXCHANGE_ID),durable);
+                        break;
+                    case HEADERS:
+                        newExchange = new HeadersExchange(exchange,(String) arguments.get(FeatureKeys.Custom.EXCHANGE_ID),durable);
+                        break;
+                    case FANOUT:
+                        newExchange = new FanoutExchange(exchange,(String) arguments.get(FeatureKeys.Custom.EXCHANGE_ID),durable);
+                        break;
+                    default:
+                        throw new UnsupportedOperationException(ExceptionMessages.buildExceptionMsgWithTemplate("# type dont support yet"));
+                }
                 newExchange.updateCurrState(LifeCyclePhases.Exchange.CREATE, LifeCyclePhases.Status.START);
                 //解析特定的路由规则 todo dongyue
 
