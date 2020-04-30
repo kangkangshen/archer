@@ -31,7 +31,7 @@ import java.util.Map;
 public final class Exchange extends FeatureBased implements Class {
 
     private static final Logger logger = LoggerFactory.getLogger("");
-    private static final int classId = 40;
+    public static final int classId = 40;
 
 
     @Override
@@ -235,14 +235,6 @@ public final class Exchange extends FeatureBased implements Class {
         }
     }
 
-    static {
-        ApplicationContext context = ApplicationContextHolder.getApplicationContext();
-        MethodResolver methodResolver = context.getBean(MethodResolver.class);
-        methodResolver.register(classId, 21, DeleteOk.class);
-        methodResolver.register(classId, 20, Delete.class);
-        methodResolver.register(classId, 11, DeclareOk.class);
-        methodResolver.register(classId, 10, Declare.class);
-    }
 
 
 }

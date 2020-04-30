@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="blockingQueue" class="java.util.concurrent.LinkedBlockingQueue">
+        <constructor-arg name="capacity" value="1024"/>
+    </bean>
+
+    <bean id="globalExecutorService" class="java.util.concurrent.ThreadPoolExecutor">
+        <constructor-arg name="corePoolSize" value="4"/>
+        <constructor-arg name="maximumPoolSize" value="8"/>
+        <constructor-arg name="keepAliveTime" value="6000"/>
+        <constructor-arg name="unit" value="NANOSECONDS"/>
+        <constructor-arg name="workQueue" ref="blockingQueue"/>
+    </bean>
+
+    <bean id="deadLetteredQueue" class="org.archer.archermq.protocol.transport.impl.msgqueue.StandardMsgQueue">
+        <constructor-arg name="durable" value="true"/>
+        <constructor-arg name="exclusive" value="true"/>
+        <constructor-arg name="name" value="deadLetteredQueue"/>
+        <constructor-arg name="autoDelete" value="false"/>
+    </bean>
+
+    <bean id="defaultVirtualHost" class="org.archer.archermq.protocol.transport.impl.virtualhost.StandardVirtualHost">
+        <description>默认的virtualhost</description>
+        <constructor-arg name="name" value="default"/>
+        <constructor-arg name="namespace" value="amqp.virtualhost"/>
+    </bean>
+
+</beans>

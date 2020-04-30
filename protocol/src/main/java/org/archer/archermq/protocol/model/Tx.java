@@ -22,7 +22,7 @@ import java.util.List;
  */
 public final class Tx extends FeatureBased implements Class {
 
-    private static final int classId = 90;
+    public static final int classId = 90;
     private static final Logger logger = LoggerFactory.getLogger("");
 
     @Override
@@ -152,14 +152,4 @@ public final class Tx extends FeatureBased implements Class {
         }
     }
 
-    static {
-        ApplicationContext context = ApplicationContextHolder.getApplicationContext();
-        MethodResolver methodResolver = context.getBean(MethodResolver.class);
-        methodResolver.register(classId, 31, RollbackOk.class);
-        methodResolver.register(classId, 30, Rollback.class);
-        methodResolver.register(classId, 21, CommitOk.class);
-        methodResolver.register(classId, 20, Commit.class);
-        methodResolver.register(classId, 11, SelectOk.class);
-        methodResolver.register(classId, 10, Select.class);
-    }
 }

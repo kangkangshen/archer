@@ -27,7 +27,7 @@ import java.util.Objects;
  */
 public final class Queue extends FeatureBased implements Class {
 
-    private static final int classId = 50;
+    public static final int classId = 50;
 
     @Override
     public int classId() {
@@ -448,20 +448,5 @@ public final class Queue extends FeatureBased implements Class {
         public Void execute() {
             throw new ConnectionException(ExceptionMessages.ConnectionErrors.COMMAND_INVALID);
         }
-    }
-
-    static {
-        ApplicationContext context = ApplicationContextHolder.getApplicationContext();
-        MethodResolver methodResolver = context.getBean(MethodResolver.class);
-        methodResolver.register(classId, 51, UnbindOk.class);
-        methodResolver.register(classId, 50, Unbind.class);
-        methodResolver.register(classId, 41, DeleteOk.class);
-        methodResolver.register(classId, 40, Delete.class);
-        methodResolver.register(classId, 31, PurgeOk.class);
-        methodResolver.register(classId, 30, Purge.class);
-        methodResolver.register(classId, 21, BindOk.class);
-        methodResolver.register(classId, 20, Bind.class);
-        methodResolver.register(classId, 11, DeclareOk.class);
-        methodResolver.register(classId, 10, Declare.class);
     }
 }

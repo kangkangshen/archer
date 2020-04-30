@@ -30,7 +30,7 @@ import java.util.Objects;
 public final class Connection extends FeatureBased implements Class {
 
     private static final Logger logger = LoggerFactory.getLogger("");
-    private static final int classId = 10;
+    public static final int classId = 10;
 
     @Override
     public int classId() {
@@ -428,21 +428,6 @@ public final class Connection extends FeatureBased implements Class {
             return null;
 
         }
-    }
-
-    static {
-        ApplicationContext context = ApplicationContextHolder.getApplicationContext();
-        MethodResolver methodResolver = context.getBean(MethodResolver.class);
-        methodResolver.register(classId, 51, CloseOk.class);
-        methodResolver.register(classId, 50, Close.class);
-        methodResolver.register(classId, 41, OpenOk.class);
-        methodResolver.register(classId, 40, Open.class);
-        methodResolver.register(classId, 31, TuneOk.class);
-        methodResolver.register(classId, 30, Tune.class);
-        methodResolver.register(classId, 21, SecureOk.class);
-        methodResolver.register(classId, 20, Secure.class);
-        methodResolver.register(classId, 11, StartOk.class);
-        methodResolver.register(classId, 10, Start.class);
     }
 
 

@@ -124,7 +124,6 @@ public abstract class BaseExchange extends BaseLifeCycleSupport implements Excha
         Metadata metadata = new Metadata();
         metadata.setId(name);
         metadata.setTag(tag());
-        metadata.setDesc("exchange");
         return metadata;
     }
 }

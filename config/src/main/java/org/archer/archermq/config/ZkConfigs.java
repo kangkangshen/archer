@@ -101,11 +101,4 @@ public class ZkConfigs {
         //todo dongyue 未来将使用string模板
         throw new UnsupportedOperationException(retryPolicy+" policy cannot supported");
     }
-
-
-
-    @Bean
-    public ConversionService conversionService(){
-        return new DefaultConversionService();
-    }
 }

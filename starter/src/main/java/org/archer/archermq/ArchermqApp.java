@@ -17,7 +17,7 @@ import javax.persistence.Persistence;
  * @author dongyue
  * @date 2020年04月15日09:59:24
  */
-@ImportResource("dataSource.xml")
+@ImportResource({"dataSource.xml","virtualHost.xml"})
 @SpringBootApplication()
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class ArchermqApp {

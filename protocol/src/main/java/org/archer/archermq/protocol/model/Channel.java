@@ -28,7 +28,7 @@ public final class Channel extends FeatureBased implements Class {
 
     private static final Logger logger = LoggerFactory.getLogger("");
 
-    private static final int classId = 20;
+    public static final int classId = 20;
 
     @Override
     public int classId() {
@@ -225,17 +225,6 @@ public final class Channel extends FeatureBased implements Class {
             channel.close();
             return null;
         }
-    }
-
-    static {
-        ApplicationContext context = ApplicationContextHolder.getApplicationContext();
-        MethodResolver methodResolver = context.getBean(MethodResolver.class);
-        methodResolver.register(classId, 41, CloseOk.class);
-        methodResolver.register(classId, 40, Close.class);
-        methodResolver.register(classId, 21, FlowOk.class);
-        methodResolver.register(classId, 20, Flow.class);
-        methodResolver.register(classId, 11, OpenOk.class);
-        methodResolver.register(classId, 10, Open.class);
     }
 
 }

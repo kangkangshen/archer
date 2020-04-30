@@ -7,6 +7,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import lombok.Data;
 import org.archer.archermq.config.cfgcenter.ConfigCenterService;
+import org.archer.archermq.protocol.Server;
 import org.archer.archermq.protocol.constants.FeatureKeys;
 import org.archer.archermq.protocol.constants.FrameTypeEnum;
 import org.archer.archermq.protocol.transport.Frame;
@@ -36,21 +37,20 @@ public class AmqpTest {
     @Autowired
     private FrameDispatcher frameDispatcher;
 
+    @Autowired
+    private Server server;
+
     @GetMapping("/start")
     public String testFullLink() {
-
-        StandardMethodFrame methodFrame = new StandardMethodFrame();
-
-        methodFrame.setRawClassId((short) 20);
-        methodFrame.setRawMethodId((short) 10);
-        methodFrame.setTcpChannel(null);
         Map<String,Object> args = Maps.newHashMap();
         args.put("reserved-1","");
         String argsJson = JSON.toJSONString(args);
-        int size = argsJson.getBytes().length;
-        methodFrame.setRawArgs(argsJson.getBytes());
-        methodFrame.setArgs(args);
-        Frame returnedFrame = frameDispatcher.dispatchFrame(methodFrame);
+        ByteBuf buf = Unpooled.buffer();
+        buf.writeShort(20);
+        buf.writeShort(10);
+        buf.writeBytes(argsJson.getBytes());
+        Frame frame = FrameBuilder.allocateFrame(FrameTypeEnum.METHOD.getVal(),Short.MIN_VALUE,buf.readableBytes(),buf);
+        Frame returnedFrame = frameDispatcher.dispatchFrame(frame);
         System.out.println("invoked");
         return "success";
     }

@@ -13,6 +13,8 @@ import org.archer.archermq.common.annotation.Log;
 import org.archer.archermq.common.log.BizLogUtil;
 import org.archer.archermq.common.log.LogConstants;
 import org.archer.archermq.common.log.LogInfo;
+import org.archer.archermq.config.register.Registrar;
+import org.archer.archermq.config.register.StandardMemRegistrar;
 import org.archer.archermq.protocol.BaseLifeCycleSupport;
 import org.archer.archermq.protocol.Server;
 import org.archer.archermq.protocol.VirtualHost;
@@ -67,6 +69,8 @@ public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements
     private ServerBootstrapConfig serverBootstrapConfig;
 
     private Channel currChannel;
+
+    private final Registrar<String,VirtualHost> virtualHostRegistry = new StandardMemRegistrar<>();
 
     @Override
     public void afterPropertiesSet() {
@@ -191,36 +195,36 @@ public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements
 
     @Override
     public boolean contains(String s) {
-        return false;
+        return virtualHostRegistry.contains(s);
     }
 
     @Override
     public boolean register(String s, VirtualHost instance) {
-        return false;
+        return virtualHostRegistry.register(s,instance);
     }
 
     @Override
     public VirtualHost remove(String s) {
-        return null;
+        return virtualHostRegistry.remove(s);
     }
 
     @Override
     public VirtualHost get(String s) {
-        return null;
+        return virtualHostRegistry.get(s);
     }
 
     @Override
     public Set<String> ids() {
-        return null;
+        return virtualHostRegistry.ids();
     }
 
     @Override
     public List<VirtualHost> instances() {
-        return null;
+        return virtualHostRegistry.instances();
     }
 
     @Override
     public int size() {
-        return 0;
+        return virtualHostRegistry.size();
     }
 }

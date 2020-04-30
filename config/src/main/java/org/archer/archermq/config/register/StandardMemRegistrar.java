@@ -21,7 +21,7 @@ public class StandardMemRegistrar<ID, TYPE> implements Registrar<ID, TYPE> {
 
     @Override
     public boolean contains(@Nonnull ID id) {
-        return delegateRegistry.containsKey(Objects.requireNonNull(id));
+        return delegateRegistry.containsKey(id);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class StandardMemRegistrar<ID, TYPE> implements Registrar<ID, TYPE> {
 
     @Override
     public TYPE get(@Nonnull ID id) {
-        return delegateRegistry.get(Objects.requireNonNull(id));
+        return delegateRegistry.get(id);
     }
 
     @Override

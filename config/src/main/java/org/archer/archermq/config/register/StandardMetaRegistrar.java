@@ -2,18 +2,18 @@ package org.archer.archermq.config.register;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 
 @Component
-public class StandardMetaRegistrar implements Registrar<String,Metadata>{
+public class StandardMetaRegistrar implements Registrar<String, Metadata>{
 
-    @Autowired
+    @Resource
     private MetadataRepository metadataRepository;
 
     @Override

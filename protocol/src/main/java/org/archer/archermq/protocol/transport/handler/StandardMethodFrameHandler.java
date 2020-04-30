@@ -41,8 +41,6 @@ public class StandardMethodFrameHandler extends BaseFrameHandler {
     private FrameConverter frameConverter;
 
 
-
-
     @Override
     public boolean canHandle(FrameTypeEnum targetType) {
         return FrameTypeEnum.METHOD.equals(targetType);
@@ -51,10 +49,13 @@ public class StandardMethodFrameHandler extends BaseFrameHandler {
     @Override
     public boolean validate(Frame targetFrame) {
         //double check
-        if(!Objects.nonNull(targetFrame)){
-            return false;
-        }
-        return Objects.equals(FrameTypeEnum.METHOD, targetFrame.type());
+        boolean valid = Objects.nonNull(targetFrame);
+
+        valid &= Objects.equals(FrameTypeEnum.METHOD, targetFrame.type());
+
+        valid &= Objects.nonNull(targetFrame.content()) && targetFrame.content().readableBytes() >= 8;
+
+        return valid;
     }
 
     @Override
@@ -62,22 +63,21 @@ public class StandardMethodFrameHandler extends BaseFrameHandler {
 
         StandardMethodFrame methodFrame = frameConverter.convert(frame);
 
-        if(!methodResolver.support(methodFrame.getRawClassId(),methodFrame.getRawMethodId())){
+        if (!methodResolver.support(methodFrame.getRawClassId(), methodFrame.getRawMethodId())) {
             throw new ChannelException(ExceptionMessages.ConnectionErrors.NOT_IMPLEMENTED);
         }
 
         Command<?> targetCommand = methodResolver.route(methodFrame);
 
         Command<?> command = (Command<?>) targetCommand.execute();
-        if(Objects.nonNull(command)){
+        if (Objects.nonNull(command)) {
             String cmdJson = JSON.toJSONString(command);
             ByteBuf byteBuf = Unpooled.buffer(cmdJson.getBytes().length);
             byteBuf.writeBytes(cmdJson.getBytes());
-            return FrameBuilder.allocateFrame(FrameTypeEnum.METHOD.getVal(),frame.channelId(),byteBuf.readableBytes(),byteBuf);
+            return FrameBuilder.allocateFrame(FrameTypeEnum.METHOD.getVal(), frame.channelId(), byteBuf.readableBytes(), byteBuf);
         }
         return null;
     }
-
 
 
 }

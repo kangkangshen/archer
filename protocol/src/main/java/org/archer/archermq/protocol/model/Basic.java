@@ -32,7 +32,7 @@ import java.util.Set;
 public final class Basic extends FeatureBased implements Class {
 
     private static final Logger logger = LoggerFactory.getLogger("");
-    private static final int classId = 60;
+    public static final int classId = 60;
 
     @Override
     public int classId() {
@@ -622,30 +622,6 @@ public final class Basic extends FeatureBased implements Class {
         public Void execute() {
             throw new ConnectionException(ExceptionMessages.ConnectionErrors.COMMAND_INVALID);
         }
-    }
-
-    static {
-        ApplicationContext context = ApplicationContextHolder.getApplicationContext();
-        MethodResolver methodResolver = context.getBean(MethodResolver.class);
-        methodResolver.register(classId, 111, RecoverOk.class);
-        methodResolver.register(classId, 100, RecoverAsync.class);
-        methodResolver.register(classId, 110, Recover.class);
-        methodResolver.register(classId, 90, Reject.class);
-        methodResolver.register(classId, 80, Ack.class);
-        methodResolver.register(classId, 72, GetEmpty.class);
-        methodResolver.register(classId, 71, GetOk.class);
-        methodResolver.register(classId, 70, Get.class);
-        methodResolver.register(classId, 60, Deliver.class);
-        methodResolver.register(classId, 50, Return.class);
-        methodResolver.register(classId, 40, Publish.class);
-        methodResolver.register(classId, 31, CancelOk.class);
-        methodResolver.register(classId, 30, Cancel.class);
-        methodResolver.register(classId, 21, ConsumeOk.class);
-        methodResolver.register(classId, 20, Consume.class);
-        methodResolver.register(classId, 11, QosOk.class);
-        methodResolver.register(classId, 10, Qos.class);
-
-
     }
 
 }

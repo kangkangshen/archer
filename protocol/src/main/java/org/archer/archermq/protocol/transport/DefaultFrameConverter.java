@@ -41,7 +41,7 @@ public class DefaultFrameConverter implements FrameConverter{
         short methodId = payload.readShort();
 
         byte[] rawArgBytes = new byte[payload.readableBytes()];
-        payload.writeBytes(rawArgBytes);
+        payload.readBytes(rawArgBytes);
 
         Map<String,Object> args = JSON.parseObject(new String(rawArgBytes, StandardCharsets.UTF_8));
 

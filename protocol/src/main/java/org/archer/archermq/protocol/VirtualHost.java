@@ -3,6 +3,7 @@ package org.archer.archermq.protocol;
 
 import io.netty.channel.Channel;
 import org.archer.archermq.common.Namespace;
+import org.archer.archermq.config.register.Metadata;
 import org.archer.archermq.config.register.Registrar;
 
 import java.util.List;
@@ -57,6 +58,7 @@ public interface VirtualHost extends LifeCycle {
     MessageQueue deadLetteredQueue();
 
 
+    Registrar<String, Metadata> getMetaRegistry();
 
 
     Registrar<String, Exchange> getExchangeRegistry();

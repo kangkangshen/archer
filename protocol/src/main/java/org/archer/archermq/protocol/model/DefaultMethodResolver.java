@@ -15,6 +15,7 @@ import org.archer.archermq.protocol.constants.FeatureKeys;
 import org.archer.archermq.protocol.transport.ChannelException;
 import org.archer.archermq.protocol.transport.StandardMethodFrame;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
@@ -31,7 +32,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Component
-public class DefaultMethodResolver implements MethodResolver, ApplicationContextAware {
+public class DefaultMethodResolver implements MethodResolver, ApplicationContextAware,InitializingBean {
 
     private final Map<String, java.lang.Class<? extends Command<?>>> methodRegistry = Maps.newConcurrentMap();
 
@@ -45,7 +46,7 @@ public class DefaultMethodResolver implements MethodResolver, ApplicationContext
     }
 
     private String generateKey(int classId, int methodId) {
-        return StringUtils.EMPTY +classId + Delimiters.COLON + methodId;
+        return StringUtils.EMPTY + classId + Delimiters.COLON + methodId;
     }
 
     @Override
@@ -134,5 +135,73 @@ public class DefaultMethodResolver implements MethodResolver, ApplicationContext
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.springContext = applicationContext;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        //basic class
+        this.register(Basic.classId, 111, Basic.RecoverOk.class);
+        this.register(Basic.classId, 100, Basic.RecoverAsync.class);
+        this.register(Basic.classId, 110, Basic.Recover.class);
+        this.register(Basic.classId, 90, Basic.Reject.class);
+        this.register(Basic.classId, 80, Basic.Ack.class);
+        this.register(Basic.classId, 72, Basic.GetEmpty.class);
+        this.register(Basic.classId, 71, Basic.GetOk.class);
+        this.register(Basic.classId, 70, Basic.Get.class);
+        this.register(Basic.classId, 60, Basic.Deliver.class);
+        this.register(Basic.classId, 50, Basic.Return.class);
+        this.register(Basic.classId, 40, Basic.Publish.class);
+        this.register(Basic.classId, 31, Basic.CancelOk.class);
+        this.register(Basic.classId, 30, Basic.Cancel.class);
+        this.register(Basic.classId, 21, Basic.ConsumeOk.class);
+        this.register(Basic.classId, 20, Basic.Consume.class);
+        this.register(Basic.classId, 11, Basic.QosOk.class);
+        this.register(Basic.classId, 10, Basic.Qos.class);
+
+        //channel class
+        this.register(org.archer.archermq.protocol.model.Channel.classId, 41, org.archer.archermq.protocol.model.Channel.CloseOk.class);
+        this.register(org.archer.archermq.protocol.model.Channel.classId, 40, org.archer.archermq.protocol.model.Channel.Close.class);
+        this.register(org.archer.archermq.protocol.model.Channel.classId, 21, org.archer.archermq.protocol.model.Channel.FlowOk.class);
+        this.register(org.archer.archermq.protocol.model.Channel.classId, 20, org.archer.archermq.protocol.model.Channel.Flow.class);
+        this.register(org.archer.archermq.protocol.model.Channel.classId, 11, org.archer.archermq.protocol.model.Channel.OpenOk.class);
+        this.register(org.archer.archermq.protocol.model.Channel.classId, 10, org.archer.archermq.protocol.model.Channel.Open.class);
+
+
+        //connection class
+        this.register(org.archer.archermq.protocol.model.Connection.classId, 51, org.archer.archermq.protocol.model.Connection.CloseOk.class);
+        this.register(org.archer.archermq.protocol.model.Connection.classId, 50, org.archer.archermq.protocol.model.Connection.Close.class);
+        this.register(org.archer.archermq.protocol.model.Connection.classId, 41, org.archer.archermq.protocol.model.Connection.OpenOk.class);
+        this.register(org.archer.archermq.protocol.model.Connection.classId, 40, org.archer.archermq.protocol.model.Connection.Open.class);
+        this.register(org.archer.archermq.protocol.model.Connection.classId, 31, org.archer.archermq.protocol.model.Connection.TuneOk.class);
+        this.register(org.archer.archermq.protocol.model.Connection.classId, 30, org.archer.archermq.protocol.model.Connection.Tune.class);
+        this.register(org.archer.archermq.protocol.model.Connection.classId, 21, org.archer.archermq.protocol.model.Connection.SecureOk.class);
+        this.register(org.archer.archermq.protocol.model.Connection.classId, 20, org.archer.archermq.protocol.model.Connection.Secure.class);
+        this.register(org.archer.archermq.protocol.model.Connection.classId, 11, org.archer.archermq.protocol.model.Connection.StartOk.class);
+        this.register(org.archer.archermq.protocol.model.Connection.classId, 10, org.archer.archermq.protocol.model.Connection.Start.class);
+
+        //exchange class
+        this.register(Exchange.classId, 21, Exchange.DeleteOk.class);
+        this.register(Exchange.classId, 20, Exchange.Delete.class);
+        this.register(Exchange.classId, 11, Exchange.DeclareOk.class);
+        this.register(Exchange.classId, 10, Exchange.Declare.class);
+
+        //queue class
+        this.register(Queue.classId, 51, Queue.UnbindOk.class);
+        this.register(Queue.classId, 50, Queue.Unbind.class);
+        this.register(Queue.classId, 41, Queue.DeleteOk.class);
+        this.register(Queue.classId, 31, Queue.PurgeOk.class);
+        this.register(Queue.classId, 30, Queue.Purge.class);
+        this.register(Queue.classId, 21, Queue.BindOk.class);
+        this.register(Queue.classId, 20, Queue.Bind.class);
+        this.register(Queue.classId, 11, Queue.DeclareOk.class);
+        this.register(Queue.classId, 10, Queue.Declare.class);
+
+        this.register(Tx.classId, 31, Tx.RollbackOk.class);
+        this.register(Tx.classId, 30, Tx.Rollback.class);
+        this.register(Tx.classId, 21, Tx.CommitOk.class);
+        this.register(Tx.classId, 20, Tx.Commit.class);
+        this.register(Tx.classId, 11, Tx.SelectOk.class);
+        this.register(Tx.classId, 10, Tx.Select.class);
+
     }
 }

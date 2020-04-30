@@ -1,14 +1,10 @@
 package org.archer.archermq.protocol.transport.impl.exchange;
 
-import org.archer.archermq.common.log.BizLogUtil;
-import org.archer.archermq.common.log.LogConstants;
-import org.archer.archermq.config.register.Metadata;
 import org.archer.archermq.protocol.Message;
 import org.archer.archermq.protocol.MessageQueue;
 import org.archer.archermq.protocol.constants.ExceptionMessages;
 import org.archer.archermq.protocol.constants.ExchangeTypeEnum;
 import org.archer.archermq.protocol.transport.BaseExchange;
-import org.archer.archermq.protocol.transport.ConnectionException;
 
 import java.util.List;
 

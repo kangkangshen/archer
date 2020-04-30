@@ -12,16 +12,17 @@ import org.archer.archermq.protocol.persistence.repository.MsgLifeCycleRepositor
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @Component
 public class MsgLifeCycleLogHandler implements LifeCycleListener {
 
 
-    @Autowired
+    @Resource
     private MsgContentRepository msgContentRepository;
 
-    @Autowired
+    @Resource
     private MsgLifeCycleRepository msgLifeCycleRepository;
 
 
