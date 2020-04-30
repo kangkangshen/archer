@@ -2,6 +2,7 @@ package org.archer.archermq.protocol;
 
 
 import org.archer.archermq.protocol.constants.ExchangeTypeEnum;
+import org.archer.archermq.config.register.Recordable;
 
 /**
  * 服务器中的实体，用来接收生产者发送的消息并将这些消息路由给服务器中的队列。
@@ -15,7 +16,7 @@ import org.archer.archermq.protocol.constants.ExchangeTypeEnum;
  * @author dongyue
  * @date 2020年04月13日18:38:47
  */
-public interface Exchange extends LifeCycle {
+public interface Exchange extends LifeCycle, Recordable {
 
     /**
      * 标准交换器实例前辍是"amq."
@@ -27,7 +28,11 @@ public interface Exchange extends LifeCycle {
      */
     String CUSTOM_EXCHANGE_NAME_PREFIX = "x-";
 
+    String TAG = "exchange";
+
     String name();
+
+    boolean isDurable();
 
 
     /**

@@ -1,6 +1,6 @@
 package org.archer.archermq.protocol;
 
-import org.archer.archermq.protocol.register.Registrar;
+import org.archer.archermq.config.register.Registrar;
 
 /**
  * 作为整个中间件的入口，提供了接受客户端连接，实现AMQP消息队列和路由功能的过程,管理virtualHost,

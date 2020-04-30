@@ -2,6 +2,7 @@ package org.archer.archermq.protocol.transport.impl.exchange;
 
 import org.archer.archermq.common.log.BizLogUtil;
 import org.archer.archermq.common.log.LogConstants;
+import org.archer.archermq.config.register.Metadata;
 import org.archer.archermq.protocol.Message;
 import org.archer.archermq.protocol.MessageQueue;
 import org.archer.archermq.protocol.constants.ExceptionMessages;

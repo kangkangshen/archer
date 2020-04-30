@@ -3,7 +3,7 @@ package org.archer.archermq.protocol;
 
 import io.netty.channel.Channel;
 import org.archer.archermq.common.Namespace;
-import org.archer.archermq.protocol.register.Registrar;
+import org.archer.archermq.config.register.Registrar;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;

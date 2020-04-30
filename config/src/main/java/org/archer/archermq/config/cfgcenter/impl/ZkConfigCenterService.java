@@ -11,9 +11,11 @@ import org.apache.curator.framework.recipes.cache.PathChildrenCacheListener;
 import org.apache.curator.utils.CloseableUtils;
 import org.apache.zookeeper.data.Stat;
 import org.archer.archermq.common.constants.Delimiters;
-import org.archer.archermq.protocol.register.Registrar;
-import org.archer.archermq.protocol.register.StandardMemRegistrar;
+
+
 import org.archer.archermq.config.cfgcenter.ConfigCenterService;
+import org.archer.archermq.config.register.Registrar;
+import org.archer.archermq.config.register.StandardMemRegistrar;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PreDestroy;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Component
@@ -90,11 +93,11 @@ public class ZkConfigCenterService implements ConfigCenterService, InitializingB
     @Override
     public synchronized void putObject(String key, Object val) {
         try {
-            if(Objects.isNull(val)){
+            if (Objects.isNull(val)) {
                 String zkPath = polish(appName, key);
                 curatorClient.delete().deletingChildrenIfNeeded().forPath(zkPath);
                 localConfig.remove(key);
-            }else{
+            } else {
                 byte[] data = JSON.toJSONString(val).getBytes();
                 String zkPath = polish(appName, key);
                 if (Objects.isNull(curatorClient.checkExists().forPath(zkPath))) {
@@ -112,6 +115,12 @@ public class ZkConfigCenterService implements ConfigCenterService, InitializingB
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public Map<String, Object> cache() {
+        //todo dongyue
+        return null;
     }
 
     @Override
@@ -149,10 +158,10 @@ public class ZkConfigCenterService implements ConfigCenterService, InitializingB
         if (key.startsWith(prefixTemplate)) {
             return key.substring(prefixTemplate.length());
         }
-        if(key.startsWith(String.valueOf(Delimiters.SLASH))){
+        if (key.startsWith(String.valueOf(Delimiters.SLASH))) {
             return key;
         }
-        return Delimiters.SLASH+key;
+        return Delimiters.SLASH + key;
 
     }
 
@@ -168,14 +177,14 @@ public class ZkConfigCenterService implements ConfigCenterService, InitializingB
             Object obj = JSON.parseObject(strData);
             switch (event.getType()) {
                 case CHILD_ADDED:
-                    localConfig.register(key,obj);
+                    localConfig.register(key, obj);
                     break;
                 case CHILD_REMOVED:
                     localConfig.remove(key);
                     break;
                 case CHILD_UPDATED:
                     localConfig.remove(key);
-                    localConfig.register(key,obj);
+                    localConfig.register(key, obj);
                     break;
                 default:
                     break;

@@ -1,7 +1,7 @@
 package org.archer.archermq.protocol;
 
 
-import org.archer.archermq.protocol.register.Registrar;
+import org.archer.archermq.config.register.Registrar;
 
 /**
  * 一个网络连接，比如TCP/IP套接字连接

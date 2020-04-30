@@ -1,6 +1,7 @@
 package org.archer.archermq.protocol;
 
-import org.archer.archermq.protocol.register.Registrar;
+import org.archer.archermq.config.register.Recordable;
+import org.archer.archermq.config.register.Registrar;
 import org.archer.archermq.protocol.constants.DeliverMode;
 
 import java.util.Map;
@@ -21,7 +22,7 @@ import java.util.Map;
  * @author dongyue
  * @date 2020年04月13日21:24:19
  */
-public interface MessageQueue extends LifeCycle {
+public interface MessageQueue extends LifeCycle, Recordable {
 
     void setDeliverMode(DeliverMode deliverMode);
 
@@ -29,6 +30,8 @@ public interface MessageQueue extends LifeCycle {
      * 标准消息队列前辍是"amq."
      */
     String STANDARD_MESSAGE_QUEUE_NAME_PREFIX = "amq.";
+
+    String TAG = "message_queue";
 
     String bindingKey();
 

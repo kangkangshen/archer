@@ -1,7 +1,9 @@
-package org.archer.archermq.protocol.transport;
+package org.archer.archermq.protocol.transport.impl.msgqueue;
 
-import org.archer.archermq.protocol.register.Registrar;
-import org.archer.archermq.protocol.register.StandardMemRegistrar;
+import org.archer.archermq.config.register.Metadata;
+import org.archer.archermq.config.register.Recordable;
+import org.archer.archermq.config.register.Registrar;
+import org.archer.archermq.config.register.StandardMemRegistrar;
 import org.archer.archermq.protocol.*;
 import org.archer.archermq.protocol.constants.DeliverMode;
 import org.archer.archermq.protocol.constants.LifeCyclePhases;
@@ -13,7 +15,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class StandardMsgQueue extends BaseLifeCycleSupport implements MessageQueue {
+public class StandardMsgQueue extends BaseLifeCycleSupport implements MessageQueue, Recordable {
 
     private final Queue<Message> memQueue = new ConcurrentLinkedDeque<>();
 
@@ -211,5 +213,18 @@ public class StandardMsgQueue extends BaseLifeCycleSupport implements MessageQue
     @Override
     protected boolean couldChangeState(String nextPhase, String nextPhaseStatus) {
         return super.couldChangeState(nextPhase, nextPhaseStatus);
+    }
+
+    @Override
+    public Metadata meta() {
+        Metadata msgQueueMetadata =  new Metadata();
+        msgQueueMetadata.setId(name);
+        msgQueueMetadata.setTag(tag());
+        return msgQueueMetadata;
+    }
+
+    @Override
+    public String tag() {
+        return MessageQueue.TAG;
     }
 }

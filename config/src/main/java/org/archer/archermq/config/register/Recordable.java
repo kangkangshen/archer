@@ -1,4 +1,5 @@
-package org.archer.archermq.protocol.register;
+package org.archer.archermq.config.register;
+
 
 public interface Recordable {
 

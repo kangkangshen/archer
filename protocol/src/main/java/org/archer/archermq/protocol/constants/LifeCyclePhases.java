@@ -24,6 +24,8 @@ public interface LifeCyclePhases {
 
         String CREATE = "create";
 
+        String REGISTERED = "registered";
+
         String INUSE = "inuse";
 
         String DELETE = "delete";
@@ -38,6 +40,8 @@ public interface LifeCyclePhases {
          */
 
         String CREATE = "create";
+
+        String REGISTERED = "registered";
 
         String BIND = "bind";
 

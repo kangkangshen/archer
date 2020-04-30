@@ -2,7 +2,7 @@ package org.archer.archermq.protocol.model;
 
 import org.apache.commons.lang3.StringUtils;
 import org.archer.archermq.common.FeatureBased;
-import org.archer.archermq.protocol.register.Registrar;
+import org.archer.archermq.config.register.Registrar;
 import org.archer.archermq.common.utils.ApplicationContextHolder;
 import org.archer.archermq.protocol.Channel;
 import org.archer.archermq.protocol.Exchange;
@@ -12,7 +12,7 @@ import org.archer.archermq.protocol.constants.FeatureKeys;
 import org.archer.archermq.protocol.constants.LifeCyclePhases;
 import org.archer.archermq.protocol.transport.ChannelException;
 import org.archer.archermq.protocol.transport.ConnectionException;
-import org.archer.archermq.protocol.transport.StandardMsgQueue;
+import org.archer.archermq.protocol.transport.impl.msgqueue.StandardMsgQueue;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
 

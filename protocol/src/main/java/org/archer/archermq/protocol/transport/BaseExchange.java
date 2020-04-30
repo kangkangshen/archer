@@ -3,8 +3,8 @@ package org.archer.archermq.protocol.transport;
 import com.google.common.collect.Lists;
 import org.archer.archermq.common.log.BizLogUtil;
 import org.archer.archermq.common.log.LogConstants;
-import org.archer.archermq.protocol.register.DistributedRegistrar;
-import org.archer.archermq.protocol.register.Registrar;
+import org.archer.archermq.config.register.Metadata;
+import org.archer.archermq.config.register.Registrar;
 import org.archer.archermq.protocol.BaseLifeCycleSupport;
 import org.archer.archermq.protocol.Exchange;
 import org.archer.archermq.protocol.Message;
@@ -28,20 +28,20 @@ public abstract class BaseExchange extends BaseLifeCycleSupport implements Excha
 
     private final boolean durable;
 
-    protected final Registrar<String/*bindingKey*/, List<MessageQueue>> msgQueueRegistry = new DistributedRegistrar<>();
+    protected Registrar<String/*bindingKey*/, List<MessageQueue>> msgQueueRegistry;
 
     public BaseExchange(String name, Integer rawType) {
-        this(name,rawType,name,false);
+        this(name, rawType, name, false);
     }
 
-    public BaseExchange(String name, Integer rawType, String exchangeId,boolean durable) {
+    public BaseExchange(String name, Integer rawType, String exchangeId, boolean durable) {
         this.name = name;
         this.exchangeId = exchangeId;
         this.durable = durable;
         ExchangeTypeEnum exchangeType = ExchangeTypeEnum.getByVal(rawType);
         Assert.notNull(exchangeType, ExceptionMessages.buildExceptionMsgWithTemplate("exchangeType # not support or wrong.", String.valueOf(rawType)));
         this.exchangeType = exchangeType;
-        updateCurrState(LifeCyclePhases.Exchange.CREATE,LifeCyclePhases.Status.FINISH);
+        updateCurrState(LifeCyclePhases.Exchange.CREATE, LifeCyclePhases.Status.FINISH);
         triggerEvent();
     }
 
@@ -69,20 +69,19 @@ public abstract class BaseExchange extends BaseLifeCycleSupport implements Excha
         BizLogUtil.start()
                 .setLayer(LogConstants.TRANSPORT_LAYER)
                 .setType(LogConstants.INSTANCE_REGISTER);
-        try{
-            if(CollectionUtils.isEmpty(msgQueueRegistry.get(routingKey))){
+        try {
+            if (CollectionUtils.isEmpty(msgQueueRegistry.get(routingKey))) {
                 msgQueueRegistry.register(routingKey, Lists.newArrayList(msgQueue));
-            }else{
+            } else {
                 List<MessageQueue> msgQueues = Lists.newArrayList(msgQueueRegistry.get(routingKey));
                 msgQueues.add(msgQueue);
-                msgQueueRegistry.register(routingKey,msgQueues);
+                msgQueueRegistry.register(routingKey, msgQueues);
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             BizLogUtil.recordException(e);
             msgQueueRegistry.remove(routingKey);
-        }
-        finally {
+        } finally {
             BizLogUtil.end();
         }
     }
@@ -92,15 +91,14 @@ public abstract class BaseExchange extends BaseLifeCycleSupport implements Excha
         BizLogUtil.start()
                 .setLayer(LogConstants.TRANSPORT_LAYER)
                 .setType(LogConstants.INSTANCE_REGISTER);
-        try{
+        try {
             List<MessageQueue> preRegistered = msgQueueRegistry.get(routingKey);
-            if(!CollectionUtils.isEmpty(preRegistered)){
+            if (!CollectionUtils.isEmpty(preRegistered)) {
                 preRegistered.remove(msgQueue);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             BizLogUtil.recordException(e);
-        }
-        finally {
+        } finally {
             BizLogUtil.end();
         }
     }
@@ -108,11 +106,25 @@ public abstract class BaseExchange extends BaseLifeCycleSupport implements Excha
     @Override
     public void exchangeMsg(Message msg, String routingKey) {
         //check param valid
-        if(Objects.nonNull(msg)||msgQueueRegistry.contains(routingKey)){
-            exchangeMsgInternal(msg,routingKey);
+        if (Objects.nonNull(msg) || msgQueueRegistry.contains(routingKey)) {
+            exchangeMsgInternal(msg, routingKey);
         }
     }
 
     protected abstract void exchangeMsgInternal(Message message, String routingKey);
 
+    @Override
+    public String tag() {
+        return Exchange.TAG;
+    }
+
+    @Override
+    public Metadata meta() {
+        //todo dongyue
+        Metadata metadata = new Metadata();
+        metadata.setId(name);
+        metadata.setTag(tag());
+        metadata.setDesc("exchange");
+        return metadata;
+    }
 }
