@@ -12,18 +12,18 @@ import io.netty.channel.Channel;
  */
 public class FrameBuilder {
 
-    public static Frame allocateFrame(byte rawType, short channelId, int size, ByteBuf payload, Channel tcpChannel) {
+    public static Frame allocateFrame(byte rawType, short channelId, ByteBuf payload, Channel tcpChannel) {
         StandardFrame frame = new StandardFrame();
         frame.setRawType(rawType);
         frame.setRawChannelId(channelId);
-        frame.setSize(size);
+        frame.setSize(payload.readableBytes());
         frame.setPayload(payload);
         frame.setRawFrameEnd(Frame.FRAME_END);
         frame.setTcpChannel(tcpChannel);
         return frame;
     }
 
-    public static Frame allocateFrame(byte rawType, short channelId, int size, ByteBuf payload) {
-        return allocateFrame(rawType, channelId, size, payload, null);
+    public static Frame allocateFrame(byte rawType, short channelId, ByteBuf payload) {
+        return allocateFrame(rawType, channelId, payload, null);
     }
 }

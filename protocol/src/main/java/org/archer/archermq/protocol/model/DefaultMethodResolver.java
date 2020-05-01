@@ -6,6 +6,7 @@ import io.netty.util.internal.StringUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.archer.archermq.common.FeatureBased;
 import org.archer.archermq.common.constants.Delimiters;
+import org.archer.archermq.common.utils.NamingUtil;
 import org.archer.archermq.protocol.Channel;
 import org.archer.archermq.protocol.Connection;
 import org.archer.archermq.protocol.Server;
@@ -22,6 +23,7 @@ import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -30,9 +32,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
-public class DefaultMethodResolver implements MethodResolver, ApplicationContextAware,InitializingBean {
+public class DefaultMethodResolver implements MethodResolver, ApplicationContextAware, InitializingBean {
 
     private final Map<String, java.lang.Class<? extends Command<?>>> methodRegistry = Maps.newConcurrentMap();
 
@@ -56,7 +59,7 @@ public class DefaultMethodResolver implements MethodResolver, ApplicationContext
 
     @Override
     public Command<?> route(StandardMethodFrame methodFrame) {
-        Assert.notNull(methodFrame, ExceptionMessages.buildExceptionMsgWithTemplate("methodFrame is null"));
+        Assert.notNull(methodFrame, ExceptionMessages.ConnectionErrors.FRAME_ERR.getDesc());
         java.lang.Class<? extends Command<?>> commandClazz = methodRegistry.get(generateKey(methodFrame.getRawClassId(), methodFrame.getRawMethodId()));
         Assert.notNull(commandClazz, "commandClazz is null");
         String commandClazzName = commandClazz.getName();
@@ -75,20 +78,21 @@ public class DefaultMethodResolver implements MethodResolver, ApplicationContext
             Object[] targetCmdConstructorArgs = null;
             Constructor<?>[] constructors = commandClazz.getConstructors();
             Map<String, Object> frameArgs = methodFrame.getArgs();
-            frameArgs.put("this$0", clazzInstance);
-            Set<String> frameArgNames = frameArgs.keySet();
+
+            Map<String,Object> polishedFrameArgs = polish(frameArgs);
+            polishedFrameArgs.put("this$0", clazzInstance);
+            Set<String> polishedFrameArgNames = polishedFrameArgs.keySet();
             for (Constructor<?> constructor : constructors) {
                 String[] tmp = parameterNameDiscoverer.getParameterNames(constructor);
                 //内部类默认添加了this$0这个默认的外部类成员变量因此tmp必不为空 todo dongyue
                 Set<String> cmdArgNames = Sets.newHashSet(tmp);
-
-                if (cmdArgNames.equals(frameArgNames)) {
+                if (cmdArgNames.equals(polishedFrameArgNames)) {
                     //因为使用的可能是json传输的字符串表，可能参数顺序会打乱，需要重新组织参数顺序
                     targetCmdConstructor = constructor;
                     targetCmdConstructorArgNames = tmp;
                     targetCmdConstructorArgs = new Object[tmp.length];
                     for (int i = 0; i < targetCmdConstructorArgNames.length; i++) {
-                        targetCmdConstructorArgs[i] = frameArgs.get(targetCmdConstructorArgNames[i]);
+                        targetCmdConstructorArgs[i] = polishedFrameArgs.get(targetCmdConstructorArgNames[i]);
                     }
                     break;
                 }
@@ -101,6 +105,15 @@ public class DefaultMethodResolver implements MethodResolver, ApplicationContext
             e.printStackTrace();
             throw new ChannelException(ExceptionMessages.SystemErrors.INSTANTIATION_ERR);
         }
+    }
+
+
+    private Map<String, Object> polish(Map<String, Object> rawArgs) {
+        Map<String, Object> polishedArgs = Maps.newHashMap();
+        rawArgs.forEach((argName, argValue) -> {
+            polishedArgs.put(NamingUtil.toCamelCaseNaming(argName), argValue);
+        });
+        return polishedArgs;
     }
 
     /**

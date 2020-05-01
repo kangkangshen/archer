@@ -22,4 +22,9 @@ public class ConnectionException extends RuntimeException {
     public ExceptionMessages getExceptionMessages() {
         return exceptionMessages;
     }
+
+    @Override
+    public String getMessage() {
+        return ExceptionMessages.buildExceptionMsgWithTemplate("err id #,name #,type #,desc #.",String.valueOf(exceptionMessages.getId()),exceptionMessages.getName(),String.valueOf(exceptionMessages.getErrType()),exceptionMessages.getDesc());
+    }
 }

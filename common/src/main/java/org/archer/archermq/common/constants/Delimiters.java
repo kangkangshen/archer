@@ -15,5 +15,7 @@ public interface Delimiters {
 
     char PERIOD = '.';
 
+    char DASH = '-';
+
 
 }

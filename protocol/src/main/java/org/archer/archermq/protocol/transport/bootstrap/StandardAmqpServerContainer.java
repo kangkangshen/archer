@@ -1,18 +1,14 @@
 package org.archer.archermq.protocol.transport.bootstrap;
 
 
-import com.alibaba.fastjson.JSON;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.bootstrap.ServerBootstrapConfig;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import lombok.SneakyThrows;
-import org.archer.archermq.common.annotation.Log;
 import org.archer.archermq.common.log.BizLogUtil;
 import org.archer.archermq.common.log.LogConstants;
-import org.archer.archermq.common.log.LogInfo;
 import org.archer.archermq.config.register.Registrar;
 import org.archer.archermq.config.register.StandardMemRegistrar;
 import org.archer.archermq.protocol.BaseLifeCycleSupport;
@@ -21,7 +17,8 @@ import org.archer.archermq.protocol.VirtualHost;
 import org.archer.archermq.protocol.constants.LifeCyclePhases;
 import org.archer.archermq.protocol.constants.ServerRoleTypeEnum;
 import org.archer.archermq.protocol.transport.FrameDispatcher;
-import org.springframework.beans.BeanUtils;
+import org.archer.archermq.protocol.transport.handler.AmqpDecoder;
+import org.archer.archermq.protocol.transport.handler.AmqpEncoder;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,8 +52,6 @@ public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements
     private ServerRoleTypeEnum serverRoleTypeEnum;
 
 
-    @Autowired
-    private ChannelInboundHandler amqpDecoder;
 
     @Autowired
     private ChannelInboundHandler loadBalanceHandler;
@@ -107,12 +102,13 @@ public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
-                            ch.pipeline().addLast(amqpDecoder);
+                            ch.pipeline().addLast("amqpDecoder",new AmqpDecoder());
+                            ch.pipeline().addLast("amqpEncoder",new AmqpEncoder());
                             if (ServerRoleTypeEnum.PIONEER.equals(serverRoleTypeEnum)) {
                                 //作为将军，肯定要多感谢事情啦，就比如派活啦 blablabla。。。
-                                ch.pipeline().addLast(loadBalanceHandler);
+                                ch.pipeline().addLast("loadBalanceHandler",loadBalanceHandler);
                             }
-                            ch.pipeline().addLast(frameDispatcher);
+                            ch.pipeline().addLast("frameDispatcher",frameDispatcher);
                         }
                     })
                     .option(ChannelOption.SO_BACKLOG, 128)

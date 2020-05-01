@@ -1,11 +1,15 @@
 package org.archer.archermq.protocol.model;
 
+import com.alibaba.fastjson.parser.Feature;
 import org.apache.commons.lang3.StringUtils;
 import org.archer.archermq.common.FeatureBased;
 import org.archer.archermq.common.log.BizLogUtil;
 import org.archer.archermq.common.log.LogConstants;
 import org.archer.archermq.common.log.LogInfo;
 import org.archer.archermq.common.utils.ApplicationContextHolder;
+import org.archer.archermq.protocol.Connection;
+import org.archer.archermq.protocol.Server;
+import org.archer.archermq.protocol.VirtualHost;
 import org.archer.archermq.protocol.constants.ClassEnum;
 import org.archer.archermq.protocol.constants.ExceptionMessages;
 import org.archer.archermq.protocol.constants.FeatureKeys;
@@ -15,6 +19,7 @@ import org.archer.archermq.protocol.transport.ConnectionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.util.Assert;
 
 import java.util.Objects;
 
@@ -70,7 +75,11 @@ public final class Channel extends FeatureBased implements Class {
         }
 
         private String openNewChannel() {
-            return null;
+            VirtualHost virtualHost = (VirtualHost) getFeature(FeatureKeys.Command.VIRTUALHOST);
+            io.netty.channel.Channel tcpChannel = (io.netty.channel.Channel) getFeature(FeatureKeys.Command.TCP_CHANNEL);
+            Connection amqpConnection = virtualHost.getConnRegistry().get(tcpChannel);
+            Assert.notNull(amqpConnection,"amqp connection is null");
+            return amqpConnection.openChannel().id().toString();
         }
 
         public String getReserved1() {

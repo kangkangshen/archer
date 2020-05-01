@@ -32,4 +32,11 @@ public class AppTest {
 
         System.out.println(Arrays.toString("17".getBytes()));
     }
+
+    @Test
+    public void test(){
+        byte a = Frame.FRAME_END;
+        System.out.println(a);
+        System.out.println(Objects.equals(a,Frame.FRAME_END));
+    }
 }

@@ -74,7 +74,7 @@ public class StandardMethodFrameHandler extends BaseFrameHandler {
             String cmdJson = JSON.toJSONString(command);
             ByteBuf byteBuf = Unpooled.buffer(cmdJson.getBytes().length);
             byteBuf.writeBytes(cmdJson.getBytes());
-            return FrameBuilder.allocateFrame(FrameTypeEnum.METHOD.getVal(), frame.channelId(), byteBuf.readableBytes(), byteBuf);
+            return FrameBuilder.allocateFrame(FrameTypeEnum.METHOD.getVal(), frame.channelId(), byteBuf);
         }
         return null;
     }

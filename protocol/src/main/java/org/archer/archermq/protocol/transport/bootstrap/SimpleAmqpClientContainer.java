@@ -3,6 +3,7 @@ package org.archer.archermq.protocol.transport.bootstrap;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.BootstrapConfig;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -14,12 +15,18 @@ import org.archer.archermq.common.log.LogConstants;
 import org.archer.archermq.protocol.BaseLifeCycleSupport;
 import org.archer.archermq.protocol.InternalClient;
 import org.archer.archermq.protocol.constants.LifeCyclePhases;
+import org.archer.archermq.protocol.transport.Frame;
+import org.archer.archermq.protocol.transport.handler.AmqpDecoder;
+import org.archer.archermq.protocol.transport.handler.AmqpEncoder;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 
 @Component
 public class SimpleAmqpClientContainer extends BaseLifeCycleSupport implements InitializingBean, InternalClient {
@@ -30,8 +37,9 @@ public class SimpleAmqpClientContainer extends BaseLifeCycleSupport implements I
     @Value("${amqp.internal.client.threads:2}")
     private int amqpInternalClientThreads;
 
-    @Autowired
-    private ChannelInboundHandler amqpDecoder;
+    private final ChannelInboundHandler amqpDecoder = new AmqpDecoder();
+
+    private final ChannelOutboundHandler amqpEncoder = new AmqpEncoder();
 
     private Bootstrap internalClientBootstrap;
 
@@ -72,6 +80,7 @@ public class SimpleAmqpClientContainer extends BaseLifeCycleSupport implements I
                         @Override
                         protected void initChannel(SocketChannel ch) {
                             ch.pipeline().addLast(amqpDecoder);
+                            ch.pipeline().addLast(amqpEncoder);
                         }
                     })
                     .option(ChannelOption.SO_BACKLOG, 128)
@@ -84,6 +93,8 @@ public class SimpleAmqpClientContainer extends BaseLifeCycleSupport implements I
             triggerEvent();
 
         } catch (Exception e) {
+
+            e.printStackTrace();
 
             BizLogUtil.recordException(e);
 
@@ -128,6 +139,20 @@ public class SimpleAmqpClientContainer extends BaseLifeCycleSupport implements I
             throw new RuntimeException(e);
 
         }
+    }
+
+    @SneakyThrows
+    @Override
+    public void connect(String host, int port) {
+        this.currChannel.connect(new InetSocketAddress(host,port)).sync();
+    }
+
+
+    @SneakyThrows
+    @Override
+    public void send(Frame frame) {
+
+        currChannel.writeAndFlush(frame).sync();
     }
 
     @Override

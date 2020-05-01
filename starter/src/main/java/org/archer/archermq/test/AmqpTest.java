@@ -7,6 +7,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import lombok.Data;
 import org.archer.archermq.config.cfgcenter.ConfigCenterService;
+import org.archer.archermq.protocol.InternalClient;
 import org.archer.archermq.protocol.Server;
 import org.archer.archermq.protocol.constants.FeatureKeys;
 import org.archer.archermq.protocol.constants.FrameTypeEnum;
@@ -49,7 +50,7 @@ public class AmqpTest {
         buf.writeShort(20);
         buf.writeShort(10);
         buf.writeBytes(argsJson.getBytes());
-        Frame frame = FrameBuilder.allocateFrame(FrameTypeEnum.METHOD.getVal(),Short.MIN_VALUE,buf.readableBytes(),buf);
+        Frame frame = FrameBuilder.allocateFrame(FrameTypeEnum.METHOD.getVal(),Short.MIN_VALUE,buf);
         Frame returnedFrame = frameDispatcher.dispatchFrame(frame);
         System.out.println("invoked");
         return "success";
@@ -58,9 +59,6 @@ public class AmqpTest {
 
     @Autowired
     private ConfigCenterService configCenterService;
-
-    @Autowired
-    private ApplicationContext applicationContext;
 
     @GetMapping("/config")
     public String testCfgCenter(){
@@ -74,7 +72,27 @@ public class AmqpTest {
         System.out.println(configCenterService.getObject("xiaoming",Student.class).getName());
         return "hello,world";
 
+    }
 
+
+    @Autowired
+    private InternalClient internalClient;
+
+    @GetMapping("/connect")
+    public String testConnect(){
+        internalClient.connect("localhost",5672);
+        Map<String,Object> args = Maps.newHashMap();
+        args.put("virtual-host","default");
+        args.put("reserved-1","");
+        args.put("reserved-2","");
+        String argsJson = JSON.toJSONString(args);
+        ByteBuf buf = Unpooled.buffer();
+        buf.writeShort(10);
+        buf.writeShort(40);
+        buf.writeBytes(argsJson.getBytes());
+        Frame frame = FrameBuilder.allocateFrame(FrameTypeEnum.METHOD.getVal(),Short.MIN_VALUE,buf);
+        internalClient.send(frame);
+        return "hello,world";
     }
 
     @Data

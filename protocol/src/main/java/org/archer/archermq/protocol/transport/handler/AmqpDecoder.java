@@ -1,6 +1,7 @@
 package org.archer.archermq.protocol.transport.handler;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 
@@ -29,7 +31,6 @@ import java.util.Objects;
  * @date 2020年04月14日16:53:43
  * @author dongyue
  */
-@Component
 public class AmqpDecoder extends LengthFieldBasedFrameDecoder {
 
     public AmqpDecoder() {
@@ -43,16 +44,16 @@ public class AmqpDecoder extends LengthFieldBasedFrameDecoder {
         if(Objects.isNull(rawByteFrame)){
             return null;
         }
-        byte rawType = in.readByte();
-        short channelId = in.readShort();
-        int size = in.readInt();
-        ByteBuf payload = in.copy(7,size);
-        in.skipBytes(size);
-        byte frameEnd = in.readByte();
-        if(Objects.equals(frameEnd,Frame.FRAME_END)){
+        byte rawType = rawByteFrame.readByte();
+        short channelId = rawByteFrame.readShort();
+        int size = rawByteFrame.readInt();
+        ByteBuf payload = rawByteFrame.copy(7,size);
+        rawByteFrame.skipBytes(size);
+        byte frameEnd = rawByteFrame.readByte();
+        if(!Objects.equals(frameEnd,Frame.FRAME_END)){
             throw new ConnectionException(ExceptionMessages.ConnectionErrors.FRAME_ERR);
         }
-        return FrameBuilder.allocateFrame(rawType,channelId,size,payload,ctx.channel());
+        return FrameBuilder.allocateFrame(rawType,channelId,payload,ctx.channel());
     }
 
     @Log(layer = LogConstants.TRANSPORT_LAYER)

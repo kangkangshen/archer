@@ -48,9 +48,8 @@ public class StandardFrameDispatcher extends ChannelInboundHandlerAdapter implem
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         Frame returnedFrame = dispatchFrame((Frame) msg);
         if (Objects.nonNull(returnedFrame)) {
-            ctx.write(returnedFrame);
+            ctx.writeAndFlush(returnedFrame);
         }
-
     }
 
     @Override
