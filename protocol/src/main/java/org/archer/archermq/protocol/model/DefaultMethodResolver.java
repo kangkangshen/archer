@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import io.netty.util.internal.StringUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.zookeeper.Op;
 import org.archer.archermq.common.FeatureBased;
 import org.archer.archermq.common.constants.Delimiters;
 import org.archer.archermq.common.utils.NamingUtil;
@@ -79,7 +80,7 @@ public class DefaultMethodResolver implements MethodResolver, ApplicationContext
             Constructor<?>[] constructors = commandClazz.getConstructors();
             Map<String, Object> frameArgs = methodFrame.getArgs();
 
-            Map<String,Object> polishedFrameArgs = polish(frameArgs);
+            Map<String, Object> polishedFrameArgs = polish(frameArgs);
             polishedFrameArgs.put("this$0", clazzInstance);
             Set<String> polishedFrameArgNames = polishedFrameArgs.keySet();
             for (Constructor<?> constructor : constructors) {
@@ -127,9 +128,9 @@ public class DefaultMethodResolver implements MethodResolver, ApplicationContext
             //1.注入当前server
             clazz.addFeature(FeatureKeys.Command.SERVER, springContext.getBean(Server.class));
 
-            //2.注入当前的conn,channel,virtualHost,连接新建立的时候可能还没有conn,channel
+            //2.注入当前的conn,channel,virtualHost,连接新建立的时候可能还没有conn,channel,需要由具体的命令来实现
             Optional<Channel> channel = Optional.ofNullable(rawMethodFrame.channel());
-            Optional<Connection> connection = channel.map(Channel::conn);
+            Optional<Connection> connection = Optional.ofNullable(rawMethodFrame.conn());
             Optional<VirtualHost> virtualHost = connection.map(Connection::virtualHost);
             clazz.addFeature(FeatureKeys.Command.AMQP_CONNECTION, connection.orElse(null));
             clazz.addFeature(FeatureKeys.Command.AMQP_CHANNEL, channel.orElse(null));

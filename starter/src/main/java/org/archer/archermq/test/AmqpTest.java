@@ -62,14 +62,6 @@ public class AmqpTest {
 
     @GetMapping("/config")
     public String testCfgCenter(){
-//        configCenterService.putShort("wukangkang",(short) 17);
-//        System.out.println(configCenterService.getShort("wukangkang"));
-//        return "hello,world";
-        Student xiaoming = new Student();
-        xiaoming.setName("xiaoming");
-        xiaoming.setAge(23);
-        configCenterService.putObject("xiaoming",xiaoming);
-        System.out.println(configCenterService.getObject("xiaoming",Student.class).getName());
         return "hello,world";
 
     }
@@ -95,11 +87,18 @@ public class AmqpTest {
         return "hello,world";
     }
 
-    @Data
-    public static class Student{
-        private String name;
-        private int age;
-
+    @GetMapping("/openChannel")
+    public String testOpenNewChannel(){
+        Map<String,Object> args = Maps.newHashMap();
+        args.put("reserved-1","");
+        String argsJson = JSON.toJSONString(args);
+        ByteBuf buf = Unpooled.buffer();
+        buf.writeShort(20);
+        buf.writeShort(10);
+        buf.writeBytes(argsJson.getBytes());
+        Frame frame = FrameBuilder.allocateFrame(FrameTypeEnum.METHOD.getVal(),Short.MIN_VALUE,buf);
+        internalClient.send(frame);
+        return "hello,world";
     }
 
 }

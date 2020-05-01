@@ -75,10 +75,8 @@ public final class Channel extends FeatureBased implements Class {
         }
 
         private String openNewChannel() {
-            VirtualHost virtualHost = (VirtualHost) getFeature(FeatureKeys.Command.VIRTUALHOST);
-            io.netty.channel.Channel tcpChannel = (io.netty.channel.Channel) getFeature(FeatureKeys.Command.TCP_CHANNEL);
-            Connection amqpConnection = virtualHost.getConnRegistry().get(tcpChannel);
-            Assert.notNull(amqpConnection,"amqp connection is null");
+            Connection amqpConnection = (Connection) getFeature(FeatureKeys.Command.AMQP_CONNECTION);
+            Assert.notNull(amqpConnection, "amqp connection is null");
             return amqpConnection.openChannel().id().toString();
         }
 

@@ -19,6 +19,7 @@ public abstract class BaseFrameHandler implements FrameHandler {
             if (virtualHost.getConnRegistry().contains(tcpChannel)) {
                 Connection amqpConnection = virtualHost.getConnRegistry().get(tcpChannel);
                 StandardFrame standardFrame = (StandardFrame) frame;
+                standardFrame.setConnection(amqpConnection);
                 standardFrame.setChannel(amqpConnection.get(frame.channelId()));
             }
         });

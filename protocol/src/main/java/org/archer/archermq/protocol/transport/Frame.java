@@ -3,6 +3,7 @@ package org.archer.archermq.protocol.transport;
 
 import io.netty.buffer.ByteBuf;
 import org.archer.archermq.protocol.Channel;
+import org.archer.archermq.protocol.Connection;
 import org.archer.archermq.protocol.constants.FrameTypeEnum;
 
 import java.io.Serializable;
@@ -58,4 +59,6 @@ public interface Frame extends Serializable {
     byte frameEnd();
 
     io.netty.channel.Channel tcpChannel();
+
+    Connection conn();
 }

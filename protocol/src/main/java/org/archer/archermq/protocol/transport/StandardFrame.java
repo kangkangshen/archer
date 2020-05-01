@@ -3,6 +3,7 @@ package org.archer.archermq.protocol.transport;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import org.archer.archermq.protocol.Channel;
+import org.archer.archermq.protocol.Connection;
 import org.archer.archermq.protocol.constants.FrameTypeEnum;
 
 import java.util.Objects;
@@ -31,6 +32,8 @@ public class StandardFrame implements Frame {
 
     protected byte rawFrameEnd;
 
+    protected Connection connection;
+
     public StandardFrame() {
     }
 
@@ -43,6 +46,7 @@ public class StandardFrame implements Frame {
         this.size = extendedFrame.size();
         this.payload = extendedFrame.content();
         this.rawFrameEnd = extendedFrame.frameEnd();
+        this.connection = extendedFrame.conn();
     }
 
     @Override
@@ -83,6 +87,11 @@ public class StandardFrame implements Frame {
         return tcpChannel;
     }
 
+    @Override
+    public Connection conn() {
+        return connection;
+    }
+
     public void setRawType(byte rawType) {
         this.rawType = rawType;
         this.frameType = FrameTypeEnum.getByVal(rawType);
@@ -110,5 +119,9 @@ public class StandardFrame implements Frame {
 
     public void setChannel(Channel channel) {
         this.channel = channel;
+    }
+
+    public void setConnection(Connection connection) {
+        this.connection = connection;
     }
 }
