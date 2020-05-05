@@ -184,6 +184,7 @@ public final class Connection extends FeatureBased implements Class {
 
         @Override
         public TuneOk execute() {
+            //todo dongyue
             throw new ConnectionException(ExceptionMessages.ConnectionErrors.COMMAND_INVALID);
         }
 
@@ -276,7 +277,7 @@ public final class Connection extends FeatureBased implements Class {
             }
             //todo dongyue
             org.archer.archermq.protocol.Connection amqpConn = new StandardAmqpConnection(virtualHostInstance);
-            virtualHostInstance.getConnRegistry().register((Channel) getFeature(FeatureKeys.Command.TCP_CHANNEL),amqpConn);
+            virtualHostInstance.getConnRegistry().register((Channel) getFeature(FeatureKeys.Command.TCP_CHANNEL), amqpConn);
             return new OpenOk(reserved1);
         }
 

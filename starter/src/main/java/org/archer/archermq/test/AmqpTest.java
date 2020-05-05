@@ -73,16 +73,26 @@ public class AmqpTest {
     @GetMapping("/connect")
     public String testConnect(){
         internalClient.connect("localhost",5672);
-        Map<String,Object> args = Maps.newHashMap();
-        args.put("virtual-host","default");
-        args.put("reserved-1","");
-        args.put("reserved-2","");
-        String argsJson = JSON.toJSONString(args);
+        Map<String,Object> connArgs = Maps.newHashMap();
+        connArgs.put("virtual-host","default");
+        connArgs.put("reserved-1","");
+        connArgs.put("reserved-2","");
+        String argsJson = JSON.toJSONString(connArgs);
         ByteBuf buf = Unpooled.buffer();
         buf.writeShort(10);
         buf.writeShort(40);
         buf.writeBytes(argsJson.getBytes());
         Frame frame = FrameBuilder.allocateFrame(FrameTypeEnum.METHOD.getVal(),Short.MIN_VALUE,buf);
+        internalClient.send(frame);
+
+        Map<String,Object> channelArgs = Maps.newHashMap();
+        channelArgs.put("reserved-1","");
+        argsJson = JSON.toJSONString(channelArgs);
+        buf = Unpooled.buffer();
+        buf.writeShort(20);
+        buf.writeShort(10);
+        buf.writeBytes(argsJson.getBytes());
+        frame = FrameBuilder.allocateFrame(FrameTypeEnum.METHOD.getVal(),Short.MIN_VALUE,buf);
         internalClient.send(frame);
         return "hello,world";
     }

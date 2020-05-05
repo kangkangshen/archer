@@ -20,6 +20,8 @@ public interface Frame extends Serializable {
 
     byte FRAME_END = (byte) 206;
 
+    int HEART_BEAT_CHANNEL_ID = 0;
+
     /**
      * 获取当前数据帧类型
      *

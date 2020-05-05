@@ -7,6 +7,7 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.timeout.IdleStateHandler;
 import org.archer.archermq.common.log.BizLogUtil;
 import org.archer.archermq.common.log.LogConstants;
 import org.archer.archermq.config.register.Registrar;
@@ -19,6 +20,7 @@ import org.archer.archermq.protocol.constants.ServerRoleTypeEnum;
 import org.archer.archermq.protocol.transport.FrameDispatcher;
 import org.archer.archermq.protocol.transport.handler.AmqpDecoder;
 import org.archer.archermq.protocol.transport.handler.AmqpEncoder;
+import org.archer.archermq.protocol.transport.handler.HeartBeatTimeoutHandler;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,10 +49,13 @@ public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements
     @Value("${server.handle.threads:8}")
     private int serverHandleThreads;
 
+    @Value(("${server.read.idle:10}"))
+    private int serverIdleTime;
+
+
     @Value("${server.role.type}")
     private int serverRoleType;
     private ServerRoleTypeEnum serverRoleTypeEnum;
-
 
 
     @Autowired
@@ -65,7 +70,7 @@ public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements
 
     private Channel currChannel;
 
-    private final Registrar<String,VirtualHost> virtualHostRegistry = new StandardMemRegistrar<>();
+    private final Registrar<String, VirtualHost> virtualHostRegistry = new StandardMemRegistrar<>();
 
     @Override
     public void afterPropertiesSet() {
@@ -102,13 +107,19 @@ public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
-                            ch.pipeline().addLast("amqpDecoder",new AmqpDecoder());
-                            ch.pipeline().addLast("amqpEncoder",new AmqpEncoder());
+                            ch.pipeline().addLast("amqpDecoder", new AmqpDecoder());
+                            ch.pipeline().addLast("amqpEncoder", new AmqpEncoder());
+
                             if (ServerRoleTypeEnum.PIONEER.equals(serverRoleTypeEnum)) {
                                 //作为将军，肯定要多感谢事情啦，就比如派活啦 blablabla。。。
-                                ch.pipeline().addLast("loadBalanceHandler",loadBalanceHandler);
+                                ch.pipeline().addLast("loadBalanceHandler", loadBalanceHandler);
                             }
-                            ch.pipeline().addLast("frameDispatcher",frameDispatcher);
+                            //amqp 协议仅支持单向心跳
+                            ch.pipeline().addLast("idleStateHandler", new IdleStateHandler(serverIdleTime, serverIdleTime, serverIdleTime));
+                            ch.pipeline().addLast("heartbeatTimeoutHandler", new HeartBeatTimeoutHandler());
+
+
+                            ch.pipeline().addLast("frameDispatcher", frameDispatcher);
                         }
                     })
                     .option(ChannelOption.SO_BACKLOG, 128)
@@ -196,7 +207,7 @@ public class StandardAmqpServerContainer extends BaseLifeCycleSupport implements
 
     @Override
     public boolean register(String s, VirtualHost instance) {
-        return virtualHostRegistry.register(s,instance);
+        return virtualHostRegistry.register(s, instance);
     }
 
     @Override
