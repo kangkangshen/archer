@@ -30,7 +30,6 @@ public interface LifeCycle {
 
     void acceptListener(LifeCycleListener listener);
 
-
     void updateCurrState(String nextPhase, String nextPhaseStatus);
 
 }
